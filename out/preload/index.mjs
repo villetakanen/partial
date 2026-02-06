@@ -1,38 +1,42 @@
-import { contextBridge, ipcRenderer } from 'electron'
-
+import { contextBridge, ipcRenderer } from "electron";
 const IPC_CHANNELS = {
   /** main → renderer: Plan file changed on disk */
-  PLAN_UPDATED: 'plan:updated',
+  PLAN_UPDATED: "plan:updated",
   /** main → renderer: Plan file deleted */
-  PLAN_DELETED: 'plan:deleted',
+  PLAN_DELETED: "plan:deleted",
   /** main → renderer: Parse error on a plan file */
-  PLAN_ERROR: 'plan:error',
-  /** renderer → main: User selects a project directory */
-  OPEN_DIRECTORY: 'plan:open-directory',
+  PLAN_ERROR: "plan:error",
+  /** renderer → main: Open a .plan file by path */
+  OPEN_FILE: "plan:open-file",
+  /** renderer → main: Show the native file picker dialog */
+  SHOW_OPEN_DIALOG: "plan:show-open-dialog",
   /** renderer → main: User saves changes from UI */
-  SAVE: 'plan:save',
-}
+  SAVE: "plan:save"
+};
 const api = {
-  openDirectory(payload) {
-    return ipcRenderer.invoke(IPC_CHANNELS.OPEN_DIRECTORY, payload)
+  openFile(payload) {
+    return ipcRenderer.invoke(IPC_CHANNELS.OPEN_FILE, payload);
+  },
+  showOpenDialog() {
+    return ipcRenderer.invoke(IPC_CHANNELS.SHOW_OPEN_DIALOG);
   },
   savePlan(payload) {
-    return ipcRenderer.invoke(IPC_CHANNELS.SAVE, payload)
+    return ipcRenderer.invoke(IPC_CHANNELS.SAVE, payload);
   },
   onPlanUpdated(callback) {
     ipcRenderer.on(IPC_CHANNELS.PLAN_UPDATED, (_event, payload) => {
-      callback(payload)
-    })
+      callback(payload);
+    });
   },
   onPlanDeleted(callback) {
     ipcRenderer.on(IPC_CHANNELS.PLAN_DELETED, (_event, payload) => {
-      callback(payload)
-    })
+      callback(payload);
+    });
   },
   onPlanError(callback) {
     ipcRenderer.on(IPC_CHANNELS.PLAN_ERROR, (_event, payload) => {
-      callback(payload)
-    })
-  },
-}
-contextBridge.exposeInMainWorld('api', api)
+      callback(payload);
+    });
+  }
+};
+contextBridge.exposeInMainWorld("api", api);

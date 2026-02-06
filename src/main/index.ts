@@ -107,21 +107,11 @@ function registerIpcHandlers(): void {
 app.whenReady().then(() => {
   registerIpcHandlers()
   createWindow()
-
-  app.on('activate', () => {
-    // macOS: re-create window when dock icon is clicked and no windows exist
-    if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow()
-    }
-  })
 })
 
-// Windows/Linux: quit when all windows are closed
-// macOS: keep running (standard macOS behaviour)
+// Partial is a single-window app — quit on all platforms when the window closes.
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+  app.quit()
 })
 
 // Clean up watcher on quit

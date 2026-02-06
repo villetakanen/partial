@@ -404,7 +404,7 @@ tasks:
     title: Fix macOS quit-on-close behavior
     parent: electron
     type: fix
-    done: false
+    done: true
 
   - id: pbi-047
     title: Add native Electron menu with File > Open Directory

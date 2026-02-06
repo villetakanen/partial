@@ -150,10 +150,10 @@ Read: `docs/0.1.0-findings.md` — HF-1 (macOS: Closing Window Does Not Quit the
 Read: `plans/electron-shell/spec.md` — Contract → Scenarios (macOS lifecycle)
 
 #### Verification
-- [ ] On macOS, closing the window quits the app entirely
-- [ ] On Windows/Linux, closing the window quits the app (unchanged)
-- [ ] No zombie processes remain after closing
-- [ ] `pnpm exec tsc --noEmit` passes
+- [x] On macOS, closing the window quits the app entirely
+- [x] On Windows/Linux, closing the window quits the app (unchanged)
+- [x] No zombie processes remain after closing
+- [x] `pnpm exec tsc --noEmit` passes
 
 #### Refinement Protocol
 If a user preference for "keep in dock" is needed later, it can be added behind a settings flag in a future release.

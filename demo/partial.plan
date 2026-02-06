@@ -24,7 +24,7 @@ tasks:
     title: Initialize package.json and install dependencies
     parent: foundation
     type: chore
-    done: false
+    done: true
 
   - id: pbi-002
     title: Add TypeScript configuration

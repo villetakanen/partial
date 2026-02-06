@@ -76,11 +76,11 @@ Create `package.json` with project metadata, scripts, and install all production
 Read: `docs/scaffolding.md` — Section 3 (Project Initialization)
 
 #### Verification
-- [ ] `package.json` contains all scripts: dev, build, preview, check, check:fix, test, test:coverage, prepare
-- [ ] `package.json` has `"type": "module"` and `"engines": { "node": ">=20.0.0" }`
-- [ ] `pnpm install` completes without errors
-- [ ] All dependencies from scaffolding Section 3 Step 2 are present (electron, svelte, d3, yaml, chokidar, graphlib, zod, biome, lefthook, vitest, etc.)
-- [ ] `pnpm check` does not crash (biome is callable)
+- [x] `package.json` contains all scripts: dev, build, preview, check, check:fix, test, test:coverage, prepare
+- [x] `package.json` has `"type": "module"` and `"engines": { "node": ">=20.0.0" }`
+- [x] `pnpm install` completes without errors
+- [x] All dependencies from scaffolding Section 3 Step 2 are present (electron, svelte, d3, yaml, chokidar, graphlib, zod, biome, lefthook, vitest, etc.)
+- [x] `pnpm check` does not crash (biome is callable)
 
 #### Refinement Protocol
 If a dependency version conflict arises, resolve it and document the resolution in the commit message body.

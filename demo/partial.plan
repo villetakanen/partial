@@ -307,7 +307,7 @@ tasks:
       - pbi-023
       - pbi-024
       - pbi-015
-    done: false
+    done: true
 
   - id: pbi-027
     title: Implement Graph view

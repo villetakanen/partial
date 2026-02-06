@@ -837,16 +837,16 @@ Implement `Gantt.svelte` with D3-powered horizontal bar chart. Derive task posit
 Read: `plans/gantt-view/spec.md` — Full spec
 
 #### Verification
-- [ ] Tasks rendered as horizontal bars in dependency order
-- [ ] Dependency edges drawn as connector lines
-- [ ] Critical path visually highlighted
-- [ ] Done tasks visually muted
-- [ ] Horizontal and vertical scrolling for large projects
-- [ ] Responsive to container resizing
-- [ ] Empty plan renders empty state (no errors)
-- [ ] Uses D3 for layout calculation, Svelte for DOM
-- [ ] Uses Svelte 5 runes, scoped styles
-- [ ] `pnpm exec svelte-check` passes
+- [x] Tasks rendered as horizontal bars in dependency order
+- [x] Dependency edges drawn as connector lines
+- [x] Critical path visually highlighted
+- [x] Done tasks visually muted
+- [x] Horizontal and vertical scrolling for large projects
+- [x] Responsive to container resizing
+- [x] Empty plan renders empty state (no errors)
+- [x] Uses D3 for layout calculation, Svelte for DOM
+- [x] Uses Svelte 5 runes, scoped styles
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If D3 integration pattern with Svelte 5 requires specific approach, document the chosen pattern.

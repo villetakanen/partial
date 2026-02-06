@@ -39,6 +39,66 @@ export function buildDAG(tasks: Task[]): Graph {
 }
 
 /**
+ * Detect cycles in the graph using depth-first search.
+ *
+ * @returns The cycle path as an array of task IDs (e.g. `["A", "B", "C", "A"]`),
+ *          or `null` if the graph is acyclic.
+ */
+export function detectCycles(graph: Graph): string[] | null {
+	const visited = new Set<string>()
+	const inStack = new Set<string>()
+	const parent = new Map<string, string>()
+
+	for (const node of graph.nodes()) {
+		if (visited.has(node)) continue
+		const cycle = dfsVisit(graph, node, visited, inStack, parent)
+		if (cycle) return cycle
+	}
+
+	return null
+}
+
+/** DFS visit for cycle detection. Returns cycle path or null. */
+function dfsVisit(
+	graph: Graph,
+	node: string,
+	visited: Set<string>,
+	inStack: Set<string>,
+	parent: Map<string, string>,
+): string[] | null {
+	visited.add(node)
+	inStack.add(node)
+
+	const successors = graph.successors(node) ?? []
+	for (const next of successors) {
+		if (inStack.has(next)) {
+			return buildCyclePath(parent, node, next)
+		}
+		if (!visited.has(next)) {
+			parent.set(next, node)
+			const cycle = dfsVisit(graph, next, visited, inStack, parent)
+			if (cycle) return cycle
+		}
+	}
+
+	inStack.delete(node)
+	return null
+}
+
+/** Reconstruct cycle path from parent map. */
+function buildCyclePath(parent: Map<string, string>, from: string, to: string): string[] {
+	const path: string[] = [to]
+	let current = from
+	while (current !== to) {
+		path.push(current)
+		current = parent.get(current) ?? to
+	}
+	path.push(to)
+	path.reverse()
+	return path
+}
+
+/**
  * Add directed edges from dependencies to the dependent task.
  * Edge direction: dependency → dependent (predecessor → successor).
  */

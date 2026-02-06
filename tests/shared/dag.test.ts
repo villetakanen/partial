@@ -1,5 +1,6 @@
-import { buildDAG, type EdgeLabel } from '@shared/dag'
+import { buildDAG, detectCycles, type EdgeLabel } from '@shared/dag'
 import type { Task } from '@shared/types'
+import { Graph } from 'graphlib'
 import { describe, expect, it } from 'vitest'
 
 function task(id: string, overrides: Partial<Task> = {}): Task {
@@ -129,5 +130,69 @@ describe('buildDAG', () => {
 		const tasks = [task('group'), task('child', { parent: 'group' })]
 		const graph = buildDAG(tasks)
 		expect(graph.edgeCount()).toBe(0)
+	})
+})
+
+describe('detectCycles', () => {
+	it('returns null for acyclic graph (linear chain)', () => {
+		const tasks = [task('a'), task('b', { needs: ['a'] }), task('c', { needs: ['b'] })]
+		const graph = buildDAG(tasks)
+		expect(detectCycles(graph)).toBeNull()
+	})
+
+	it('returns null for acyclic graph (diamond)', () => {
+		const tasks = [
+			task('a'),
+			task('b', { needs: ['a'] }),
+			task('c', { needs: ['a'] }),
+			task('d', { needs: ['b', 'c'] }),
+		]
+		const graph = buildDAG(tasks)
+		expect(detectCycles(graph)).toBeNull()
+	})
+
+	it('returns null for disconnected acyclic graph', () => {
+		const tasks = [task('a'), task('b', { needs: ['a'] }), task('c'), task('d', { needs: ['c'] })]
+		const graph = buildDAG(tasks)
+		expect(detectCycles(graph)).toBeNull()
+	})
+
+	it('detects self-referencing task (A → A)', () => {
+		// Build graph manually since buildDAG wouldn't create a self-loop
+		const graph = new Graph({ directed: true })
+		graph.setNode('a', task('a'))
+		graph.setEdge('a', 'a')
+		const cycle = detectCycles(graph)
+		expect(cycle).not.toBeNull()
+		expect(cycle).toContain('a')
+	})
+
+	it('detects indirect cycle (A → B → C → A)', () => {
+		// A needs C (edge C→A), B needs A (edge A→B), C needs B (edge B→C)
+		// This creates the cycle: A→B→C→A
+		const tasks = [
+			task('a', { needs: ['c'] }),
+			task('b', { needs: ['a'] }),
+			task('c', { needs: ['b'] }),
+		]
+		const graph = buildDAG(tasks)
+		const cycle = detectCycles(graph)
+		expect(cycle).not.toBeNull()
+		// Cycle should contain all three nodes and repeat the start
+		expect(cycle).toHaveLength(4)
+		expect(cycle?.[0]).toBe(cycle?.[3])
+		expect(cycle).toContain('a')
+		expect(cycle).toContain('b')
+		expect(cycle).toContain('c')
+	})
+
+	it('returns null for empty graph', () => {
+		const graph = buildDAG([])
+		expect(detectCycles(graph)).toBeNull()
+	})
+
+	it('returns null for single task with no deps', () => {
+		const graph = buildDAG([task('a')])
+		expect(detectCycles(graph)).toBeNull()
 	})
 })

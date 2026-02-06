@@ -180,7 +180,7 @@ tasks:
     type: feat
     needs:
       - pbi-011
-    done: false
+    done: true
 
   - id: pbi-013
     title: Implement topological sort

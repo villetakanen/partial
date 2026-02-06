@@ -423,11 +423,11 @@ Implement `detectCycles(graph: Graph): string[] | null` in `src/shared/dag.ts`. 
 Read: `plans/dag-engine/spec.md` — Contract → Scenarios (Cycle detected)
 
 #### Verification
-- [ ] Returns `null` for acyclic graphs
-- [ ] Returns the cycle path array for cyclic graphs (e.g., `["A", "B", "C", "A"]`)
-- [ ] Detects self-referencing tasks (A → A)
-- [ ] Detects indirect cycles (A → B → C → A)
-- [ ] Tests pass with at least 4 cycle/no-cycle scenarios
+- [x] Returns `null` for acyclic graphs
+- [x] Returns the cycle path array for cyclic graphs (e.g., `["A", "B", "C", "A"]`)
+- [x] Detects self-referencing tasks (A → A)
+- [x] Detects indirect cycles (A → B → C → A)
+- [x] Tests pass with at least 4 cycle/no-cycle scenarios
 
 #### Refinement Protocol
 None — cycle detection algorithm is well-defined.

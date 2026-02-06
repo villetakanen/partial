@@ -115,7 +115,7 @@ tasks:
     type: docs
     needs:
       - pbi-005
-    done: false
+    done: true
 
   # ── Layer 1 — Shared Types & Schemas ──────────────────────────
 

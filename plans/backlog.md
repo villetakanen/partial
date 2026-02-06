@@ -1107,10 +1107,10 @@ Create `AGENTS.md` following the seven-part structure defined in the scaffolding
 Read: `docs/scaffolding.md` — Section 11 (Agent Context Files)
 
 #### Verification
-- [ ] `AGENTS.md` contains all 7 parts: Mission, Personas, Tech Stack, Boundaries, Directory Map, Command Registry, Coding Standards
-- [ ] `CLAUDE.md` is a symlink → `AGENTS.md` (verified via `ls -la`)
-- [ ] `.gitignore` includes `CLAUDE.local.md`
-- [ ] Both files are tracked in git
+- [x] `AGENTS.md` contains all 7 parts: Mission, Personas, Tech Stack, Boundaries, Directory Map, Command Registry, Coding Standards
+- [x] `CLAUDE.md` is a symlink → `AGENTS.md` (verified via `ls -la`)
+- [x] `.gitignore` includes `CLAUDE.local.md`
+- [x] Both files are tracked in git
 
 #### Refinement Protocol
 Content will evolve as the project matures — this is the initial version.

@@ -258,7 +258,7 @@ tasks:
     needs:
       - pbi-016
       - pbi-020
-    done: false
+    done: true
 
   # ── Layer 4 — Renderer & Components ───────────────────────────
 

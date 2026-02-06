@@ -682,12 +682,12 @@ Read: `plans/electron-shell/spec.md` — Contract → Scenarios (Live file updat
 Read: `plans/file-watcher/spec.md` — Blueprint → Architecture (IPC Contract)
 
 #### Verification
-- [ ] Watcher `change` event triggers `plan:updated` IPC to renderer
-- [ ] Watcher `delete` event triggers `plan:deleted` IPC to renderer
-- [ ] Watcher `error` event triggers `plan:error` IPC to renderer
-- [ ] `plan:open-directory` from renderer starts watcher on specified directory
-- [ ] Watcher ignores its own writes when `plan:save` writes a file
-- [ ] No double-parsing when Partial writes and then watches its own file
+- [x] Watcher `change` event triggers `plan:updated` IPC to renderer
+- [x] Watcher `delete` event triggers `plan:deleted` IPC to renderer
+- [x] Watcher `error` event triggers `plan:error` IPC to renderer
+- [x] `plan:open-directory` from renderer starts watcher on specified directory
+- [x] Watcher ignores its own writes when `plan:save` writes a file
+- [x] No double-parsing when Partial writes and then watches its own file
 
 #### Refinement Protocol
 If write-lock mechanism for self-write detection needs design, propose approach in commit message.

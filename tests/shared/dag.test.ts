@@ -1,5 +1,6 @@
 import {
 	buildDAG,
+	criticalPath,
 	detectCycles,
 	type EdgeLabel,
 	getUnblockedTasks,
@@ -340,5 +341,73 @@ describe('topologicalSort', () => {
 		const graph = buildDAG([task('a')])
 		const ids = topologicalSort(graph).map((t) => t.id)
 		expect(ids).toEqual(['a'])
+	})
+})
+
+describe('criticalPath', () => {
+	it('returns the linear chain as the critical path', () => {
+		const tasks = [task('a'), task('b', { needs: ['a'] }), task('c', { needs: ['b'] })]
+		const graph = buildDAG(tasks)
+		const ids = criticalPath(graph).map((t) => t.id)
+		expect(ids).toEqual(['a', 'b', 'c'])
+	})
+
+	it('returns the longest path in a diamond (multi-path)', () => {
+		// a → b → d (length 3) and a → c → d (length 3) — both equal
+		// But add an extra step: a → b → e → d makes the b path longer
+		const tasks = [
+			task('a'),
+			task('b', { needs: ['a'] }),
+			task('c', { needs: ['a'] }),
+			task('e', { needs: ['b'] }),
+			task('d', { needs: ['e', 'c'] }),
+		]
+		const graph = buildDAG(tasks)
+		const ids = criticalPath(graph).map((t) => t.id)
+		// Longest path: a → b → e → d (length 4)
+		expect(ids).toEqual(['a', 'b', 'e', 'd'])
+	})
+
+	it('handles single-task graph', () => {
+		const graph = buildDAG([task('only')])
+		const ids = criticalPath(graph).map((t) => t.id)
+		expect(ids).toEqual(['only'])
+	})
+
+	it('returns the longest chain across disconnected subgraphs', () => {
+		// Subgraph 1: a → b (length 2)
+		// Subgraph 2: c → d → e (length 3) — this is longer
+		const tasks = [
+			task('a'),
+			task('b', { needs: ['a'] }),
+			task('c'),
+			task('d', { needs: ['c'] }),
+			task('e', { needs: ['d'] }),
+		]
+		const graph = buildDAG(tasks)
+		const ids = criticalPath(graph).map((t) => t.id)
+		expect(ids).toEqual(['c', 'd', 'e'])
+	})
+
+	it('returns empty array for empty graph', () => {
+		const graph = buildDAG([])
+		expect(criticalPath(graph)).toEqual([])
+	})
+
+	it('returns the correct path when multiple paths have different lengths', () => {
+		// a → b → c → f (length 4)
+		// a → d → f (length 3)
+		// a → e (length 2)
+		const tasks = [
+			task('a'),
+			task('b', { needs: ['a'] }),
+			task('c', { needs: ['b'] }),
+			task('d', { needs: ['a'] }),
+			task('e', { needs: ['a'] }),
+			task('f', { needs: ['c', 'd'] }),
+		]
+		const graph = buildDAG(tasks)
+		const ids = criticalPath(graph).map((t) => t.id)
+		expect(ids).toEqual(['a', 'b', 'c', 'f'])
 	})
 })

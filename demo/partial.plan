@@ -204,7 +204,7 @@ tasks:
     type: feat
     needs:
       - pbi-013
-    done: false
+    done: true
 
   # ── Layer 3 — File Watcher ────────────────────────────────────
 

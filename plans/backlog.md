@@ -507,10 +507,10 @@ Implement `criticalPath(graph: Graph): Task[]` in `src/shared/dag.ts`. Compute t
 Read: `plans/dag-engine/spec.md` — Contract → Definition of Done (criticalPath)
 
 #### Verification
-- [ ] Returns the longest chain for a DAG with multiple paths
-- [ ] Handles single-task graphs (critical path is just that task)
-- [ ] Handles disconnected subgraphs (returns the longest chain across all)
-- [ ] Tests pass with at least 3 scenarios (linear, diamond, multi-path)
+- [x] Returns the longest chain for a DAG with multiple paths
+- [x] Handles single-task graphs (critical path is just that task)
+- [x] Handles disconnected subgraphs (returns the longest chain across all)
+- [x] Tests pass with at least 3 scenarios (linear, diamond, multi-path)
 
 #### Refinement Protocol
 If duration/weight metadata is needed for accurate scheduling, flag for spec update and implement with unit weights initially.

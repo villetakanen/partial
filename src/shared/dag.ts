@@ -167,6 +167,82 @@ export function topologicalSort(graph: Graph): Task[] {
 }
 
 /**
+ * Compute the critical path — the longest dependency chain in the DAG.
+ *
+ * Uses dynamic programming over topological order: for each node, the longest
+ * path ending at that node equals `1 + max(longest path of predecessors)`.
+ * The critical path is the globally longest such chain across all nodes,
+ * including disconnected subgraphs.
+ *
+ * Each task is treated as unit weight (1). Returns tasks along the longest
+ * chain in dependency order.
+ *
+ * @returns An array of tasks forming the critical path, or an empty array
+ *          for an empty graph
+ */
+export function criticalPath(graph: Graph): Task[] {
+	const sorted = topologicalSort(graph)
+	if (sorted.length === 0) return []
+
+	const { dist, prev } = computeLongestPaths(graph, sorted)
+	const endNode = findMaxDistNode(sorted, dist)
+	return reconstructPath(graph, prev, endNode)
+}
+
+/** Compute longest-path distances and predecessor pointers via DP. */
+function computeLongestPaths(
+	graph: Graph,
+	sorted: Task[],
+): { dist: Map<string, number>; prev: Map<string, string | null> } {
+	const dist = new Map<string, number>()
+	const prev = new Map<string, string | null>()
+
+	for (const t of sorted) {
+		dist.set(t.id, 1)
+		prev.set(t.id, null)
+	}
+
+	for (const t of sorted) {
+		const preds = graph.predecessors(t.id) ?? []
+		for (const predId of preds) {
+			const candidate = (dist.get(predId) ?? 0) + 1
+			if (candidate > (dist.get(t.id) ?? 0)) {
+				dist.set(t.id, candidate)
+				prev.set(t.id, predId)
+			}
+		}
+	}
+
+	return { dist, prev }
+}
+
+/** Find the node with maximum distance (end of critical path). */
+function findMaxDistNode(sorted: Task[], dist: Map<string, number>): string {
+	let maxNode = sorted[0].id
+	let maxDist = dist.get(maxNode) ?? 0
+	for (const t of sorted) {
+		const d = dist.get(t.id) ?? 0
+		if (d > maxDist) {
+			maxDist = d
+			maxNode = t.id
+		}
+	}
+	return maxNode
+}
+
+/** Reconstruct the critical path by following prev pointers. */
+function reconstructPath(graph: Graph, prev: Map<string, string | null>, endNode: string): Task[] {
+	const path: Task[] = []
+	let current: string | null = endNode
+	while (current !== null) {
+		path.push(graph.node(current) as Task)
+		current = prev.get(current) ?? null
+	}
+	path.reverse()
+	return path
+}
+
+/**
  * Add directed edges from dependencies to the dependent task.
  * Edge direction: dependency → dependent (predecessor → successor).
  */

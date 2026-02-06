@@ -390,7 +390,7 @@ tasks:
     title: Fix malformed pbi-007 in demo/partial.plan
     parent: fixes
     type: fix
-    done: false
+    done: true
 
   - id: pbi-045
     title: Update scaffolding doc to reflect out/ build directory

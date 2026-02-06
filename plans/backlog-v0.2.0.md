@@ -214,11 +214,11 @@ Fix the corrupted YAML structure of pbi-007 in `demo/partial.plan`. Remove the d
 Read: `docs/0.1.0-findings.md` — Finding 1 (Malformed pbi-007)
 
 #### Verification
-- [ ] `pbi-007` has a single `done: true` key
-- [ ] No stray `- pbi-042` line under `done:`
-- [ ] `pbi-007.needs` contains only `pbi-006` (as per backlog dependency graph)
-- [ ] File parses without errors: `echo "valid" || pnpm exec tsx src/cli/index.ts validate demo/partial.plan`
-- [ ] YAML lints clean (no duplicate keys)
+- [x] `pbi-007` has a single `done: true` key
+- [x] No stray `- pbi-042` line under `done:`
+- [x] `pbi-007.needs` contains only `pbi-006` (as per backlog dependency graph)
+- [x] File parses without errors: `echo "valid" || pnpm exec tsx src/cli/index.ts validate demo/partial.plan`
+- [x] YAML lints clean (no duplicate keys)
 
 #### Refinement Protocol
 None — this is a data fix.

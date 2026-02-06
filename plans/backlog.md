@@ -536,13 +536,13 @@ Implement `watchDirectory(dirPath: string): PlanWatcher` in `src/main/watcher.ts
 Read: `plans/file-watcher/spec.md` — Full spec
 
 #### Verification
-- [ ] Watches a directory for `*.plan` files only
-- [ ] Emits `change` event with parsed `PlanFile` on file create/modify
-- [ ] Emits `delete` event with file path on deletion
-- [ ] Ignores non-`.plan` files and hidden files
-- [ ] `close()` method cleans up all watchers
-- [ ] Tests pass (use temp directories for isolation)
-- [ ] All exported functions have JSDoc comments
+- [x] Watches a directory for `*.plan` files only
+- [x] Emits `change` event with parsed `PlanFile` on file create/modify
+- [x] Emits `delete` event with file path on deletion
+- [x] Ignores non-`.plan` files and hidden files
+- [x] `close()` method cleans up all watchers
+- [x] Tests pass (use temp directories for isolation)
+- [x] All exported functions have JSDoc comments
 
 #### Refinement Protocol
 If chokidar v4 API differs from v3, adapt and document.

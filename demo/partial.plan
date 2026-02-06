@@ -214,7 +214,7 @@ tasks:
     type: feat
     needs:
       - pbi-008
-    done: false
+    done: true
 
   - id: pbi-017
     title: Add debouncing to file watcher

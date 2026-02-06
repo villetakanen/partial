@@ -73,7 +73,7 @@ tasks:
     type: docs
     needs:
       - pbi-001
-    done: false
+    done: true
 
   - id: pbi-039
     title: Create electron-vite configuration

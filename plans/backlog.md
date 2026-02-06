@@ -1167,14 +1167,14 @@ Create a `README.md` with project name, one-line description, tech stack summary
 Read: `docs/scaffolding.md` — Section 1 (Overview) and Section 2 (Repository Structure lists README.md)
 
 #### Verification
-- [ ] `README.md` exists in repo root
-- [ ] Contains project name "Partial" and one-line description
-- [ ] Lists the tech stack (Node.js, TypeScript, Electron, Svelte, D3)
-- [ ] Contains quick start: clone, `pnpm install`, `pnpm dev`
-- [ ] Contains test command: `pnpm test`
-- [ ] Links to `docs/scaffolding.md` for full setup
-- [ ] Links to `AGENTS.md` for agent contributors
-- [ ] Contains MIT license badge or reference
+- [x] `README.md` exists in repo root
+- [x] Contains project name "Partial" and one-line description
+- [x] Lists the tech stack (Node.js, TypeScript, Electron, Svelte, D3)
+- [x] Contains quick start: clone, `pnpm install`, `pnpm dev`
+- [x] Contains test command: `pnpm test`
+- [x] Links to `docs/scaffolding.md` for full setup
+- [x] Links to `AGENTS.md` for agent contributors
+- [x] Contains MIT license badge or reference
 
 #### Refinement Protocol
 None — this is a minimal initial README that will evolve.

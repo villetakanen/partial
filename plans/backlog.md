@@ -714,12 +714,12 @@ Create the Svelte 5 application bootstrap: `src/renderer/main.ts` mounts `App.sv
 Read: `plans/electron-shell/spec.md` — Blueprint → Architecture (Renderer Architecture)
 
 #### Verification
-- [ ] `pnpm dev` shows the Svelte app in the Electron window
-- [ ] `App.svelte` renders a placeholder UI
-- [ ] Svelte 5 runes syntax works (`$state`, `$derived`)
-- [ ] HMR updates the renderer without full reload
-- [ ] `pnpm exec svelte-check` passes
-- [ ] No `export let` or `$:` syntax (Svelte 4 patterns)
+- [x] `pnpm dev` shows the Svelte app in the Electron window
+- [x] `App.svelte` renders a placeholder UI
+- [x] Svelte 5 runes syntax works (`$state`, `$derived`)
+- [x] HMR updates the renderer without full reload
+- [x] `pnpm exec svelte-check` passes
+- [x] No `export let` or `$:` syntax (Svelte 4 patterns)
 
 #### Refinement Protocol
 If electron-vite requires specific Svelte plugin configuration, adapt.

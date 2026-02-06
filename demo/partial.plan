@@ -268,7 +268,7 @@ tasks:
     type: feat
     needs:
       - pbi-020
-    done: false
+    done: true
 
   - id: pbi-023
     title: Implement App.svelte view switching

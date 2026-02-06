@@ -91,7 +91,7 @@ Read: `docs/0.1.0-findings.md` — HF-2
 - [x] After selecting a file, Welcome screen disappears and active view shows
 - [x] Welcome screen uses Svelte 5 runes syntax
 - [x] Welcome screen uses scoped Svelte styles (no CSS frameworks)
-- [ ] `pnpm exec svelte-check` passes
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 None — keep the Welcome screen minimal. Branding and onboarding can be enhanced later.
@@ -429,12 +429,12 @@ Update `demo/partial.plan` to include all v0.2.0 PBIs (044–056) as tasks, with
 Read: This backlog (plans/backlog-v0.2.0.md)
 
 #### Verification
-- [ ] All v0.2.0 PBIs (044–056) are present as tasks
-- [ ] Dependency edges match this backlog's dependency graph
-- [ ] v0.1.0 tasks retain their `done: true` status
-- [ ] v0.2.0 tasks start as `done: false`
-- [ ] File parses without errors
-- [ ] Metadata field is preserved (round-trip safe)
+- [x] All v0.2.0 PBIs (044–056) are present as tasks
+- [x] Dependency edges match this backlog's dependency graph
+- [x] v0.1.0 tasks retain their `done: true` status
+- [x] v0.2.0 tasks start as `done: false`
+- [x] File parses without errors
+- [x] Metadata field is preserved (round-trip safe)
 
 #### Refinement Protocol
 Update this file as PBIs are completed during the release cycle.

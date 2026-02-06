@@ -317,7 +317,7 @@ tasks:
       - pbi-023
       - pbi-024
       - pbi-011
-    done: false
+    done: true
 
   # ── Layer 3 — CLI ─────────────────────────────────────────────
 

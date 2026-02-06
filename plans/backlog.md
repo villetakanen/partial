@@ -869,17 +869,17 @@ Implement `Graph.svelte` with D3 force-directed layout. Render task nodes and de
 Read: `plans/graph-view/spec.md` — Full spec
 
 #### Verification
-- [ ] Tasks rendered as nodes, dependencies as directed edges
-- [ ] Force simulation stabilizes (alpha decays to 0)
-- [ ] Pan and zoom via mouse/trackpad
-- [ ] Click on node shows task details
-- [ ] Nodes color-coded by state (done/blocked/ready)
-- [ ] Edge style encodes dependency type
-- [ ] Empty plan renders empty state
-- [ ] Simulation restarts only on topology changes, not metadata changes
-- [ ] No CPU consumption after convergence
-- [ ] Uses Svelte 5 runes, scoped styles
-- [ ] `pnpm exec svelte-check` passes
+- [x] Tasks rendered as nodes, dependencies as directed edges
+- [x] Force simulation stabilizes (alpha decays to 0)
+- [x] Pan and zoom via mouse/trackpad
+- [x] Click on node shows task details
+- [x] Nodes color-coded by state (done/blocked/ready)
+- [x] Edge style encodes dependency type
+- [x] Empty plan renders empty state
+- [x] Simulation restarts only on topology changes, not metadata changes
+- [x] No CPU consumption after convergence
+- [x] Uses Svelte 5 runes, scoped styles
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If force simulation parameters need tuning, document chosen values.

@@ -241,9 +241,9 @@ Update `docs/scaffolding.md` Section 6 to use `out/` instead of `dist/` as the e
 Read: `docs/0.1.0-findings.md` — Finding 8 (out/ vs dist/ divergence)
 
 #### Verification
-- [ ] All references to `dist/` as build output in `docs/scaffolding.md` are updated to `out/`
-- [ ] A note explains that electron-vite uses `out/` by convention
-- [ ] `electron-builder.json` references are consistent with the doc
+- [x] All references to `dist/` as build output in `docs/scaffolding.md` are updated to `out/`
+- [x] A note explains that electron-vite uses `out/` by convention
+- [x] `electron-builder.json` references are consistent with the doc
 
 #### Refinement Protocol
 None.

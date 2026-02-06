@@ -94,9 +94,9 @@ Update `package.json`:
   "name": "partial",
   "version": "0.1.0",
   "description": "Agent-native project management via .plan files",
-  "main": "dist/main/index.js",
+  "main": "out/main/index.js",
   "bin": {
-    "partial": "./dist/cli/index.js"
+    "partial": "./out/cli/index.js"
   },
   "scripts": {
     "dev": "electron-vite dev",
@@ -169,7 +169,7 @@ Create `tsconfig.json`:
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "./out",
     "rootDir": "./src",
     "baseUrl": ".",
     "paths": {
@@ -179,7 +179,7 @@ Create `tsconfig.json`:
     }
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "out"]
 }
 ```
 
@@ -224,7 +224,7 @@ Create `biome.json`:
     }
   },
   "files": {
-    "ignore": ["dist/", "node_modules/", "*.plan"]
+    "ignore": ["out/", "node_modules/", "*.plan"]
   }
 }
 ```
@@ -232,6 +232,8 @@ Create `biome.json`:
 ---
 
 ## 6. Electron Builder Configuration
+
+> **Note:** electron-vite outputs compiled files to `out/` (not the traditional `dist/`). All build-related paths in `package.json`, `electron-builder.json`, and `tsconfig.json` must reference `out/` accordingly.
 
 Create `electron-builder.json`:
 
@@ -244,7 +246,7 @@ Create `electron-builder.json`:
     "output": "release"
   },
   "files": [
-    "dist/**/*"
+    "out/**/*"
   ],
   "mac": {
     "target": [
@@ -855,7 +857,7 @@ Force agents to use the correct commands — prevents defaulting to `pnpm test` 
 | Intent | Command | Notes |
 |--------|---------|-------|
 | **Dev** | `pnpm dev` | Electron + Vite HMR |
-| **Build** | `pnpm build` | Outputs to `dist/` |
+| **Build** | `pnpm build` | Outputs to `out/` (electron-vite convention) |
 | **Test** | `pnpm test -- --run` | Vitest, single run |
 | **Test (watch)** | `pnpm test` | Vitest, watch mode |
 | **Coverage** | `pnpm test:coverage` | Vitest + v8 coverage |

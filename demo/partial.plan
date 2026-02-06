@@ -32,7 +32,7 @@ tasks:
     type: chore
     needs:
       - pbi-001
-    done: false
+    done: true
 
   - id: pbi-003
     title: Add Biome configuration
@@ -40,7 +40,7 @@ tasks:
     type: chore
     needs:
       - pbi-001
-    done: false
+    done: true
 
   - id: pbi-004
     title: Add Lefthook git hooks and Conventional Commits enforcement
@@ -65,7 +65,7 @@ tasks:
     type: chore
     needs:
       - pbi-001
-    done: false
+    done: true
 
   - id: pbi-038
     title: Create README.md

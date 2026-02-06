@@ -104,10 +104,10 @@ Create `tsconfig.json` with strict mode, ES2022 target, bundler module resolutio
 Read: `docs/scaffolding.md` — Section 4 (TypeScript Configuration)
 
 #### Verification
-- [ ] `pnpm exec tsc --version` runs successfully
-- [ ] `tsconfig.json` has `"strict": true`
-- [ ] `tsconfig.json` has path aliases: `@shared/*`, `@main/*`, `@renderer/*`
-- [ ] `tsconfig.json` targets `ES2022` with `ESNext` module
+- [x] `pnpm exec tsc --version` runs successfully
+- [x] `tsconfig.json` has `"strict": true`
+- [x] `tsconfig.json` has path aliases: `@shared/*`, `@main/*`, `@renderer/*`
+- [x] `tsconfig.json` targets `ES2022` with `ESNext` module
 
 #### Refinement Protocol
 If electron-vite requires additional tsconfig overrides (e.g., separate configs per process), add them and note in commit body.
@@ -130,10 +130,10 @@ Create `biome.json` with project formatting and linting rules: tab indentation, 
 Read: `docs/scaffolding.md` — Section 5 (Biome Configuration)
 
 #### Verification
-- [ ] `pnpm exec biome check .` runs without crashing
-- [ ] `biome.json` uses tab indentation, single quotes, no semicolons
-- [ ] `biome.json` ignores `dist/`, `node_modules/`, `*.plan`
-- [ ] Linter rules include `noExplicitAny: warn`, `useConst: error`, `noNonNullAssertion: warn`
+- [x] `pnpm exec biome check .` runs without crashing
+- [x] `biome.json` uses tab indentation, single quotes, no semicolons
+- [x] `biome.json` ignores `dist/`, `node_modules/`, `*.plan`
+- [x] Linter rules include `noExplicitAny: warn`, `useConst: error`, `noNonNullAssertion: warn`
 
 #### Refinement Protocol
 If Biome version requires schema updates, use the latest stable schema URL.
@@ -212,9 +212,9 @@ Create `.github/pull_request_template.md`, `.github/ISSUE_TEMPLATE/bug_report.md
 Read: `docs/scaffolding.md` — Section 9 (Pull Request Template)
 
 #### Verification
-- [ ] `.github/pull_request_template.md` exists with summary, type-of-change checklist, testing section, and commit checklist
-- [ ] `.github/ISSUE_TEMPLATE/bug_report.md` exists
-- [ ] `.github/ISSUE_TEMPLATE/feature_request.md` exists
+- [x] `.github/pull_request_template.md` exists with summary, type-of-change checklist, testing section, and commit checklist
+- [x] `.github/ISSUE_TEMPLATE/bug_report.md` exists
+- [x] `.github/ISSUE_TEMPLATE/feature_request.md` exists
 
 #### Refinement Protocol
 None.

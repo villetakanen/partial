@@ -373,7 +373,7 @@ tasks:
     needs:
       - pbi-003
       - pbi-002
-    done: false
+    done: true
 
   - id: pbi-034
     title: Add GitHub Actions release workflow

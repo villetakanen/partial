@@ -1049,11 +1049,11 @@ Create `.github/workflows/ci.yml` that runs on push to main and PRs: install, bi
 Read: `docs/scaffolding.md` — Section 9 (CI Workflow)
 
 #### Verification
-- [ ] Workflow triggers on push to `main` and pull requests to `main`
-- [ ] Jobs: `check` (lint, typecheck, test) and `build` (matrix: ubuntu, windows, macos)
-- [ ] `build` job depends on `check` passing
-- [ ] Node.js 20 with pnpm cache
-- [ ] Coverage uploaded to Codecov
+- [x] Workflow triggers on push to `main` and pull requests to `main`
+- [x] Jobs: `check` (lint, typecheck, test) and `build` (matrix: ubuntu, windows, macos)
+- [x] `build` job depends on `check` passing
+- [x] Node.js 20 with pnpm cache
+- [x] Coverage uploaded to Codecov
 
 #### Refinement Protocol
 None.

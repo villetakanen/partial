@@ -183,13 +183,13 @@ Remove the `max-width: 1200px` cap on the root `<main>` element. Make the Graph 
 Read: `docs/0.1.0-findings.md` — HF-5 (Viewport Locked at 1200px)
 
 #### Verification
-- [ ] Root `<main>` has no `max-width` cap (or uses `100%`)
-- [ ] Graph SVG height adapts to viewport height
-- [ ] Gantt chart width fills available horizontal space
-- [ ] Kanban columns distribute evenly across available width
-- [ ] App renders correctly at 1280px, 1440px, 1920px, and 2560px widths
-- [ ] No horizontal scrollbar at 1440px+ widths
-- [ ] `pnpm exec svelte-check` passes
+- [x] Root `<main>` has no `max-width` cap (or uses `100%`)
+- [x] Graph SVG height adapts to viewport height
+- [x] Gantt chart width fills available horizontal space
+- [x] Kanban columns distribute evenly across available width
+- [x] App renders correctly at 1280px, 1440px, 1920px, and 2560px widths
+- [x] No horizontal scrollbar at 1440px+ widths
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If a minimum supported width is needed, set it at 1024px and document.

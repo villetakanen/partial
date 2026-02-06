@@ -436,7 +436,7 @@ tasks:
     title: Make all views responsive to window size
     parent: views
     type: fix
-    done: false
+    done: true
 
   # ── v0.2.0 — Kanban Polish ─────────────────────────────────────
 

@@ -51,8 +51,7 @@ $effect(() => {
 <style>
 	main {
 		font-family: system-ui, -apple-system, sans-serif;
-		max-width: 1200px;
-		margin: 0 auto;
+		width: 100%;
 		padding: 1rem;
 		color: #e0e0e0;
 		background: #1a1a2e;

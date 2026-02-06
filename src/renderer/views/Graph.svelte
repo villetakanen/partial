@@ -287,7 +287,7 @@ function targetY(link: SimLink): number {
 
 	.graph-svg {
 		width: 100%;
-		height: 500px;
+		height: calc(100vh - 8rem);
 		background: #121225;
 		border-radius: 8px;
 		border: 1px solid #2a2a3e;

@@ -58,7 +58,10 @@ This is the integration layer — it doesn't implement business logic itself, bu
 - [ ] IPC channels are registered for all documented channels (plan:updated, plan:deleted, plan:error, plan:open-directory, plan:save)
 - [ ] `contextIsolation: true` and `nodeIntegration: false` in web preferences
 - [ ] Preload script exposes a typed API for renderer-to-main communication
-- [ ] Application handles lifecycle events (ready, window-all-closed, activate for macOS)
+- [ ] Application handles lifecycle events (ready, window-all-closed → quit on all platforms)
+- [ ] Native Electron menu with File > Open Directory (Cmd/Ctrl+O)
+- [ ] Welcome screen shown when no plans are loaded
+- [ ] Last-opened directory persisted and auto-loaded on relaunch
 - [ ] `App.svelte` supports view switching between Gantt, Kanban, and Graph
 - [ ] Renderer receives plan updates via IPC and computes DAG for views
 - [ ] `pnpm dev` starts Electron with Vite HMR for the renderer
@@ -101,12 +104,30 @@ This is the integration layer — it doesn't implement business logic itself, bu
 - When: The user clicks the Kanban tab
 - Then: `App.svelte` switches to render the Kanban view with the same plan data
 
-**Scenario: macOS lifecycle**
-- Given: The app is running on macOS
+**Scenario: Window close quits app (all platforms)**
+- Given: The app is running on any platform (macOS, Windows, Linux)
 - When: All windows are closed
-- Then: The app remains running (dock icon active); clicking the dock icon recreates the window
+- Then: The app quits entirely (no dock icon, no background process)
+- Note: Changed in v0.2.0 (was macOS keep-alive). Partial is a single-window app where dock persistence confuses users.
 
 **Scenario: Save from UI**
 - Given: A plan is loaded in the renderer
 - When: A task is modified in the UI and the user saves
 - Then: `plan:save` IPC sends the updated `PlanFile` to main, which writes it to disk; the watcher ignores its own write
+
+**Scenario: File open via native menu (v0.2.0)**
+- Given: The app is running with no project loaded
+- When: The user selects File > Open Directory (or presses Cmd/Ctrl+O)
+- Then: A native directory picker dialog opens; selecting a directory triggers `plan:open-directory` IPC; canceling does nothing
+
+**Scenario: Welcome screen (v0.2.0)**
+- Given: The app launches with no previously opened directory
+- When: The renderer loads
+- Then: A Welcome screen is shown with project name and an "Open Folder" button
+- When: The user clicks "Open Folder" or uses the menu
+- Then: After a directory is selected and plans are loaded, the Welcome screen is replaced by the active view
+
+**Scenario: Last-opened directory persistence (v0.2.0)**
+- Given: The user has previously opened a directory
+- When: The app is relaunched
+- Then: The last-opened directory is automatically loaded; if the path no longer exists, the Welcome screen is shown

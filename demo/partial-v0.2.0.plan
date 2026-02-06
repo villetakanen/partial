@@ -2,6 +2,7 @@ version: "1.0.0"
 project: Partial
 
 # Dogfood: Partial's own backlog as a .plan file.
+# v0.2.0 — "Usable by Humans"
 # This exercises the full schema — dependencies, parent grouping,
 # extended fields, and unknown custom fields — making it a useful
 # smoke-test for the parser, DAG engine, and every view.
@@ -10,9 +11,10 @@ metadata:
   description: Agent-native project management via .plan files
   repository: https://github.com/villetakanen/partial
   created: 2026-02-06
+  release: v0.2.0
 
 tasks:
-  # ── Layer 0 — Project Foundation ──────────────────────────────
+  # ── Layer 0 — Project Foundation (v0.1.0, all done) ────────────
 
   - id: pbi-037
     title: Create .gitignore
@@ -117,7 +119,7 @@ tasks:
       - pbi-005
     done: true
 
-  # ── Layer 1 — Shared Types & Schemas ──────────────────────────
+  # ── Layer 1 — Shared Types & Schemas (v0.1.0, all done) ────────
 
   - id: pbi-006
     title: Create shared TypeScript type definitions
@@ -135,7 +137,7 @@ tasks:
       - pbi-006
     done: true
 
-  # ── Layer 2 — Parser ──────────────────────────────────────────
+  # ── Layer 2 — Parser (v0.1.0, all done) ────────────────────────
 
   - id: pbi-008
     title: Implement parsePlan function
@@ -162,7 +164,7 @@ tasks:
       - pbi-041
     done: true
 
-  # ── Layer 2 — DAG Engine ──────────────────────────────────────
+  # ── Layer 2 — DAG Engine (v0.1.0, all done) ────────────────────
 
   - id: pbi-011
     title: Implement buildDAG function
@@ -204,7 +206,7 @@ tasks:
       - pbi-013
     done: true
 
-  # ── Layer 3 — File Watcher ────────────────────────────────────
+  # ── Layer 3 — File Watcher (v0.1.0, all done) ──────────────────
 
   - id: pbi-016
     title: Implement core file watcher
@@ -230,7 +232,7 @@ tasks:
       - pbi-016
     done: true
 
-  # ── Layer 3 — Electron Shell ──────────────────────────────────
+  # ── Layer 3 — Electron Shell (v0.1.0, all done) ────────────────
 
   - id: pbi-019
     title: Create Electron main process entry point
@@ -258,7 +260,7 @@ tasks:
       - pbi-020
     done: true
 
-  # ── Layer 4 — Renderer & Components ───────────────────────────
+  # ── Layer 4 — Renderer & Components (v0.1.0, all done) ─────────
 
   - id: pbi-022
     title: Bootstrap Svelte renderer
@@ -285,7 +287,7 @@ tasks:
       - pbi-006
     done: true
 
-  # ── Layer 5 — Views ───────────────────────────────────────────
+  # ── Layer 5 — Views (v0.1.0, all done) ─────────────────────────
 
   - id: pbi-025
     title: Implement Kanban view
@@ -317,7 +319,7 @@ tasks:
       - pbi-011
     done: true
 
-  # ── Layer 3 — CLI ─────────────────────────────────────────────
+  # ── Layer 3 — CLI (v0.1.0, all done) ───────────────────────────
 
   - id: pbi-028
     title: Scaffold CLI entry point and implement validate command
@@ -354,7 +356,7 @@ tasks:
       - pbi-011
     done: true
 
-  # ── Layer 6 — Build & CI ──────────────────────────────────────
+  # ── Layer 6 — Build & CI (v0.1.0, all done) ────────────────────
 
   - id: pbi-032
     title: Add electron-builder configuration
@@ -381,3 +383,113 @@ tasks:
       - pbi-032
       - pbi-033
     done: true
+
+  # ── v0.2.0 — Data Fixes ────────────────────────────────────────
+
+  - id: pbi-044
+    title: Fix malformed pbi-007 in demo/partial.plan
+    parent: fixes
+    type: fix
+    done: false
+
+  - id: pbi-045
+    title: Update scaffolding doc to reflect out/ build directory
+    parent: fixes
+    type: docs
+    done: false
+
+  # ── v0.2.0 — Electron Lifecycle & File Open ────────────────────
+
+  - id: pbi-046
+    title: Fix macOS quit-on-close behavior
+    parent: electron
+    type: fix
+    done: false
+
+  - id: pbi-047
+    title: Add native Electron menu with File > Open Directory
+    parent: electron
+    type: feat
+    needs:
+      - pbi-046
+    done: false
+
+  - id: pbi-048
+    title: Add Welcome screen with Open Folder button
+    parent: renderer
+    type: feat
+    needs:
+      - pbi-047
+    done: false
+
+  - id: pbi-049
+    title: Persist and auto-load last-opened directory
+    parent: electron
+    type: feat
+    needs:
+      - pbi-047
+    done: false
+
+  # ── v0.2.0 — Responsive Layout ─────────────────────────────────
+
+  - id: pbi-050
+    title: Make all views responsive to window size
+    parent: views
+    type: fix
+    done: false
+
+  # ── v0.2.0 — Kanban Polish ─────────────────────────────────────
+
+  - id: pbi-051
+    title: Make Kanban columns context-aware
+    parent: views
+    type: feat
+    done: false
+
+  # ── v0.2.0 — Watcher Quality ───────────────────────────────────
+
+  - id: pbi-052
+    title: Improve self-write detection with content hashing
+    parent: watcher
+    type: fix
+    done: false
+
+  # ── v0.2.0 — Graph Tuning ──────────────────────────────────────
+
+  - id: pbi-053
+    title: Auto-scale Graph force simulation parameters
+    parent: views
+    type: feat
+    done: false
+
+  # ── v0.2.0 — Test Coverage ─────────────────────────────────────
+
+  - id: pbi-054
+    title: Add Svelte component tests
+    parent: testing
+    type: test
+    needs:
+      - pbi-051
+      - pbi-050
+    done: false
+
+  - id: pbi-055
+    title: Add Electron IPC integration tests
+    parent: testing
+    type: test
+    needs:
+      - pbi-047
+    done: false
+
+  # ── v0.2.0 — Dogfood Update ────────────────────────────────────
+
+  - id: pbi-056
+    title: Update demo/partial.plan for v0.2.0
+    parent: release
+    type: chore
+    needs:
+      - pbi-044
+      - pbi-047
+      - pbi-050
+      - pbi-051
+    done: false

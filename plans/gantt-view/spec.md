@@ -53,7 +53,7 @@ interface GanttViewProps {
 - [ ] Completed tasks (`done: true`) are visually distinct (muted/checked)
 - [ ] Supports horizontal scrolling for projects exceeding viewport width
 - [ ] Supports vertical scrolling for projects with many tasks
-- [ ] Responsive to container resizing
+- [ ] Responsive to container resizing (fills available width, no fixed max-width cap) (v0.2.0 strengthened)
 - [ ] Updates reactively when `plan` prop changes (no full re-render)
 - [ ] Uses Svelte 5 runes syntax exclusively
 - [ ] Uses scoped Svelte styles (no CSS frameworks)

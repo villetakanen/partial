@@ -52,7 +52,7 @@ interface PlanWatcher {
 - **Watching node_modules** — The glob pattern must be scoped to `*.plan` files only. Never recursively watch all files.
 - **Blocking the main process** — File reading and parsing must be non-blocking. Use async file reads.
 - **Swallowing watcher errors** — File permission errors, disappeared directories, etc. must surface to the user.
-- **Re-parsing on own writes** — If Partial itself writes a `.plan` file, the watcher must not trigger a redundant re-parse loop. Use a write-lock or ignore list.
+- **Re-parsing on own writes** — If Partial itself writes a `.plan` file, the watcher must not trigger a redundant re-parse loop. Use content hashing (SHA-256) to distinguish self-writes from external edits (v0.2.0: upgraded from simple path Set to hash comparison).
 
 ## Contract
 

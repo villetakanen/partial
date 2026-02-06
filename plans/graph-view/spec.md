@@ -59,6 +59,8 @@ interface GraphViewProps {
 - [ ] Uses Svelte 5 runes syntax exclusively
 - [ ] Uses scoped Svelte styles (no CSS frameworks)
 - [ ] Simulation stops after convergence (alpha decay)
+- [ ] Force simulation parameters auto-scale based on node count (v0.2.0)
+- [ ] SVG height is responsive to viewport (not fixed at 500px) (v0.2.0)
 
 ### Regression Guardrails
 

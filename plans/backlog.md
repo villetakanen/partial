@@ -745,13 +745,13 @@ Implement view switching in `App.svelte` between Gantt, Kanban, and Graph views.
 Read: `plans/electron-shell/spec.md` — Contract → Scenarios (View switching)
 
 #### Verification
-- [ ] Tab/nav UI allows switching between three views
-- [ ] Active view state uses `$state()` rune
-- [ ] Each view receives `plan` and `dag` as props
-- [ ] Plan data received from IPC is stored in `$state`
-- [ ] DAG computed via `$derived` from plan data
-- [ ] Switching views does not lose plan state
-- [ ] `pnpm exec svelte-check` passes
+- [x] Tab/nav UI allows switching between three views
+- [x] Active view state uses `$state()` rune
+- [x] Each view receives `plan` and `dag` as props
+- [x] Plan data received from IPC is stored in `$state`
+- [x] DAG computed via `$derived` from plan data
+- [x] Switching views does not lose plan state
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 None.

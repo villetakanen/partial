@@ -276,7 +276,7 @@ tasks:
     type: feat
     needs:
       - pbi-022
-    done: false
+    done: true
 
   - id: pbi-024
     title: Implement TaskCard component

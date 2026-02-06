@@ -1,5 +1,27 @@
 <script lang="ts">
+import type { Graph } from '@shared/dag'
+import { buildDAG } from '@shared/dag'
+import type { PartialAPI, PlanUpdatedPayload } from '@shared/ipc'
+import type { PlanFile } from '@shared/types'
+import Gantt from './views/Gantt.svelte'
+import GraphView from './views/Graph.svelte'
+import Kanban from './views/Kanban.svelte'
+
 let view = $state<'gantt' | 'kanban' | 'graph'>('gantt')
+
+const emptyPlan: PlanFile = { version: '1.0.0', project: '', tasks: [] }
+
+let plan = $state<PlanFile>(emptyPlan)
+
+const dag: Graph = $derived(buildDAG(plan.tasks))
+
+const api = (window as unknown as { api: PartialAPI }).api
+
+$effect(() => {
+	api?.onPlanUpdated((payload: PlanUpdatedPayload) => {
+		plan = payload.plan
+	})
+})
 </script>
 
 <main>
@@ -13,7 +35,13 @@ let view = $state<'gantt' | 'kanban' | 'graph'>('gantt')
 	</header>
 
 	<section class="view-container">
-		<p>{view.charAt(0).toUpperCase() + view.slice(1)} view — placeholder</p>
+		{#if view === 'gantt'}
+			<Gantt {plan} {dag} />
+		{:else if view === 'kanban'}
+			<Kanban {plan} {dag} />
+		{:else}
+			<GraphView {plan} {dag} />
+		{/if}
 	</section>
 </main>
 

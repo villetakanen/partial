@@ -1,5 +1,7 @@
-import { PlanParseError, parsePlan } from '@main/parser'
+import { PlanParseError, parsePlan, stringifyPlan } from '@main/parser'
+import type { PlanFile } from '@shared/types'
 import { describe, expect, it } from 'vitest'
+import { parse } from 'yaml'
 
 describe('parsePlan', () => {
 	it('parses valid YAML and returns a typed PlanFile', () => {
@@ -245,5 +247,82 @@ tasks:
 			expect(plan.tasks[0].type).toBe('feature')
 			expect(plan.tasks[0].state).toBe('in_progress')
 		})
+	})
+})
+
+describe('stringifyPlan', () => {
+	it('produces valid YAML output', () => {
+		const plan: PlanFile = {
+			version: '1.0.0',
+			project: 'Test',
+			tasks: [{ id: 'a', title: 'Task A', done: false }],
+		}
+		const yaml = stringifyPlan(plan)
+		const reparsed = parse(yaml)
+		expect(reparsed.version).toBe('1.0.0')
+		expect(reparsed.project).toBe('Test')
+		expect(reparsed.tasks).toHaveLength(1)
+		expect(reparsed.tasks[0].id).toBe('a')
+	})
+
+	it('uses 2-space indentation', () => {
+		const plan: PlanFile = {
+			version: '1.0.0',
+			project: 'Test',
+			tasks: [{ id: 'a', title: 'Task A', done: false }],
+		}
+		const yaml = stringifyPlan(plan)
+		// Tasks array items should be indented with 2 spaces
+		expect(yaml).toContain('  - id: a')
+	})
+
+	it('does not wrap long lines', () => {
+		const longTitle = 'A'.repeat(200)
+		const plan: PlanFile = {
+			version: '1.0.0',
+			project: 'Test',
+			tasks: [{ id: 'a', title: longTitle, done: false }],
+		}
+		const yaml = stringifyPlan(plan)
+		// The long title should appear on a single line, not wrapped
+		expect(yaml).toContain(`title: ${longTitle}`)
+	})
+
+	it('does not mutate the input PlanFile object', () => {
+		const plan: PlanFile = {
+			version: '1.0.0',
+			project: 'Test',
+			tasks: [{ id: 'a', title: 'Task A', done: false }],
+		}
+		const planCopy = JSON.parse(JSON.stringify(plan))
+		stringifyPlan(plan)
+		expect(plan).toEqual(planCopy)
+	})
+
+	it('produces stable field order across calls', () => {
+		const plan: PlanFile = {
+			version: '1.0.0',
+			project: 'Test',
+			tasks: [
+				{ id: 'a', title: 'Task A', done: true, needs: ['b'] },
+				{ id: 'b', title: 'Task B', done: false },
+			],
+		}
+		const yaml1 = stringifyPlan(plan)
+		const yaml2 = stringifyPlan(plan)
+		expect(yaml1).toBe(yaml2)
+	})
+
+	it('preserves unknown fields in output', () => {
+		const plan: PlanFile = {
+			version: '1.0.0',
+			project: 'Test',
+			tasks: [{ id: 'a', title: 'Task A', done: false, priority: 'high' }],
+			custom_metadata: { author: 'alice' },
+		}
+		const yaml = stringifyPlan(plan)
+		const reparsed = parse(yaml)
+		expect(reparsed.custom_metadata).toEqual({ author: 'alice' })
+		expect(reparsed.tasks[0].priority).toBe('high')
 	})
 })

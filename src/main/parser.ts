@@ -1,6 +1,6 @@
 import { PlanFileSchema } from '@shared/schemas'
 import type { PlanFile } from '@shared/types'
-import { parse } from 'yaml'
+import { parse, stringify } from 'yaml'
 
 /**
  * Error thrown when parsing a `.plan` file fails.
@@ -75,4 +75,18 @@ export function parsePlan(content: string): PlanFile {
 	}
 
 	return result.data as PlanFile
+}
+
+/**
+ * Serialize a {@link PlanFile} back to YAML string.
+ *
+ * - Uses 2-space indentation with no line wrapping
+ * - Does not mutate the input object
+ * - Field order is stable across calls with identical input
+ */
+export function stringifyPlan(plan: PlanFile): string {
+	return stringify(plan, {
+		indent: 2,
+		lineWidth: 0,
+	})
 }

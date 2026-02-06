@@ -333,11 +333,11 @@ Implement `stringifyPlan(plan: PlanFile): string` in `src/main/parser.ts`. Seria
 Read: `plans/plan-parser/spec.md` — Blueprint → Architecture → `stringifyPlan`
 
 #### Verification
-- [ ] `stringifyPlan` produces valid YAML output
-- [ ] Indentation is 2 spaces, no line wrapping
-- [ ] Input `PlanFile` object is not mutated
-- [ ] Field order is stable across calls with identical input
-- [ ] Tests pass: `pnpm test -- --run tests/main/parser.test.ts`
+- [x] `stringifyPlan` produces valid YAML output
+- [x] Indentation is 2 spaces, no line wrapping
+- [x] Input `PlanFile` object is not mutated
+- [x] Field order is stable across calls with identical input
+- [x] Tests pass: `pnpm test -- --run tests/main/parser.test.ts`
 
 #### Refinement Protocol
 If `yaml` stringify options change, update the call and document in commit body.

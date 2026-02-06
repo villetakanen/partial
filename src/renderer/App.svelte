@@ -1,5 +1,4 @@
 <script lang="ts">
-// biome-ignore lint/style/useConst: Svelte 5 $state requires let for reactivity
 let view = $state<'gantt' | 'kanban' | 'graph'>('gantt')
 </script>
 

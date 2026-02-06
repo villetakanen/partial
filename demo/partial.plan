@@ -345,7 +345,7 @@ tasks:
     needs:
       - pbi-028
       - pbi-014
-    done: false
+    done: true
 
   - id: pbi-031
     title: Implement CLI graph command

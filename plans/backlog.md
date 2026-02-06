@@ -965,11 +965,11 @@ Implement `partial unblocked [file]` that lists task IDs whose dependencies are 
 Read: `plans/cli/spec.md` — Contract → Scenarios (Unblocked tasks)
 
 #### Verification
-- [ ] Prints unblocked task IDs, one per line
-- [ ] `--json` outputs array of task objects
-- [ ] Exit code `0` on success
-- [ ] Piped input supported
-- [ ] Tests pass
+- [x] Prints unblocked task IDs, one per line
+- [x] `--json` outputs array of task objects
+- [x] Exit code `0` on success
+- [x] Piped input supported
+- [x] Tests pass
 
 #### Refinement Protocol
 None.

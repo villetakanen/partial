@@ -12,6 +12,7 @@ const USAGE = `Usage: partial <command> [file.plan] [options]
 Commands:
   validate   Validate a .plan file against the schema
   status     Show project status summary (done, ready, blocked)
+  unblocked  List tasks with all dependencies satisfied
 
 Options:
   --json      Output structured JSON
@@ -41,6 +42,15 @@ Show project status summary with task counts by state.
 
 Options:
   --json      Output structured JSON
+  --quiet     Suppress non-error output
+  --help      Print this help`
+
+const UNBLOCKED_USAGE = `Usage: partial unblocked [file.plan] [options]
+
+List tasks whose dependencies are all satisfied.
+
+Options:
+  --json      Output structured JSON (array of task objects)
   --quiet     Suppress non-error output
   --help      Print this help`
 
@@ -191,6 +201,37 @@ async function runStatus(
 	process.exitCode = 0
 }
 
+/**
+ * Run the `unblocked` command.
+ *
+ * Parses a `.plan` file, builds the DAG, and lists tasks whose
+ * dependencies are all satisfied (done).
+ *
+ * @param filePath - Optional path to the .plan file (reads stdin if omitted)
+ * @param json - Whether to output structured JSON
+ * @param quiet - Whether to suppress non-error output
+ */
+async function runUnblocked(
+	filePath: string | undefined,
+	json: boolean,
+	quiet: boolean,
+): Promise<void> {
+	const plan = await readAndParse(filePath, json)
+	if (!plan) return
+
+	const graph = buildDAG(plan.tasks)
+	const unblocked = getUnblockedTasks(graph, plan.tasks)
+
+	if (json) {
+		process.stdout.write(`${JSON.stringify(unblocked)}\n`)
+	} else if (!quiet) {
+		for (const task of unblocked) {
+			process.stdout.write(`${task.id}\n`)
+		}
+	}
+	process.exitCode = 0
+}
+
 /** CLI entry point. Parses arguments and dispatches to the appropriate command. */
 async function main(): Promise<void> {
 	const { values, positionals } = parseArgs({
@@ -239,6 +280,13 @@ async function main(): Promise<void> {
 				return
 			}
 			await runStatus(filePath, jsonFlag, quietFlag)
+			break
+		case 'unblocked':
+			if (values.help) {
+				process.stdout.write(`${UNBLOCKED_USAGE}\n`)
+				return
+			}
+			await runUnblocked(filePath, jsonFlag, quietFlag)
 			break
 		default:
 			process.stderr.write(`Unknown command: ${command}\n\n${USAGE}\n`)

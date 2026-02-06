@@ -32,5 +32,31 @@
     "electron",
     "ai-agent"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "pnpm": {
+    "onlyBuiltDependencies": ["electron", "esbuild", "lefthook"]
+  },
+  "dependencies": {
+    "chokidar": "^5.0.0",
+    "d3": "^7.9.0",
+    "graphlib": "^2.1.8",
+    "svelte": "^5.49.2",
+    "yaml": "^2.8.2",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.3.14",
+    "@sveltejs/vite-plugin-svelte": "^6.2.4",
+    "@types/d3": "^7.4.3",
+    "@types/node": "^25.2.1",
+    "@vitest/coverage-v8": "^4.0.18",
+    "electron": "^40.2.1",
+    "electron-builder": "^26.7.0",
+    "electron-vite": "^5.0.0",
+    "lefthook": "^2.1.0",
+    "svelte-check": "^4.3.6",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vitest": "^4.0.18"
+  }
 }

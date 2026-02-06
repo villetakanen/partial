@@ -121,32 +121,32 @@ Update `package.json`:
 
 ```bash
 # Core
-pnpm addelectron electron-vite vite
+pnpm add electron electron-vite vite
 
 # TypeScript
-pnpm add -Dtypescript @types/node
+pnpm add -D typescript @types/node
 
 # UI Framework
-pnpm addsvelte
-pnpm add -D@sveltejs/vite-plugin-svelte svelte-check
+pnpm add svelte
+pnpm add -D @sveltejs/vite-plugin-svelte svelte-check
 
 # Visualization
-pnpm addd3
-pnpm add -D@types/d3
+pnpm add d3
+pnpm add -D @types/d3
 
 # Parser & utilities
-pnpm addyaml                    # YAML parsing
-pnpm addchokidar                # File watching
-pnpm addgraphlib                # DAG operations
-pnpm addzod                     # Schema validation
+pnpm add yaml                    # YAML parsing
+pnpm add chokidar                # File watching
+pnpm add graphlib                # DAG operations
+pnpm add zod                     # Schema validation
 
 # Build & packaging
-pnpm add -Delectron-builder
+pnpm add -D electron-builder
 
 # Dev tooling
-pnpm add -D@biomejs/biome
-pnpm add -Dlefthook
-pnpm add -Dvitest @vitest/coverage-v8
+pnpm add -D @biomejs/biome
+pnpm add -D lefthook
+pnpm add -D vitest @vitest/coverage-v8
 ```
 
 ---

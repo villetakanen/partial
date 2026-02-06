@@ -2,7 +2,7 @@ import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import type { OpenDirectoryPayload, PlanSavePayload } from '@shared/ipc'
 import { IPC_CHANNELS } from '@shared/ipc'
-import { app, BrowserWindow, ipcMain } from 'electron'
+import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
 import { stringifyPlan } from './parser'
 import type { PlanWatcher } from './watcher'
 import { watchDirectory } from './watcher'
@@ -90,6 +90,77 @@ async function startWatching(dirPath: string): Promise<void> {
 }
 
 /**
+ * Show a native directory picker and start watching the selected directory.
+ * Does nothing if the user cancels.
+ */
+async function openDirectoryDialog(): Promise<void> {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+    title: 'Open Project Directory',
+  })
+
+  if (result.canceled || result.filePaths.length === 0) {
+    return
+  }
+
+  const dirPath = result.filePaths[0]
+  await startWatching(dirPath)
+}
+
+/**
+ * Build the native application menu with File > Open Directory.
+ */
+function buildAppMenu(): void {
+  const isMac = process.platform === 'darwin'
+
+  const template: Electron.MenuItemConstructorOptions[] = [
+    ...(isMac
+      ? [
+          {
+            label: app.name,
+            submenu: [
+              { role: 'about' as const },
+              { type: 'separator' as const },
+              { role: 'quit' as const },
+            ],
+          },
+        ]
+      : []),
+    {
+      label: 'File',
+      submenu: [
+        {
+          label: 'Open Directory...',
+          accelerator: 'CmdOrCtrl+O',
+          click: () => {
+            openDirectoryDialog()
+          },
+        },
+        { type: 'separator' },
+        isMac ? { role: 'close' } : { role: 'quit' },
+      ],
+    },
+    {
+      label: 'View',
+      submenu: [
+        { role: 'reload' },
+        { role: 'forceReload' },
+        { role: 'toggleDevTools' },
+        { type: 'separator' },
+        { role: 'resetZoom' },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { type: 'separator' },
+        { role: 'togglefullscreen' },
+      ],
+    },
+  ]
+
+  const menu = Menu.buildFromTemplate(template)
+  Menu.setApplicationMenu(menu)
+}
+
+/**
  * Register IPC handlers for renderer → main communication.
  */
 function registerIpcHandlers(): void {
@@ -105,6 +176,7 @@ function registerIpcHandlers(): void {
 }
 
 app.whenReady().then(() => {
+  buildAppMenu()
   registerIpcHandlers()
   createWindow()
 })

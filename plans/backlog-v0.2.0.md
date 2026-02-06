@@ -51,14 +51,14 @@ Read: `plans/electron-shell/spec.md` — Blueprint → Architecture (IPC Channel
 Read: `docs/0.1.0-findings.md` — HF-2 (No way to open a file)
 
 #### Verification
-- [ ] File > Open Directory menu item exists on all platforms
-- [ ] Clicking it opens a native directory picker dialog
-- [ ] Selecting a directory triggers `plan:open-directory` IPC with the chosen path
-- [ ] Canceling the dialog does nothing (no error, no crash)
-- [ ] Keyboard shortcut Cmd/Ctrl+O triggers the dialog
-- [ ] On macOS, the menu integrates with the native menu bar (not a custom HTML menu)
-- [ ] `pnpm exec tsc --noEmit` passes
-- [ ] `pnpm check` passes
+- [x] File > Open Directory menu item exists on all platforms
+- [x] Clicking it opens a native directory picker dialog
+- [x] Selecting a directory triggers `plan:open-directory` IPC with the chosen path
+- [x] Canceling the dialog does nothing (no error, no crash)
+- [x] Keyboard shortcut Cmd/Ctrl+O triggers the dialog
+- [x] On macOS, the menu integrates with the native menu bar (not a custom HTML menu)
+- [x] `pnpm exec tsc --noEmit` passes
+- [x] `pnpm check` passes
 
 #### Refinement Protocol
 If additional menu items are discovered as needed (e.g., File > Recent), defer to a follow-up PBI.

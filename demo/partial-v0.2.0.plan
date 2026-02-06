@@ -412,7 +412,7 @@ tasks:
     type: feat
     needs:
       - pbi-046
-    done: false
+    done: true
 
   - id: pbi-048
     title: Add Welcome screen with Open Folder button

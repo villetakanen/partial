@@ -805,16 +805,16 @@ Implement `Kanban.svelte` with four columns (Blocked, Ready, In Progress, Done).
 Read: `plans/kanban-view/spec.md` — Full spec
 
 #### Verification
-- [ ] Four columns rendered: Blocked, Ready, In Progress, Done
-- [ ] Column assignment derived from DAG engine (not manual logic)
-- [ ] Each task appears in exactly one column
-- [ ] Empty columns show placeholder text
-- [ ] Task counts shown per column
-- [ ] Handles `state: "in_progress"` extended field
-- [ ] Updates reactively when plan prop changes
-- [ ] Empty plan renders without errors
-- [ ] Uses Svelte 5 runes, scoped styles, no CSS frameworks
-- [ ] `pnpm exec svelte-check` passes
+- [x] Four columns rendered: Blocked, Ready, In Progress, Done
+- [x] Column assignment derived from DAG engine (not manual logic)
+- [x] Each task appears in exactly one column
+- [x] Empty columns show placeholder text
+- [x] Task counts shown per column
+- [x] Handles `state: "in_progress"` extended field
+- [x] Updates reactively when plan prop changes
+- [x] Empty plan renders without errors
+- [x] Uses Svelte 5 runes, scoped styles, no CSS frameworks
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If column definitions need to be configurable, flag for spec update.

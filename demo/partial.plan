@@ -297,7 +297,7 @@ tasks:
       - pbi-023
       - pbi-024
       - pbi-014
-    done: false
+    done: true
 
   - id: pbi-026
     title: Implement Gantt view

@@ -336,12 +336,12 @@ Read: `docs/0.1.0-findings.md` — Finding 6 (Force sim defaults)
 Read: `plans/graph-view/spec.md` — Anti-Patterns (Unbounded simulation)
 
 #### Verification
-- [ ] Small graph (<20 nodes): current parameters unchanged
-- [ ] Medium graph (20-50 nodes): labels do not overlap in `demo/partial.plan` (34 tasks)
-- [ ] Large graph (50+ nodes): simulation converges within 3 seconds
-- [ ] Parameters are computed via a pure function `getSimParams(nodeCount: number)`
-- [ ] Function has JSDoc and unit test
-- [ ] `pnpm exec svelte-check` passes
+- [x] Small graph (<20 nodes): current parameters unchanged
+- [x] Medium graph (20-50 nodes): labels do not overlap in `demo/partial.plan` (34 tasks)
+- [x] Large graph (50+ nodes): simulation converges within 3 seconds
+- [x] Parameters are computed via a pure function `getSimParams(nodeCount: number)`
+- [x] Function has JSDoc and unit test
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If users need manual tuning, add a settings panel in a future release.

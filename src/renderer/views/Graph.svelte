@@ -3,6 +3,7 @@ import type { Graph as DAGGraph, EdgeLabel } from '@shared/dag'
 import { getUnblockedTasks } from '@shared/dag'
 import type { PlanFile, Task } from '@shared/types'
 import * as d3 from 'd3'
+import { getSimParams } from './graphSimParams'
 
 interface Props {
   plan: PlanFile
@@ -94,6 +95,8 @@ $effect(() => {
 
     if (simulation) simulation.stop()
 
+    const params = getSimParams(nodes.length)
+
     simulation = d3
       .forceSimulation(nodes)
       .force(
@@ -101,12 +104,12 @@ $effect(() => {
         d3
           .forceLink<SimNode, SimLink>(links)
           .id((d) => d.id)
-          .distance(100),
+          .distance(params.linkDistance),
       )
-      .force('charge', d3.forceManyBody().strength(-300))
+      .force('charge', d3.forceManyBody().strength(params.chargeStrength))
       .force('center', d3.forceCenter(0, 0))
-      .force('collision', d3.forceCollide(40))
-      .alphaDecay(0.02)
+      .force('collision', d3.forceCollide(params.collisionRadius))
+      .alphaDecay(params.alphaDecay)
       .on('tick', () => {
         simNodes = [...nodes]
         simLinks = [...links]

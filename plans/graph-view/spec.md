@@ -34,6 +34,7 @@ interface GraphViewProps {
 
 - **Dependencies:** DAG engine, D3.js (`d3-force`, `d3-selection`, `d3-zoom`), `TaskCard` component (for detail overlays)
 - **Dependents:** `App.svelte` (view switcher)
+- **Auto-scaling:** Force simulation parameters (link distance, charge strength, collision radius, alpha decay) are computed by `getSimParams(nodeCount)` in `graphSimParams.ts`. Thresholds: small (<20), medium (20–50), large (50+).
 
 ### Anti-Patterns
 
@@ -59,7 +60,7 @@ interface GraphViewProps {
 - [ ] Uses Svelte 5 runes syntax exclusively
 - [ ] Uses scoped Svelte styles (no CSS frameworks)
 - [ ] Simulation stops after convergence (alpha decay)
-- [ ] Force simulation parameters auto-scale based on node count (v0.2.0)
+- [x] Force simulation parameters auto-scale based on node count (v0.2.0)
 - [ ] SVG height is responsive to viewport (not fixed at 500px) (v0.2.0)
 
 ### Regression Guardrails

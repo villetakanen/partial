@@ -1,0 +1,384 @@
+version: "1.0.0"
+project: Partial
+
+# Dogfood: Partial's own backlog as a .plan file.
+# This exercises the full schema — dependencies, parent grouping,
+# extended fields, and unknown custom fields — making it a useful
+# smoke-test for the parser, DAG engine, and every view.
+
+metadata:
+  description: Agent-native project management via .plan files
+  repository: https://github.com/villetakanen/partial
+  created: 2026-02-06
+
+tasks:
+  # ── Layer 0 — Project Foundation ──────────────────────────────
+
+  - id: pbi-037
+    title: Create .gitignore
+    parent: foundation
+    type: chore
+    done: false
+
+  - id: pbi-001
+    title: Initialize package.json and install dependencies
+    parent: foundation
+    type: chore
+    done: false
+
+  - id: pbi-002
+    title: Add TypeScript configuration
+    parent: foundation
+    type: chore
+    needs:
+      - pbi-001
+    done: false
+
+  - id: pbi-003
+    title: Add Biome configuration
+    parent: foundation
+    type: chore
+    needs:
+      - pbi-001
+    done: false
+
+  - id: pbi-004
+    title: Add Lefthook git hooks and Conventional Commits enforcement
+    parent: foundation
+    type: chore
+    needs:
+      - pbi-001
+      - pbi-003
+    done: false
+
+  - id: pbi-005
+    title: Create initial directory structure
+    parent: foundation
+    type: chore
+    needs:
+      - pbi-002
+    done: false
+
+  - id: pbi-036
+    title: Add GitHub PR and issue templates
+    parent: foundation
+    type: chore
+    needs:
+      - pbi-001
+    done: false
+
+  - id: pbi-038
+    title: Create README.md
+    parent: foundation
+    type: docs
+    needs:
+      - pbi-001
+    done: false
+
+  - id: pbi-039
+    title: Create electron-vite configuration
+    parent: foundation
+    type: chore
+    needs:
+      - pbi-001
+      - pbi-002
+    done: false
+
+  - id: pbi-040
+    title: Create Vitest configuration
+    parent: foundation
+    type: chore
+    needs:
+      - pbi-001
+      - pbi-002
+    done: false
+
+  - id: pbi-041
+    title: Create sample .plan fixture files
+    parent: foundation
+    type: test
+    needs:
+      - pbi-005
+    done: false
+
+  - id: pbi-042
+    title: Add Vitest test setup and helpers
+    parent: foundation
+    type: test
+    needs:
+      - pbi-040
+    done: false
+
+  - id: pbi-035
+    title: Create AGENTS.md and CLAUDE.md symlink
+    parent: foundation
+    type: docs
+    needs:
+      - pbi-005
+    done: false
+
+  # ── Layer 1 — Shared Types & Schemas ──────────────────────────
+
+  - id: pbi-006
+    title: Create shared TypeScript type definitions
+    parent: shared
+    type: feat
+    needs:
+      - pbi-005
+    done: false
+
+  - id: pbi-007
+    title: Add Zod validation schemas for .plan files
+    parent: shared
+    type: feat
+    needs:
+      - pbi-006
+      - pbi-042
+    done: false
+
+  # ── Layer 2 — Parser ──────────────────────────────────────────
+
+  - id: pbi-008
+    title: Implement parsePlan function
+    parent: parser
+    type: feat
+    needs:
+      - pbi-007
+    done: false
+
+  - id: pbi-009
+    title: Implement stringifyPlan function
+    parent: parser
+    type: feat
+    needs:
+      - pbi-008
+    done: false
+
+  - id: pbi-010
+    title: Add round-trip safety tests for parser
+    parent: parser
+    type: test
+    needs:
+      - pbi-009
+      - pbi-041
+    done: false
+
+  # ── Layer 2 — DAG Engine ──────────────────────────────────────
+
+  - id: pbi-011
+    title: Implement buildDAG function
+    parent: dag
+    type: feat
+    needs:
+      - pbi-007
+    done: false
+
+  - id: pbi-012
+    title: Implement cycle detection
+    parent: dag
+    type: feat
+    needs:
+      - pbi-011
+    done: false
+
+  - id: pbi-013
+    title: Implement topological sort
+    parent: dag
+    type: feat
+    needs:
+      - pbi-011
+    done: false
+
+  - id: pbi-014
+    title: Implement getUnblockedTasks
+    parent: dag
+    type: feat
+    needs:
+      - pbi-011
+    done: false
+
+  - id: pbi-015
+    title: Implement critical path calculation
+    parent: dag
+    type: feat
+    needs:
+      - pbi-013
+    done: false
+
+  # ── Layer 3 — File Watcher ────────────────────────────────────
+
+  - id: pbi-016
+    title: Implement core file watcher
+    parent: watcher
+    type: feat
+    needs:
+      - pbi-008
+    done: false
+
+  - id: pbi-017
+    title: Add debouncing to file watcher
+    parent: watcher
+    type: feat
+    needs:
+      - pbi-016
+    done: false
+
+  - id: pbi-018
+    title: Add error handling to file watcher
+    parent: watcher
+    type: feat
+    needs:
+      - pbi-016
+    done: false
+
+  # ── Layer 3 — Electron Shell ──────────────────────────────────
+
+  - id: pbi-019
+    title: Create Electron main process entry point
+    parent: electron
+    type: feat
+    needs:
+      - pbi-005
+      - pbi-039
+    done: false
+
+  - id: pbi-020
+    title: Add preload script and IPC channel registration
+    parent: electron
+    type: feat
+    needs:
+      - pbi-019
+    done: false
+
+  - id: pbi-021
+    title: Wire file watcher to Electron IPC
+    parent: electron
+    type: feat
+    needs:
+      - pbi-016
+      - pbi-020
+    done: false
+
+  # ── Layer 4 — Renderer & Components ───────────────────────────
+
+  - id: pbi-022
+    title: Bootstrap Svelte renderer
+    parent: renderer
+    type: feat
+    needs:
+      - pbi-020
+    done: false
+
+  - id: pbi-023
+    title: Implement App.svelte view switching
+    parent: renderer
+    type: feat
+    needs:
+      - pbi-022
+    done: false
+
+  - id: pbi-024
+    title: Implement TaskCard component
+    parent: renderer
+    type: feat
+    needs:
+      - pbi-022
+      - pbi-006
+    done: false
+
+  # ── Layer 5 — Views ───────────────────────────────────────────
+
+  - id: pbi-025
+    title: Implement Kanban view
+    parent: views
+    type: feat
+    needs:
+      - pbi-023
+      - pbi-024
+      - pbi-014
+    done: false
+
+  - id: pbi-026
+    title: Implement Gantt view
+    parent: views
+    type: feat
+    needs:
+      - pbi-023
+      - pbi-024
+      - pbi-015
+    done: false
+
+  - id: pbi-027
+    title: Implement Graph view
+    parent: views
+    type: feat
+    needs:
+      - pbi-023
+      - pbi-024
+      - pbi-011
+    done: false
+
+  # ── Layer 3 — CLI ─────────────────────────────────────────────
+
+  - id: pbi-028
+    title: Scaffold CLI entry point and implement validate command
+    parent: cli
+    type: feat
+    needs:
+      - pbi-008
+    done: false
+
+  - id: pbi-029
+    title: Implement CLI status command
+    parent: cli
+    type: feat
+    needs:
+      - pbi-028
+      - pbi-014
+    done: false
+
+  - id: pbi-030
+    title: Implement CLI unblocked command
+    parent: cli
+    type: feat
+    needs:
+      - pbi-028
+      - pbi-014
+    done: false
+
+  - id: pbi-031
+    title: Implement CLI graph command
+    parent: cli
+    type: feat
+    needs:
+      - pbi-028
+      - pbi-011
+    done: false
+
+  # ── Layer 6 — Build & CI ──────────────────────────────────────
+
+  - id: pbi-032
+    title: Add electron-builder configuration
+    parent: release
+    type: chore
+    needs:
+      - pbi-019
+    done: false
+
+  - id: pbi-033
+    title: Add GitHub Actions CI workflow
+    parent: release
+    type: ci
+    needs:
+      - pbi-003
+      - pbi-002
+    done: false
+
+  - id: pbi-034
+    title: Add GitHub Actions release workflow
+    parent: release
+    type: ci
+    needs:
+      - pbi-032
+      - pbi-033
+    done: false

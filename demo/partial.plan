@@ -125,7 +125,7 @@ tasks:
     type: feat
     needs:
       - pbi-005
-    done: false
+    done: true
 
   - id: pbi-007
     title: Add Zod validation schemas for .plan files

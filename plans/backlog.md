@@ -240,12 +240,12 @@ Read: `plans/plan-parser/spec.md` — Blueprint → Architecture → Data Models
 Read: `docs/scaffolding.md` — Section 10 (Initial Files, types.ts)
 
 #### Verification
-- [ ] `PlanFile` interface has `version`, `project`, `tasks`, and `[key: string]: unknown`
-- [ ] `Task` interface has `id`, `title`, `done?`, `needs?`, `parent?`, and `[key: string]: unknown`
-- [ ] `TaskExtended` extends `Task` with `type?`, `state?`, `needs_fs?`, `needs_ss?`, `needs_ff?`, `needs_sf?`
-- [ ] `DependencyType` is `'fs' | 'ss' | 'ff' | 'sf'`
-- [ ] `pnpm exec tsc --noEmit` passes
-- [ ] All exported types have JSDoc comments
+- [x] `PlanFile` interface has `version`, `project`, `tasks`, and `[key: string]: unknown`
+- [x] `Task` interface has `id`, `title`, `done?`, `needs?`, `parent?`, and `[key: string]: unknown`
+- [x] `TaskExtended` extends `Task` with `type?`, `state?`, `needs_fs?`, `needs_ss?`, `needs_ff?`, `needs_sf?`
+- [x] `DependencyType` is `'fs' | 'ss' | 'ff' | 'sf'`
+- [x] `pnpm exec tsc --noEmit` passes
+- [x] All exported types have JSDoc comments
 
 #### Refinement Protocol
 If additional types are needed by downstream PBIs, add them here and update the commit message.

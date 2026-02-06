@@ -937,11 +937,11 @@ Implement `partial status [file]` that displays task counts by state: done, read
 Read: `plans/cli/spec.md` — Contract → Scenarios (Status summary, JSON output)
 
 #### Verification
-- [ ] Prints counts: done, ready, blocked
-- [ ] `--json` outputs `{ "done": N, "ready": N, "blocked": N }`
-- [ ] Exit code `0` on success
-- [ ] Piped input supported
-- [ ] Tests pass
+- [x] Prints counts: done, ready, blocked
+- [x] `--json` outputs `{ "done": N, "ready": N, "blocked": N }`
+- [x] Exit code `0` on success
+- [x] Piped input supported
+- [x] Tests pass
 
 #### Refinement Protocol
 None.

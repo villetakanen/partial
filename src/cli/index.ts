@@ -2,6 +2,7 @@
 import { readFile } from 'node:fs/promises'
 import { parseArgs } from 'node:util'
 import { PlanParseError, parsePlan } from '@main/parser'
+import { buildDAG, getUnblockedTasks } from '@shared/dag'
 
 /** Version from package.json, injected at build time or read dynamically. */
 const VERSION = '0.1.0'
@@ -10,6 +11,7 @@ const USAGE = `Usage: partial <command> [file.plan] [options]
 
 Commands:
   validate   Validate a .plan file against the schema
+  status     Show project status summary (done, ready, blocked)
 
 Options:
   --json      Output structured JSON
@@ -32,6 +34,15 @@ Exit codes:
   0  Valid file
   1  Invalid file (schema/parse error)
   2  System error (file not found, permission denied)`
+
+const STATUS_USAGE = `Usage: partial status [file.plan] [options]
+
+Show project status summary with task counts by state.
+
+Options:
+  --json      Output structured JSON
+  --quiet     Suppress non-error output
+  --help      Print this help`
 
 /**
  * Read plan content from a file path or stdin.
@@ -67,6 +78,35 @@ function writeResult(message: string, json: boolean, data: Record<string, unknow
 		process.stdout.write(`${JSON.stringify(data)}\n`)
 	} else {
 		process.stderr.write(`${message}\n`)
+	}
+}
+
+/**
+ * Read and parse a .plan file, handling read and parse errors with proper exit codes.
+ *
+ * @returns The parsed PlanFile, or null if an error occurred (exitCode is set).
+ */
+async function readAndParse(
+	filePath: string | undefined,
+	json: boolean,
+): Promise<ReturnType<typeof parsePlan> | null> {
+	let content: string
+	try {
+		content = await readInput(filePath)
+	} catch (err) {
+		const message = formatReadError(err, filePath)
+		writeResult(message, json, { error: message })
+		process.exitCode = 2
+		return null
+	}
+
+	try {
+		return parsePlan(content)
+	} catch (err) {
+		const message = err instanceof Error ? err.message : String(err)
+		writeResult(message, json, { error: message })
+		process.exitCode = 1
+		return null
 	}
 }
 
@@ -116,6 +156,41 @@ async function runValidate(
 	}
 }
 
+/**
+ * Run the `status` command.
+ *
+ * Parses a `.plan` file, builds the DAG, and reports task counts
+ * by state: done, ready, and blocked.
+ *
+ * @param filePath - Optional path to the .plan file (reads stdin if omitted)
+ * @param json - Whether to output structured JSON
+ * @param quiet - Whether to suppress non-error output
+ */
+async function runStatus(
+	filePath: string | undefined,
+	json: boolean,
+	quiet: boolean,
+): Promise<void> {
+	const plan = await readAndParse(filePath, json)
+	if (!plan) return
+
+	const tasks = plan.tasks
+	const graph = buildDAG(tasks)
+	const unblocked = getUnblockedTasks(graph, tasks)
+	const unblockedIds = new Set(unblocked.map((t) => t.id))
+
+	const done = tasks.filter((t) => t.done).length
+	const ready = unblockedIds.size
+	const blocked = tasks.length - done - ready
+
+	if (json) {
+		process.stdout.write(`${JSON.stringify({ done, ready, blocked })}\n`)
+	} else if (!quiet) {
+		process.stdout.write(`Done:    ${done}\nReady:   ${ready}\nBlocked: ${blocked}\n`)
+	}
+	process.exitCode = 0
+}
+
 /** CLI entry point. Parses arguments and dispatches to the appropriate command. */
 async function main(): Promise<void> {
 	const { values, positionals } = parseArgs({
@@ -147,13 +222,23 @@ async function main(): Promise<void> {
 		return
 	}
 
+	const jsonFlag = values.json ?? false
+	const quietFlag = values.quiet ?? false
+
 	switch (command) {
 		case 'validate':
 			if (values.help) {
 				process.stdout.write(`${VALIDATE_USAGE}\n`)
 				return
 			}
-			await runValidate(filePath, values.json ?? false, values.quiet ?? false)
+			await runValidate(filePath, jsonFlag, quietFlag)
+			break
+		case 'status':
+			if (values.help) {
+				process.stdout.write(`${STATUS_USAGE}\n`)
+				return
+			}
+			await runStatus(filePath, jsonFlag, quietFlag)
 			break
 		default:
 			process.stderr.write(`Unknown command: ${command}\n\n${USAGE}\n`)

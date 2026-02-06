@@ -145,7 +145,7 @@ tasks:
     type: feat
     needs:
       - pbi-007
-    done: false
+    done: true
 
   - id: pbi-009
     title: Implement stringifyPlan function

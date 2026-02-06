@@ -303,13 +303,13 @@ Read: `plans/plan-parser/spec.md` — Full spec
 Read: `docs/scaffolding.md` — Section 10 (parser.ts)
 
 #### Verification
-- [ ] `parsePlan` accepts valid YAML and returns a typed `PlanFile`
-- [ ] Default values applied: `version` → `"1.0.0"`, `tasks` → `[]`, `task.done` → `false`
-- [ ] Invalid YAML throws a typed error with line/column when available
-- [ ] Empty string input returns a valid empty `PlanFile`
-- [ ] Unknown fields at root and task level are preserved in the output
-- [ ] Tests pass: `pnpm test -- --run tests/main/parser.test.ts`
-- [ ] Test coverage for `parsePlan` >= 90%
+- [x] `parsePlan` accepts valid YAML and returns a typed `PlanFile`
+- [x] Default values applied: `version` → `"1.0.0"`, `tasks` → `[]`, `task.done` → `false`
+- [x] Invalid YAML throws a typed error with line/column when available
+- [x] Empty string input returns a valid empty `PlanFile`
+- [x] Unknown fields at root and task level are preserved in the output
+- [x] Tests pass: `pnpm test -- --run tests/main/parser.test.ts`
+- [x] Test coverage for `parsePlan` >= 90%
 
 #### Refinement Protocol
 If the `yaml` package error format differs from expected, adapt error mapping and update spec scenarios.

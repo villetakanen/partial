@@ -133,6 +133,7 @@ tasks:
     type: feat
     needs:
       - pbi-006
+    done: true
       - pbi-042
     done: false
 

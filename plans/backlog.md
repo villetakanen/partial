@@ -270,13 +270,13 @@ Read: `plans/plan-parser/spec.md` — Blueprint → Architecture (Zod validation
 Read: `plans/plan-parser/spec.md` — Contract → Scenarios (Invalid YAML, Default values)
 
 #### Verification
-- [ ] `TaskSchema` validates required fields (`id`, `title`) and allows unknown fields via `.passthrough()`
-- [ ] `PlanFileSchema` validates required fields (`version`, `project`, `tasks`) with `.passthrough()`
-- [ ] `validatePlan(data)` returns `{ success: true, data: PlanFile }` or `{ success: false, errors: ZodError }`
-- [ ] Validation rejects a plan missing `project` field with an actionable error message
-- [ ] Validation accepts a plan with extra unknown fields (round-trip safe)
-- [ ] Tests pass: `pnpm test -- --run tests/shared/schemas.test.ts`
-- [ ] `pnpm exec tsc --noEmit` passes
+- [x] `TaskSchema` validates required fields (`id`, `title`) and allows unknown fields via `.passthrough()`
+- [x] `PlanFileSchema` validates required fields (`version`, `project`, `tasks`) with `.passthrough()`
+- [x] `validatePlan(data)` returns `{ success: true, data: PlanFile }` or `{ success: false, errors: ZodError }`
+- [x] Validation rejects a plan missing `project` field with an actionable error message
+- [x] Validation accepts a plan with extra unknown fields (round-trip safe)
+- [x] Tests pass: `pnpm test -- --run tests/shared/schemas.test.ts`
+- [x] `pnpm exec tsc --noEmit` passes
 
 #### Refinement Protocol
 If Zod's `.passthrough()` doesn't preserve nested unknown fields, document the limitation and propose a workaround.

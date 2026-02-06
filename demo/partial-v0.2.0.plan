@@ -428,7 +428,7 @@ tasks:
     type: feat
     needs:
       - pbi-047
-    done: false
+    done: true
 
   # ── v0.2.0 — Responsive Layout ─────────────────────────────────
 

@@ -4,6 +4,7 @@ import type { OpenFilePayload, PlanSavePayload } from '@shared/ipc'
 import { IPC_CHANNELS } from '@shared/ipc'
 import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
 import { parsePlan, stringifyPlan } from './parser'
+import { getLastOpenedFile, setLastOpenedFile } from './store'
 import type { PlanWatcher } from './watcher'
 import { watchDirectory } from './watcher'
 
@@ -59,6 +60,9 @@ async function openPlanFile(filePath: string): Promise<void> {
   const content = await readFile(filePath, 'utf-8')
   const plan = parsePlan(content)
   sendToAllWindows(IPC_CHANNELS.PLAN_UPDATED, { filePath, plan })
+
+  // Persist the path so it can be auto-loaded on next launch
+  await setLastOpenedFile(filePath)
 
   // Watch the file's parent directory for changes to *.plan files
   if (activeWatcher) {
@@ -186,10 +190,22 @@ function registerIpcHandlers(): void {
   })
 }
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   buildAppMenu()
   registerIpcHandlers()
-  createWindow()
+  const win = createWindow()
+
+  // Auto-load the last-opened .plan file once the renderer is ready
+  win.webContents.once('did-finish-load', async () => {
+    const lastFile = await getLastOpenedFile()
+    if (!lastFile) return
+
+    try {
+      await openPlanFile(lastFile)
+    } catch {
+      // File no longer exists or is invalid — fall through to Welcome screen
+    }
+  })
 })
 
 // Partial is a single-window app — quit on all platforms when the window closes.

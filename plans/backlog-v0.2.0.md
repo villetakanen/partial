@@ -115,13 +115,13 @@ Store the last successfully opened `.plan` file path using Electron's `app.getPa
 Read: `docs/0.1.0-findings.md` — HF-2 (recommendation: auto-load from last-opened)
 
 #### Verification
-- [ ] After opening a `.plan` file, the path is persisted to a JSON file in `userData`
-- [ ] On next app launch, the last-opened file is loaded automatically
-- [ ] If the persisted path no longer exists on disk, the Welcome screen is shown
-- [ ] The settings file is not committed to git (lives in OS user data)
-- [ ] `store.ts` has JSDoc comments on all exported functions
-- [ ] No `any` types
-- [ ] `pnpm exec tsc --noEmit` passes
+- [x] After opening a `.plan` file, the path is persisted to a JSON file in `userData`
+- [x] On next app launch, the last-opened file is loaded automatically
+- [x] If the persisted path no longer exists on disk, the Welcome screen is shown
+- [x] The settings file is not committed to git (lives in OS user data)
+- [x] `store.ts` has JSDoc comments on all exported functions
+- [x] No `any` types
+- [x] `pnpm exec tsc --noEmit` passes
 
 #### Refinement Protocol
 If multiple recent files are needed, defer to a future PBI. This PBI stores only the single last-opened path.

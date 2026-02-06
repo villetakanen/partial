@@ -230,7 +230,7 @@ tasks:
     type: feat
     needs:
       - pbi-016
-    done: false
+    done: true
 
   # ── Layer 3 — Electron Shell ──────────────────────────────────
 

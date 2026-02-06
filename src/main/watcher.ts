@@ -1,13 +1,16 @@
 import { readFile } from 'node:fs/promises'
 import type { PlanFile } from '@shared/types'
 import { watch } from 'chokidar'
-import { parsePlan } from './parser'
+import { PlanParseError, parsePlan } from './parser'
 
 /** Handler for change events (file created or modified with parsed content). */
 type ChangeHandler = (filePath: string, plan: PlanFile) => void
 
 /** Handler for delete events (file removed from disk). */
 type DeleteHandler = (filePath: string) => void
+
+/** Handler for error events (file exists but contains invalid YAML/schema). */
+type ErrorHandler = (filePath: string, error: PlanParseError) => void
 
 /** Options for {@link watchDirectory}. */
 export interface WatchOptions {
@@ -22,9 +25,10 @@ export interface WatchOptions {
  * created, modified, or deleted.
  */
 export interface PlanWatcher {
-	/** Register a handler for file change (create/modify) or delete events. */
+	/** Register a handler for file change, delete, or error events. */
 	on(event: 'change', handler: ChangeHandler): void
 	on(event: 'delete', handler: DeleteHandler): void
+	on(event: 'error', handler: ErrorHandler): void
 	/** Stop watching and clean up all resources including pending debounce timers. */
 	close(): Promise<void>
 	/** Resolves when the watcher has finished initial scan and is ready. */
@@ -53,6 +57,7 @@ export function watchDirectory(dirPath: string, options?: WatchOptions): PlanWat
 	const debounceMs = options?.debounce ?? 100
 	const changeHandlers: ChangeHandler[] = []
 	const deleteHandlers: DeleteHandler[] = []
+	const errorHandlers: ErrorHandler[] = []
 	const pendingTimers = new Map<string, ReturnType<typeof setTimeout>>()
 
 	const watcher = watch(dirPath, {
@@ -72,10 +77,20 @@ export function watchDirectory(dirPath: string, options?: WatchOptions): PlanWat
 	})
 
 	const emitChange = async (filePath: string) => {
-		const content = await readFile(filePath, 'utf-8')
-		const plan = parsePlan(content)
-		for (const handler of changeHandlers) {
-			handler(filePath, plan)
+		try {
+			const content = await readFile(filePath, 'utf-8')
+			const plan = parsePlan(content)
+			for (const handler of changeHandlers) {
+				handler(filePath, plan)
+			}
+		} catch (err) {
+			const parseError =
+				err instanceof PlanParseError
+					? err
+					: new PlanParseError(err instanceof Error ? err.message : String(err))
+			for (const handler of errorHandlers) {
+				handler(filePath, parseError)
+			}
 		}
 	}
 
@@ -112,11 +127,13 @@ export function watchDirectory(dirPath: string, options?: WatchOptions): PlanWat
 	})
 
 	return {
-		on(event: string, handler: ChangeHandler | DeleteHandler) {
+		on(event: string, handler: ChangeHandler | DeleteHandler | ErrorHandler) {
 			if (event === 'change') {
 				changeHandlers.push(handler as ChangeHandler)
 			} else if (event === 'delete') {
 				deleteHandlers.push(handler as DeleteHandler)
+			} else if (event === 'error') {
+				errorHandlers.push(handler as ErrorHandler)
 			}
 		},
 		async close() {

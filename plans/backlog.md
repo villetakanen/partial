@@ -594,11 +594,11 @@ Emit `error` events when a watched `.plan` file contains invalid YAML. Include f
 Read: `plans/file-watcher/spec.md` — Contract → Scenarios (Invalid YAML saved)
 
 #### Verification
-- [ ] Invalid YAML in a watched file emits an `error` event (not a thrown exception)
-- [ ] Error event includes `filePath` and structured parse error
-- [ ] Watcher continues watching after an error (does not crash or stop)
-- [ ] Subsequent valid save emits a normal `change` event
-- [ ] Tests pass
+- [x] Invalid YAML in a watched file emits an `error` event (not a thrown exception)
+- [x] Error event includes `filePath` and structured parse error
+- [x] Watcher continues watching after an error (does not crash or stop)
+- [x] Subsequent valid save emits a normal `change` event
+- [x] Tests pass
 
 #### Refinement Protocol
 None.

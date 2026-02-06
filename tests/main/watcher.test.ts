@@ -1,6 +1,7 @@
 import { mkdtemp, rm, unlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
+import { PlanParseError } from '@main/parser'
 import { type PlanWatcher, watchDirectory } from '@main/watcher'
 import type { PlanFile } from '@shared/types'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
@@ -34,6 +35,20 @@ function waitForDelete(watcher: PlanWatcher, timeout = 5000): Promise<string> {
 		watcher.on('delete', (filePath) => {
 			clearTimeout(timer)
 			resolve(filePath)
+		})
+	})
+}
+
+/** Wait for an error event with timeout. */
+function waitForError(
+	watcher: PlanWatcher,
+	timeout = 5000,
+): Promise<{ filePath: string; error: PlanParseError }> {
+	return new Promise((resolve, reject) => {
+		const timer = setTimeout(() => reject(new Error('Timed out waiting for error event')), timeout)
+		watcher.on('error', (filePath, error) => {
+			clearTimeout(timer)
+			resolve({ filePath, error })
 		})
 	})
 }
@@ -231,5 +246,83 @@ describe('watchDirectory debouncing', () => {
 
 		const result = await promise
 		expect(result.plan.project).toBe('Final')
+	})
+}, 30000)
+
+describe('watchDirectory error handling', () => {
+	let tmpDir: string
+	let watcher: PlanWatcher
+
+	beforeEach(async () => {
+		tmpDir = await mkdtemp(join(tmpdir(), 'partial-errors-'))
+	})
+
+	afterEach(async () => {
+		if (watcher) {
+			await watcher.close()
+		}
+		await rm(tmpDir, { recursive: true, force: true })
+	})
+
+	it('emits error event for invalid YAML', async () => {
+		watcher = watchDirectory(tmpDir, { debounce: 10 })
+		await watcher.ready
+
+		const promise = waitForError(watcher)
+		await writeFile(join(tmpDir, 'broken.plan'), 'tasks:\n  - id: a\n    title: [invalid')
+
+		const result = await promise
+		expect(result.filePath).toContain('broken.plan')
+		expect(result.error).toBeInstanceOf(PlanParseError)
+		expect(result.error.message.length).toBeGreaterThan(0)
+	})
+
+	it('error event includes filePath and structured parse error', async () => {
+		watcher = watchDirectory(tmpDir, { debounce: 10 })
+		await watcher.ready
+
+		const promise = waitForError(watcher)
+		await writeFile(join(tmpDir, 'schema.plan'), 'version: "1.0.0"\ntasks:\n  - title: No ID')
+
+		const result = await promise
+		expect(result.filePath).toContain('schema.plan')
+		expect(result.error).toBeInstanceOf(PlanParseError)
+		expect(result.error.message).toContain('Validation error')
+	})
+
+	it('continues watching after an error', async () => {
+		watcher = watchDirectory(tmpDir, { debounce: 10 })
+		await watcher.ready
+
+		// First: write invalid file, expect error
+		const errorPromise = waitForError(watcher)
+		await writeFile(join(tmpDir, 'recover.plan'), 'invalid: [yaml')
+		await errorPromise
+
+		// Then: write valid file, expect change
+		const changePromise = waitForChange(watcher)
+		await writeFile(join(tmpDir, 'recover.plan'), VALID_PLAN)
+
+		const result = await changePromise
+		expect(result.plan.project).toBe('Test')
+	})
+
+	it('subsequent valid save emits normal change event', async () => {
+		watcher = watchDirectory(tmpDir, { debounce: 10 })
+		await watcher.ready
+
+		const filePath = join(tmpDir, 'flip.plan')
+
+		// Error first
+		const errorPromise = waitForError(watcher)
+		await writeFile(filePath, 'tasks:\n  - title: Missing ID')
+		await errorPromise
+
+		// Valid second
+		const changePromise = waitForChange(watcher)
+		await writeFile(filePath, VALID_PLAN)
+		const result = await changePromise
+		expect(result.filePath).toContain('flip.plan')
+		expect(result.plan.project).toBe('Test')
 	})
 }, 30000)

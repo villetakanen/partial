@@ -653,12 +653,12 @@ Create `src/main/preload.ts` exposing a typed API to the renderer via `contextBr
 Read: `plans/electron-shell/spec.md` — Blueprint → Architecture (IPC Channel Contract)
 
 #### Verification
-- [ ] `preload.ts` uses `contextBridge.exposeInMainWorld` with a typed API object
-- [ ] All 5 IPC channels are registered as constants in `src/shared/ipc.ts`
-- [ ] Payload types for each channel are defined and exported
-- [ ] Main process `ipcMain.handle` is used (async), not `ipcMain.on` for request/response
-- [ ] `pnpm exec tsc --noEmit` passes
-- [ ] Renderer cannot access `require`, `fs`, or `process` (contextIsolation enforced)
+- [x] `preload.ts` uses `contextBridge.exposeInMainWorld` with a typed API object
+- [x] All 5 IPC channels are registered as constants in `src/shared/ipc.ts`
+- [x] Payload types for each channel are defined and exported
+- [x] Main process `ipcMain.handle` is used (async), not `ipcMain.on` for request/response
+- [x] `pnpm exec tsc --noEmit` passes
+- [x] Renderer cannot access `require`, `fs`, or `process` (contextIsolation enforced)
 
 #### Refinement Protocol
 If additional IPC channels are discovered as needed, add them to `ipc.ts` and update the electron-shell spec.

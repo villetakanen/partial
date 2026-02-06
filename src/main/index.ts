@@ -1,5 +1,7 @@
 import { join } from 'node:path'
-import { app, BrowserWindow } from 'electron'
+import type { OpenDirectoryPayload, PlanSavePayload } from '@shared/ipc'
+import { IPC_CHANNELS } from '@shared/ipc'
+import { app, BrowserWindow, ipcMain } from 'electron'
 
 /**
  * Create the main application window with secure web preferences.
@@ -12,6 +14,7 @@ function createWindow(): BrowserWindow {
 			contextIsolation: true,
 			nodeIntegration: false,
 			sandbox: false,
+			preload: join(__dirname, '../preload/index.mjs'),
 		},
 	})
 
@@ -24,7 +27,23 @@ function createWindow(): BrowserWindow {
 	return mainWindow
 }
 
+/**
+ * Register IPC handlers for renderer → main communication.
+ */
+function registerIpcHandlers(): void {
+	ipcMain.handle(IPC_CHANNELS.OPEN_DIRECTORY, async (_event, payload: OpenDirectoryPayload) => {
+		// Stub: watcher integration will be added in PBI-021
+		console.log('open-directory:', payload.dirPath)
+	})
+
+	ipcMain.handle(IPC_CHANNELS.SAVE, async (_event, payload: PlanSavePayload) => {
+		// Stub: file write will be added in PBI-021
+		console.log('save:', payload.filePath)
+	})
+}
+
 app.whenReady().then(() => {
+	registerIpcHandlers()
 	createWindow()
 
 	app.on('activate', () => {

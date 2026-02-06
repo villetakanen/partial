@@ -249,7 +249,7 @@ tasks:
     type: feat
     needs:
       - pbi-019
-    done: false
+    done: true
 
   - id: pbi-021
     title: Wire file watcher to Electron IPC

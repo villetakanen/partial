@@ -393,13 +393,13 @@ Implement `buildDAG(tasks: Task[]): Graph` in `src/shared/dag.ts` using the `gra
 Read: `plans/dag-engine/spec.md` — Full spec
 
 #### Verification
-- [ ] `buildDAG` creates a node for each task
-- [ ] `buildDAG` creates directed edges from `needs` arrays
-- [ ] All four dependency types (`needs_fs`, `needs_ss`, `needs_ff`, `needs_sf`) produce typed edges
-- [ ] Missing dependency reference throws an error identifying the broken reference
-- [ ] Disconnected subgraphs are correctly represented
-- [ ] Tests pass: `pnpm test -- --run tests/shared/dag.test.ts`
-- [ ] All exported functions have JSDoc comments
+- [x] `buildDAG` creates a node for each task
+- [x] `buildDAG` creates directed edges from `needs` arrays
+- [x] All four dependency types (`needs_fs`, `needs_ss`, `needs_ff`, `needs_sf`) produce typed edges
+- [x] Missing dependency reference throws an error identifying the broken reference
+- [x] Disconnected subgraphs are correctly represented
+- [x] Tests pass: `pnpm test -- --run tests/shared/dag.test.ts`
+- [x] All exported functions have JSDoc comments
 
 #### Refinement Protocol
 If `graphlib` API has changed, adapt usage and note in commit. If a different graph library is needed, flag for human review before switching.

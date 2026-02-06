@@ -172,7 +172,7 @@ tasks:
     type: feat
     needs:
       - pbi-007
-    done: false
+    done: true
 
   - id: pbi-012
     title: Implement cycle detection

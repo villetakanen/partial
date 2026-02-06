@@ -327,7 +327,7 @@ tasks:
     type: feat
     needs:
       - pbi-008
-    done: false
+    done: true
 
   - id: pbi-029
     title: Implement CLI status command

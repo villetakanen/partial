@@ -905,15 +905,15 @@ Create `src/cli/index.ts` as the CLI entry point. Implement `partial validate [f
 Read: `plans/cli/spec.md` — Full spec (focus on validate command)
 
 #### Verification
-- [ ] `partial validate project.plan` prints "Valid" and exits `0` for valid files
-- [ ] Invalid files print errors and exit `1`
-- [ ] Missing files print error to stderr and exit `2`
-- [ ] `--json` outputs structured JSON
-- [ ] `--help` prints usage
-- [ ] `--version` prints version from package.json
-- [ ] Piped input works: `cat file.plan | partial validate`
-- [ ] No Electron imports
-- [ ] Tests pass
+- [x] `partial validate project.plan` prints "Valid" and exits `0` for valid files
+- [x] Invalid files print errors and exit `1`
+- [x] Missing files print error to stderr and exit `2`
+- [x] `--json` outputs structured JSON
+- [x] `--help` prints usage
+- [x] `--version` prints version from package.json
+- [x] Piped input works: `cat file.plan | partial validate`
+- [x] No Electron imports
+- [x] Tests pass
 
 #### Refinement Protocol
 If a CLI argument parsing library is needed, propose it and document the choice.

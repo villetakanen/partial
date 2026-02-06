@@ -1,4 +1,10 @@
-import { buildDAG, detectCycles, type EdgeLabel, getUnblockedTasks } from '@shared/dag'
+import {
+	buildDAG,
+	detectCycles,
+	type EdgeLabel,
+	getUnblockedTasks,
+	topologicalSort,
+} from '@shared/dag'
 import type { Task } from '@shared/types'
 import { Graph } from 'graphlib'
 import { describe, expect, it } from 'vitest'
@@ -267,5 +273,72 @@ describe('getUnblockedTasks', () => {
 		const graph = buildDAG(tasks)
 		const ids = getUnblockedTasks(graph, tasks).map((t) => t.id)
 		expect(ids).toEqual(['z', 'm', 'a'])
+	})
+})
+
+describe('topologicalSort', () => {
+	it('returns linear chain in dependency order', () => {
+		const tasks = [task('a'), task('b', { needs: ['a'] }), task('c', { needs: ['b'] })]
+		const graph = buildDAG(tasks)
+		const ids = topologicalSort(graph).map((t) => t.id)
+		expect(ids).toEqual(['a', 'b', 'c'])
+	})
+
+	it('returns diamond dependency in valid order (A first, D last)', () => {
+		const tasks = [
+			task('a'),
+			task('b', { needs: ['a'] }),
+			task('c', { needs: ['a'] }),
+			task('d', { needs: ['b', 'c'] }),
+		]
+		const graph = buildDAG(tasks)
+		const ids = topologicalSort(graph).map((t) => t.id)
+		expect(ids[0]).toBe('a')
+		expect(ids[3]).toBe('d')
+		// b and c are between, in sorted order for determinism
+		expect(ids.slice(1, 3).sort()).toEqual(['b', 'c'])
+	})
+
+	it('is deterministic across multiple calls', () => {
+		const tasks = [
+			task('a'),
+			task('b', { needs: ['a'] }),
+			task('c', { needs: ['a'] }),
+			task('d', { needs: ['b', 'c'] }),
+		]
+		const graph = buildDAG(tasks)
+		const run1 = topologicalSort(graph).map((t) => t.id)
+		const run2 = topologicalSort(graph).map((t) => t.id)
+		const run3 = topologicalSort(graph).map((t) => t.id)
+		expect(run1).toEqual(run2)
+		expect(run2).toEqual(run3)
+	})
+
+	it('handles disconnected subgraphs (all tasks included)', () => {
+		const tasks = [task('a'), task('b', { needs: ['a'] }), task('c'), task('d', { needs: ['c'] })]
+		const graph = buildDAG(tasks)
+		const ids = topologicalSort(graph).map((t) => t.id)
+		expect(ids).toHaveLength(4)
+		// a before b, c before d
+		expect(ids.indexOf('a')).toBeLessThan(ids.indexOf('b'))
+		expect(ids.indexOf('c')).toBeLessThan(ids.indexOf('d'))
+	})
+
+	it('returns tasks with no dependencies in sorted ID order', () => {
+		const tasks = [task('z'), task('m'), task('a')]
+		const graph = buildDAG(tasks)
+		const ids = topologicalSort(graph).map((t) => t.id)
+		expect(ids).toEqual(['a', 'm', 'z'])
+	})
+
+	it('returns empty array for empty graph', () => {
+		const graph = buildDAG([])
+		expect(topologicalSort(graph)).toEqual([])
+	})
+
+	it('returns single task for single-node graph', () => {
+		const graph = buildDAG([task('a')])
+		const ids = topologicalSort(graph).map((t) => t.id)
+		expect(ids).toEqual(['a'])
 	})
 })

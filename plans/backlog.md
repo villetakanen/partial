@@ -451,11 +451,11 @@ Implement `topologicalSort(graph: Graph): Task[]` in `src/shared/dag.ts`. Return
 Read: `plans/dag-engine/spec.md` — Contract → Scenarios (Linear chain, Diamond dependency)
 
 #### Verification
-- [ ] Linear chain A → B → C returns `[A, B, C]`
-- [ ] Diamond dependency produces valid topological order (A first, D last)
-- [ ] Deterministic: same input produces same output across runs
-- [ ] Handles disconnected subgraphs (all tasks included in output)
-- [ ] Tests pass
+- [x] Linear chain A → B → C returns `[A, B, C]`
+- [x] Diamond dependency produces valid topological order (A first, D last)
+- [x] Deterministic: same input produces same output across runs
+- [x] Handles disconnected subgraphs (all tasks included in output)
+- [x] Tests pass
 
 #### Refinement Protocol
 None.

@@ -188,7 +188,7 @@ tasks:
     type: feat
     needs:
       - pbi-011
-    done: false
+    done: true
 
   - id: pbi-014
     title: Implement getUnblockedTasks

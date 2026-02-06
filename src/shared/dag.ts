@@ -121,6 +121,52 @@ export function getUnblockedTasks(graph: Graph, tasks: Task[]): Task[] {
 }
 
 /**
+ * Return tasks in topological order (respecting dependencies).
+ *
+ * Uses Kahn's algorithm (BFS with in-degree tracking). When multiple tasks
+ * have zero in-degree simultaneously, they are processed in sorted ID order
+ * to guarantee deterministic output for identical inputs.
+ *
+ * @returns An array of tasks ordered so that every dependency appears before
+ *          the tasks that depend on it
+ */
+export function topologicalSort(graph: Graph): Task[] {
+	const inDegree = new Map<string, number>()
+	for (const node of graph.nodes()) {
+		inDegree.set(node, (graph.inEdges(node) ?? []).length)
+	}
+
+	// Seed queue with zero in-degree nodes, sorted for determinism
+	const queue: string[] = graph
+		.nodes()
+		.filter((n) => inDegree.get(n) === 0)
+		.sort()
+
+	const result: Task[] = []
+	while (queue.length > 0) {
+		const node = queue.shift() as string
+		result.push(graph.node(node) as Task)
+
+		const successors = (graph.successors(node) ?? []).slice().sort()
+		for (const next of successors) {
+			const deg = (inDegree.get(next) ?? 1) - 1
+			inDegree.set(next, deg)
+			if (deg === 0) {
+				// Insert into queue maintaining sorted order
+				const idx = queue.findIndex((q) => q > next)
+				if (idx === -1) {
+					queue.push(next)
+				} else {
+					queue.splice(idx, 0, next)
+				}
+			}
+		}
+	}
+
+	return result
+}
+
+/**
  * Add directed edges from dependencies to the dependent task.
  * Edge direction: dependency → dependent (predecessor → successor).
  */

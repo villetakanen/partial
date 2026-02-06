@@ -91,7 +91,7 @@ tasks:
     needs:
       - pbi-001
       - pbi-002
-    done: false
+    done: true
 
   - id: pbi-041
     title: Create sample .plan fixture files

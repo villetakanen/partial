@@ -1224,11 +1224,11 @@ Create Vitest configuration for the project. Configure path alias resolution mat
 Read: `docs/scaffolding.md` — Section 3 (`"test": "vitest"`, `"test:coverage": "vitest --coverage"`)
 
 #### Verification
-- [ ] `pnpm test -- --run` executes without config errors (may report "no tests found" — that's expected)
-- [ ] `pnpm test:coverage` executes with v8 coverage provider
-- [ ] Path aliases (`@shared/*`, `@main/*`) resolve in test files
-- [ ] Coverage output goes to `coverage/` directory
-- [ ] Config excludes `node_modules/`, `dist/`, and `e2e/` from test collection
+- [x] `pnpm test -- --run` executes without config errors (may report "no tests found" — that's expected)
+- [x] `pnpm test:coverage` executes with v8 coverage provider
+- [x] Path aliases (`@shared/*`, `@main/*`) resolve in test files
+- [x] Coverage output goes to `coverage/` directory
+- [x] Config excludes `node_modules/`, `dist/`, and `e2e/` from test collection
 
 #### Refinement Protocol
 If vitest requires specific configuration for Svelte component testing, add it and note.

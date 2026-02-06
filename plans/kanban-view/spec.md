@@ -53,8 +53,8 @@ interface KanbanViewProps {
 - [ ] Columns update reactively when `plan` prop changes
 - [ ] Shows task count per column
 - [ ] Handles the `state` extended field for "in_progress" differentiation
-- [ ] Empty columns are visually minimized/collapsed with an expand affordance (v0.2.0 change)
-- [ ] "In Progress" column header has a tooltip explaining the `state` field
+- [x] Empty columns are visually minimized/collapsed with an expand affordance (v0.2.0 change)
+- [x] "In Progress" column header has a tooltip explaining the `state` field
 - [ ] Uses Svelte 5 runes syntax exclusively
 - [ ] Uses scoped Svelte styles (no CSS frameworks)
 - [ ] Accessible: tasks are focusable, columns are labeled with ARIA roles

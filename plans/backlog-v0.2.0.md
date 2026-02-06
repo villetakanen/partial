@@ -270,14 +270,14 @@ Read: `docs/0.1.0-findings.md` — HF-3 (Kanban 4 cols vs 2 states)
 Read: `plans/kanban-view/spec.md` — Blueprint → Architecture (Column Logic)
 
 #### Verification
-- [ ] Columns with tasks render at full width
-- [ ] Empty columns render in a collapsed/minimized state (narrow, muted)
-- [ ] Collapsed columns can be hovered or clicked to reveal full width
-- [ ] "In Progress" column header has a tooltip: "Tasks with `state: in_progress` in the .plan file"
-- [ ] Each column header shows task count badge
-- [ ] With only `done: true/false` tasks (no dependencies), only Ready and Done columns are prominent
-- [ ] Svelte 5 runes syntax, scoped styles
-- [ ] `pnpm exec svelte-check` passes
+- [x] Columns with tasks render at full width
+- [x] Empty columns render in a collapsed/minimized state (narrow, muted)
+- [x] Collapsed columns can be hovered or clicked to reveal full width
+- [x] "In Progress" column header has a tooltip: "Tasks with `state: in_progress` in the .plan file"
+- [x] Each column header shows task count badge
+- [x] With only `done: true/false` tasks (no dependencies), only Ready and Done columns are prominent
+- [x] Svelte 5 runes syntax, scoped styles
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If project-level `statuses` config in `.plan` is needed, that requires an ADR and is deferred to v0.3.0.

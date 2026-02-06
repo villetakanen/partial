@@ -444,7 +444,7 @@ tasks:
     title: Make Kanban columns context-aware
     parent: views
     type: feat
-    done: false
+    done: true
 
   # ── v0.2.0 — Watcher Quality ───────────────────────────────────
 

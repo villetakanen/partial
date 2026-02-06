@@ -361,13 +361,13 @@ Write comprehensive round-trip tests: parse a `.plan` string, stringify it back,
 Read: `plans/plan-parser/spec.md` — Contract → Scenarios (Basic round-trip, Unknown fields preserved)
 
 #### Verification
-- [ ] Round-trip test with standard `.plan` file passes (parse → stringify → parse → deep equal)
-- [ ] Round-trip preserves unknown root-level fields (`custom_metadata: { author: "alice" }`)
-- [ ] Round-trip preserves unknown task-level fields (`priority: high`)
-- [ ] Round-trip preserves nested unknown fields
-- [ ] Round-trip handles all four dependency types (`needs_fs`, `needs_ss`, `needs_ff`, `needs_sf`)
-- [ ] At least 3 fixture `.plan` files covering different complexities
-- [ ] All tests pass: `pnpm test -- --run tests/main/parser.roundtrip.test.ts`
+- [x] Round-trip test with standard `.plan` file passes (parse → stringify → parse → deep equal)
+- [x] Round-trip preserves unknown root-level fields (`custom_metadata: { author: "alice" }`)
+- [x] Round-trip preserves unknown task-level fields (`priority: high`)
+- [x] Round-trip preserves nested unknown fields
+- [x] Round-trip handles all four dependency types (`needs_fs`, `needs_ss`, `needs_ff`, `needs_sf`)
+- [x] At least 3 fixture `.plan` files covering different complexities
+- [x] All tests pass: `pnpm test -- --run tests/main/parser.roundtrip.test.ts`
 
 #### Refinement Protocol
 If round-trip reveals YAML library quirks (comment stripping, key reordering), document as known limitations in spec.

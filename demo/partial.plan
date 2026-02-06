@@ -162,7 +162,7 @@ tasks:
     needs:
       - pbi-009
       - pbi-041
-    done: false
+    done: true
 
   # ── Layer 2 — DAG Engine ──────────────────────────────────────
 

@@ -1076,11 +1076,11 @@ Create `.github/workflows/release.yml` triggered by version tags (`v*`). Build a
 Read: `docs/scaffolding.md` — Section 9 (Release Workflow)
 
 #### Verification
-- [ ] Triggers on `v*` tags
-- [ ] Matrix build: ubuntu, windows, macos
-- [ ] Platform-specific build commands used
-- [ ] Artifacts uploaded with 5-day retention
-- [ ] Publishes to GitHub Releases via `softprops/action-gh-release`
+- [x] Triggers on `v*` tags
+- [x] Matrix build: ubuntu, windows, macos
+- [x] Platform-specific build commands used
+- [x] Artifacts uploaded with 5-day retention
+- [x] Publishes to GitHub Releases via `softprops/action-gh-release`
 
 #### Refinement Protocol
 None.

@@ -57,7 +57,7 @@ tasks:
     type: chore
     needs:
       - pbi-002
-    done: false
+    done: true
 
   - id: pbi-036
     title: Add GitHub PR and issue templates

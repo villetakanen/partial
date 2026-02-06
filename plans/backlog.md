@@ -185,10 +185,10 @@ Create the empty directory scaffold: `src/main/`, `src/renderer/views/`, `src/re
 Read: `docs/scaffolding.md` — Section 2 (Repository Structure)
 
 #### Verification
-- [ ] All directories exist: `src/main`, `src/renderer/views`, `src/renderer/components`, `src/shared`, `src/cli`, `tests`, `docs/decisions`
-- [ ] `plans/` directory exists with feature subdirectories
-- [ ] `.gitkeep` files present in otherwise-empty directories
-- [ ] `git status` shows all directories tracked
+- [x] All directories exist: `src/main`, `src/renderer/views`, `src/renderer/components`, `src/shared`, `src/cli`, `tests`, `docs/decisions`
+- [x] `plans/` directory exists with feature subdirectories
+- [x] `.gitkeep` files present in otherwise-empty directories
+- [x] `git status` shows all directories tracked
 
 #### Refinement Protocol
 None — this is a structural task with no ambiguity.

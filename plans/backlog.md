@@ -1257,13 +1257,13 @@ Read: `plans/plan-parser/spec.md` — Contract → Scenarios (all scenarios defi
 Read: `plans/dag-engine/spec.md` — Contract → Scenarios (cycle, diamond, linear, disconnected)
 
 #### Verification
-- [ ] `tests/fixtures/minimal.plan` is valid YAML with `version`, `project`, and at least one task
-- [ ] `tests/fixtures/complex.plan` has tasks using `needs`, `needs_fs`, `needs_ss`, `needs_ff`, `needs_sf`
-- [ ] `tests/fixtures/unknown-fields.plan` has `custom_metadata` at root and `priority` on a task
-- [ ] `tests/fixtures/empty.plan` is an empty file (0 bytes)
-- [ ] `tests/fixtures/invalid-yaml.plan` contains intentionally broken YAML
-- [ ] `tests/fixtures/cyclic.plan` has tasks with a circular dependency (A → B → C → A)
-- [ ] All valid `.plan` files parse successfully with the `yaml` package
+- [x] `tests/fixtures/minimal.plan` is valid YAML with `version`, `project`, and at least one task
+- [x] `tests/fixtures/complex.plan` has tasks using `needs`, `needs_fs`, `needs_ss`, `needs_ff`, `needs_sf`
+- [x] `tests/fixtures/unknown-fields.plan` has `custom_metadata` at root and `priority` on a task
+- [x] `tests/fixtures/empty.plan` is an empty file (0 bytes)
+- [x] `tests/fixtures/invalid-yaml.plan` contains intentionally broken YAML
+- [x] `tests/fixtures/cyclic.plan` has tasks with a circular dependency (A → B → C → A)
+- [x] All valid `.plan` files parse successfully with the `yaml` package
 
 #### Refinement Protocol
 Add additional fixtures as new edge cases are discovered during testing.

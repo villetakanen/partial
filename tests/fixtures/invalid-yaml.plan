@@ -1,0 +1,9 @@
+version: "1.0.0"
+project: "Broken
+tasks:
+  - id: task-a
+    title: This file has unclosed quotes
+    nested:
+      key: value
+        bad-indent: this is wrong
+  - id: [invalid

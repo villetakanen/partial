@@ -1,0 +1,28 @@
+version: "1.0.0"
+project: UnknownFields
+
+custom_metadata:
+  author: alice
+  created: 2025-01-15
+  tags:
+    - experimental
+    - prototype
+
+tasks:
+  - id: task-1
+    title: Task with extra fields
+    priority: high
+    estimate: 3
+    labels:
+      - frontend
+      - urgent
+    done: false
+
+  - id: task-2
+    title: Another task with nested unknowns
+    needs:
+      - task-1
+    custom_data:
+      reviewer: bob
+      notes: needs review
+    done: false

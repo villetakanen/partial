@@ -1,0 +1,40 @@
+version: "1.0.0"
+project: Complex
+
+tasks:
+  - id: alpha
+    title: Alpha task
+    done: true
+
+  - id: bravo
+    title: Bravo task
+    needs:
+      - alpha
+    done: true
+
+  - id: charlie
+    title: Charlie task
+    needs:
+      - alpha
+    needs_ss:
+      - bravo
+    done: false
+
+  - id: delta
+    title: Delta task
+    needs_fs:
+      - bravo
+    needs_ff:
+      - charlie
+    done: false
+
+  - id: echo
+    title: Echo task
+    needs_sf:
+      - delta
+    done: false
+
+  - id: foxtrot
+    title: Foxtrot task
+    parent: group-a
+    done: false

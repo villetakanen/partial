@@ -1,0 +1,21 @@
+version: "1.0.0"
+project: Cyclic
+
+tasks:
+  - id: task-a
+    title: Task A
+    needs:
+      - task-c
+    done: false
+
+  - id: task-b
+    title: Task B
+    needs:
+      - task-a
+    done: false
+
+  - id: task-c
+    title: Task C
+    needs:
+      - task-b
+    done: false

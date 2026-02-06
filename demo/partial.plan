@@ -99,7 +99,7 @@ tasks:
     type: test
     needs:
       - pbi-005
-    done: false
+    done: true
 
   - id: pbi-042
     title: Add Vitest test setup and helpers

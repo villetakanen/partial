@@ -1,0 +1,6 @@
+version: "1.0.0"
+project: Minimal
+tasks:
+  - id: task-a
+    title: First task
+    done: false

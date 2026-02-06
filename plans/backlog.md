@@ -775,12 +775,12 @@ Read: `plans/kanban-view/spec.md` — Blueprint (TaskCard usage)
 Read: `plans/gantt-view/spec.md` — Blueprint (TaskCard usage)
 
 #### Verification
-- [ ] Accepts `task: Task` and `status: 'done' | 'blocked' | 'ready' | 'in_progress'` via `$props()`
-- [ ] Renders task title
-- [ ] Visual distinction between done, blocked, ready, and in-progress states
-- [ ] Uses scoped Svelte styles (no CSS frameworks)
-- [ ] Uses Svelte 5 runes syntax exclusively
-- [ ] `pnpm exec svelte-check` passes
+- [x] Accepts `task: Task` and `status: 'done' | 'blocked' | 'ready' | 'in_progress'` via `$props()`
+- [x] Renders task title
+- [x] Visual distinction between done, blocked, ready, and in-progress states
+- [x] Uses scoped Svelte styles (no CSS frameworks)
+- [x] Uses Svelte 5 runes syntax exclusively
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 None.

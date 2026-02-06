@@ -285,7 +285,7 @@ tasks:
     needs:
       - pbi-022
       - pbi-006
-    done: false
+    done: true
 
   # ── Layer 5 — Views ───────────────────────────────────────────
 

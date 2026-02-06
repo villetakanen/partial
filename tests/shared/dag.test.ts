@@ -1,4 +1,4 @@
-import { buildDAG, detectCycles, type EdgeLabel } from '@shared/dag'
+import { buildDAG, detectCycles, type EdgeLabel, getUnblockedTasks } from '@shared/dag'
 import type { Task } from '@shared/types'
 import { Graph } from 'graphlib'
 import { describe, expect, it } from 'vitest'
@@ -194,5 +194,78 @@ describe('detectCycles', () => {
 	it('returns null for single task with no deps', () => {
 		const graph = buildDAG([task('a')])
 		expect(detectCycles(graph)).toBeNull()
+	})
+})
+
+describe('getUnblockedTasks', () => {
+	it('returns tasks whose dependencies are all done (spec scenario)', () => {
+		const tasks = [
+			task('a', { done: true }),
+			task('b', { needs: ['a'], done: false }),
+			task('c', { done: false }),
+			task('d', { needs: ['b'], done: false }),
+		]
+		const graph = buildDAG(tasks)
+		const unblocked = getUnblockedTasks(graph, tasks)
+		const ids = unblocked.map((t) => t.id)
+		expect(ids).toEqual(['b', 'c'])
+	})
+
+	it('excludes already-done tasks', () => {
+		const tasks = [task('a', { done: true }), task('b', { done: true })]
+		const graph = buildDAG(tasks)
+		const unblocked = getUnblockedTasks(graph, tasks)
+		expect(unblocked).toEqual([])
+	})
+
+	it('returns all tasks when none have dependencies and none are done', () => {
+		const tasks = [task('a'), task('b'), task('c')]
+		const graph = buildDAG(tasks)
+		const unblocked = getUnblockedTasks(graph, tasks)
+		expect(unblocked).toHaveLength(3)
+	})
+
+	it('excludes tasks with any unfinished dependency', () => {
+		const tasks = [
+			task('a', { done: true }),
+			task('b', { done: false }),
+			task('c', { needs: ['a', 'b'], done: false }),
+		]
+		const graph = buildDAG(tasks)
+		const unblocked = getUnblockedTasks(graph, tasks)
+		const ids = unblocked.map((t) => t.id)
+		// c is blocked because b is not done
+		expect(ids).toEqual(['b'])
+	})
+
+	it('returns empty array when all tasks are done', () => {
+		const tasks = [task('a', { done: true }), task('b', { needs: ['a'], done: true })]
+		const graph = buildDAG(tasks)
+		expect(getUnblockedTasks(graph, tasks)).toEqual([])
+	})
+
+	it('returns empty array for empty task list', () => {
+		const graph = buildDAG([])
+		expect(getUnblockedTasks(graph, [])).toEqual([])
+	})
+
+	it('handles diamond dependency where root is done', () => {
+		const tasks = [
+			task('a', { done: true }),
+			task('b', { needs: ['a'] }),
+			task('c', { needs: ['a'] }),
+			task('d', { needs: ['b', 'c'] }),
+		]
+		const graph = buildDAG(tasks)
+		const ids = getUnblockedTasks(graph, tasks).map((t) => t.id)
+		// b and c are unblocked (a is done), d is blocked (b and c not done)
+		expect(ids).toEqual(['b', 'c'])
+	})
+
+	it('preserves original task order in results', () => {
+		const tasks = [task('z'), task('m'), task('a')]
+		const graph = buildDAG(tasks)
+		const ids = getUnblockedTasks(graph, tasks).map((t) => t.id)
+		expect(ids).toEqual(['z', 'm', 'a'])
 	})
 })

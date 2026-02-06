@@ -479,11 +479,11 @@ Implement `getUnblockedTasks(graph: Graph, tasks: Task[]): Task[]` in `src/share
 Read: `plans/dag-engine/spec.md` — Contract → Scenarios (Unblocked tasks)
 
 #### Verification
-- [ ] Tasks with all dependencies `done: true` are returned
-- [ ] Tasks with no dependencies and `done: false` are returned
-- [ ] Tasks with unfinished dependencies are excluded
-- [ ] Already-done tasks are excluded (they're done, not "unblocked")
-- [ ] Tests pass with the exact scenario from the spec
+- [x] Tasks with all dependencies `done: true` are returned
+- [x] Tasks with no dependencies and `done: false` are returned
+- [x] Tasks with unfinished dependencies are excluded
+- [x] Already-done tasks are excluded (they're done, not "unblocked")
+- [x] Tests pass with the exact scenario from the spec
 
 #### Refinement Protocol
 None.

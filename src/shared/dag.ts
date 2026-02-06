@@ -99,6 +99,28 @@ function buildCyclePath(parent: Map<string, string>, from: string, to: string): 
 }
 
 /**
+ * Return tasks that are not yet done and have no unfinished dependencies.
+ *
+ * A task is "unblocked" when:
+ * - It is not `done`
+ * - All of its predecessor tasks in the graph are `done: true`
+ *
+ * Tasks with no dependencies that are not done are always unblocked.
+ *
+ * @returns An array of unblocked tasks in their original input order
+ */
+export function getUnblockedTasks(graph: Graph, tasks: Task[]): Task[] {
+	return tasks.filter((t) => {
+		if (t.done) return false
+		const preds = graph.predecessors(t.id) ?? []
+		return preds.every((predId) => {
+			const predTask = graph.node(predId) as Task | undefined
+			return predTask?.done === true
+		})
+	})
+}
+
+/**
  * Add directed edges from dependencies to the dependent task.
  * Edge direction: dependency → dependent (predecessor → successor).
  */

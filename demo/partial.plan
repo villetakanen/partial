@@ -354,7 +354,7 @@ tasks:
     needs:
       - pbi-028
       - pbi-011
-    done: false
+    done: true
 
   # ── Layer 6 — Build & CI ──────────────────────────────────────
 

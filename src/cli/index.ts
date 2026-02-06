@@ -2,6 +2,7 @@
 import { readFile } from 'node:fs/promises'
 import { parseArgs } from 'node:util'
 import { PlanParseError, parsePlan } from '@main/parser'
+import type { EdgeLabel } from '@shared/dag'
 import { buildDAG, getUnblockedTasks } from '@shared/dag'
 
 /** Version from package.json, injected at build time or read dynamically. */
@@ -13,6 +14,7 @@ Commands:
   validate   Validate a .plan file against the schema
   status     Show project status summary (done, ready, blocked)
   unblocked  List tasks with all dependencies satisfied
+  graph      Show dependency graph as text edges or JSON adjacency
 
 Options:
   --json      Output structured JSON
@@ -51,6 +53,15 @@ List tasks whose dependencies are all satisfied.
 
 Options:
   --json      Output structured JSON (array of task objects)
+  --quiet     Suppress non-error output
+  --help      Print this help`
+
+const GRAPH_USAGE = `Usage: partial graph [file.plan] [options]
+
+Show the dependency graph as text edges or JSON adjacency list.
+
+Options:
+  --json      Output JSON adjacency structure
   --quiet     Suppress non-error output
   --help      Print this help`
 
@@ -232,6 +243,50 @@ async function runUnblocked(
 	process.exitCode = 0
 }
 
+/**
+ * Run the `graph` command.
+ *
+ * Parses a `.plan` file, builds the DAG, and displays the dependency
+ * graph as text edges (e.g. `A → B (fs)`) or JSON adjacency structure.
+ *
+ * @param filePath - Optional path to the .plan file (reads stdin if omitted)
+ * @param json - Whether to output structured JSON
+ * @param quiet - Whether to suppress non-error output
+ */
+async function runGraph(
+	filePath: string | undefined,
+	json: boolean,
+	quiet: boolean,
+): Promise<void> {
+	const plan = await readAndParse(filePath, json)
+	if (!plan) return
+
+	const graph = buildDAG(plan.tasks)
+	const edges = graph.edges()
+
+	if (json) {
+		const adjacency: Record<string, Array<{ target: string; type: string }>> = {}
+		for (const node of graph.nodes()) {
+			adjacency[node] = []
+		}
+		for (const e of edges) {
+			const label = graph.edge(e.v, e.w) as EdgeLabel
+			adjacency[e.v].push({ target: e.w, type: label.type })
+		}
+		process.stdout.write(`${JSON.stringify(adjacency)}\n`)
+	} else if (!quiet) {
+		if (edges.length === 0) {
+			process.stdout.write('No dependencies\n')
+		} else {
+			for (const e of edges) {
+				const label = graph.edge(e.v, e.w) as EdgeLabel
+				process.stdout.write(`${e.v} → ${e.w} (${label.type})\n`)
+			}
+		}
+	}
+	process.exitCode = 0
+}
+
 /** CLI entry point. Parses arguments and dispatches to the appropriate command. */
 async function main(): Promise<void> {
 	const { values, positionals } = parseArgs({
@@ -287,6 +342,13 @@ async function main(): Promise<void> {
 				return
 			}
 			await runUnblocked(filePath, jsonFlag, quietFlag)
+			break
+		case 'graph':
+			if (values.help) {
+				process.stdout.write(`${GRAPH_USAGE}\n`)
+				return
+			}
+			await runGraph(filePath, jsonFlag, quietFlag)
 			break
 		default:
 			process.stderr.write(`Unknown command: ${command}\n\n${USAGE}\n`)

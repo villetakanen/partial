@@ -993,11 +993,11 @@ Implement `partial graph [file]` that outputs the dependency graph as human-read
 Read: `plans/cli/spec.md` — Contract → Scenarios (Graph output)
 
 #### Verification
-- [ ] Prints text representation of dependency edges (e.g., `A → B`)
-- [ ] `--json` outputs graph as JSON adjacency structure
-- [ ] Exit code `0` on success
-- [ ] Piped input supported
-- [ ] Tests pass
+- [x] Prints text representation of dependency edges (e.g., `A → B`)
+- [x] `--json` outputs graph as JSON adjacency structure
+- [x] Exit code `0` on success
+- [x] Piped input supported
+- [x] Tests pass
 
 #### Refinement Protocol
 If DOT format is deferred, note it as a future enhancement.

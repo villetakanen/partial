@@ -18,7 +18,7 @@ tasks:
     title: Create .gitignore
     parent: foundation
     type: chore
-    done: false
+    done: true
 
   - id: pbi-001
     title: Initialize package.json and install dependencies

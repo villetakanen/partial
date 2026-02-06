@@ -84,7 +84,7 @@ partial/
 ### Step 1: Initialize Package
 
 ```bash
-npm init -y
+pnpm init
 ```
 
 Update `package.json`:
@@ -121,32 +121,32 @@ Update `package.json`:
 
 ```bash
 # Core
-npm install electron electron-vite vite
+pnpm addelectron electron-vite vite
 
 # TypeScript
-npm install -D typescript @types/node
+pnpm add -Dtypescript @types/node
 
 # UI Framework
-npm install svelte
-npm install -D @sveltejs/vite-plugin-svelte svelte-check
+pnpm addsvelte
+pnpm add -D@sveltejs/vite-plugin-svelte svelte-check
 
 # Visualization
-npm install d3
-npm install -D @types/d3
+pnpm addd3
+pnpm add -D@types/d3
 
 # Parser & utilities
-npm install yaml                    # YAML parsing
-npm install chokidar                # File watching
-npm install graphlib                # DAG operations
-npm install zod                     # Schema validation
+pnpm addyaml                    # YAML parsing
+pnpm addchokidar                # File watching
+pnpm addgraphlib                # DAG operations
+pnpm addzod                     # Schema validation
 
 # Build & packaging
-npm install -D electron-builder
+pnpm add -Delectron-builder
 
 # Dev tooling
-npm install -D @biomejs/biome
-npm install -D lefthook
-npm install -D vitest @vitest/coverage-v8
+pnpm add -D@biomejs/biome
+pnpm add -Dlefthook
+pnpm add -Dvitest @vitest/coverage-v8
 ```
 
 ---
@@ -308,10 +308,10 @@ pre-commit:
   commands:
     biome-check:
       glob: "*.{js,ts,svelte,json}"
-      run: npx biome check --staged --no-errors-on-unmatched
+      run: pnpm exec biome check --staged --no-errors-on-unmatched
     biome-format:
       glob: "*.{js,ts,svelte,json}"
-      run: npx biome format --staged --no-errors-on-unmatched
+      run: pnpm exec biome format --staged --no-errors-on-unmatched
 
 commit-msg:
   commands:
@@ -333,17 +333,17 @@ pre-push:
   parallel: true
   commands:
     test:
-      run: npm test -- --run
+      run: pnpm test -- --run
     typecheck:
-      run: npx tsc --noEmit
+      run: pnpm exec tsc --noEmit
     svelte-check:
-      run: npx svelte-check --threshold error
+      run: pnpm exec svelte-check --threshold error
 ```
 
 Initialize Lefthook:
 
 ```bash
-npx lefthook install
+pnpm exec lefthook install
 ```
 
 ---
@@ -422,23 +422,26 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Biome check
-        run: npm run check
+        run: pnpm check
 
       - name: TypeScript check
-        run: npx tsc --noEmit
+        run: pnpm exec tsc --noEmit
 
       - name: Run tests
-        run: npm test -- --run --coverage
+        run: pnpm test -- --run --coverage
 
       - name: Upload coverage
         uses: codecov/codecov-action@v4
@@ -454,17 +457,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: npm run build
+        run: pnpm build
 ```
 
 ### Release Workflow
@@ -489,30 +495,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'pnpm'
 
       - name: Install dependencies
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Build & Package (Linux)
         if: matrix.os == 'ubuntu-latest'
-        run: npm run build:linux
+        run: pnpm build:linux
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build & Package (Windows)
         if: matrix.os == 'windows-latest'
-        run: npm run build:win
+        run: pnpm build:win
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build & Package (macOS)
         if: matrix.os == 'macos-latest'
-        run: npm run build:mac
+        run: pnpm build:mac
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -540,7 +549,7 @@ jobs:
 **To release:**
 ```bash
 # Bump version, tag, and push
-npm version patch  # or minor, major
+pnpm version patch  # or minor, major
 git push --follow-tags
 ```
 
@@ -730,7 +739,7 @@ Define personas with explicit triggers, goals, and guidelines. This prunes the m
   - TypeScript strict mode: no `any` types, no non-null assertions without justification
   - All Svelte components use Svelte 5 runes syntax (`$state`, `$derived`, `$effect`)
   - Explicitly import all dependencies; no implicit globals
-  - All changes must pass `npm run check` and `npx tsc --noEmit`
+  - All changes must pass `pnpm check` and `pnpm exec tsc --noEmit`
 
 ### 1.3. Parser / Engine Developer (@Engine)
 **Trigger:** When working on YAML parsing, DAG logic, or the watcher.
@@ -787,7 +796,7 @@ Categorize rules by severity. Absolute prohibitions are aspirational for probabi
 - ALWAYS write tests for new parser logic and DAG operations
 
 ### Tier 2 — ASK (Procedural / Human-in-the-Loop)
-- ASK before adding any new npm dependency
+- ASK before adding any new dependency
 - ASK before modifying the `.plan` schema (version bump required)
 - ASK before changing Electron IPC contracts between main/renderer
 - ASK before modifying CI/CD workflows
@@ -838,23 +847,23 @@ directory_map:
 
 #### Part 6: Command Registry
 
-Force agents to use the correct commands — prevents defaulting to `npm test` when we use `vitest`.
+Force agents to use the correct commands — prevents defaulting to `pnpm test` when we use `vitest`.
 
 ```markdown
 ## 5. Command Registry
 
 | Intent | Command | Notes |
 |--------|---------|-------|
-| **Dev** | `npm run dev` | Electron + Vite HMR |
-| **Build** | `npm run build` | Outputs to `dist/` |
-| **Test** | `npm test -- --run` | Vitest, single run |
-| **Test (watch)** | `npm test` | Vitest, watch mode |
-| **Coverage** | `npm run test:coverage` | Vitest + v8 coverage |
-| **Lint** | `npm run check` | Biome check (lint + format) |
-| **Lint (fix)** | `npm run check:fix` | Biome auto-fix |
-| **Type Check** | `npx tsc --noEmit` | TypeScript compilation check |
-| **Svelte Check** | `npx svelte-check` | Svelte-specific diagnostics |
-| **Git Hooks** | `npx lefthook install` | Initialize git hooks |
+| **Dev** | `pnpm dev` | Electron + Vite HMR |
+| **Build** | `pnpm build` | Outputs to `dist/` |
+| **Test** | `pnpm test -- --run` | Vitest, single run |
+| **Test (watch)** | `pnpm test` | Vitest, watch mode |
+| **Coverage** | `pnpm test:coverage` | Vitest + v8 coverage |
+| **Lint** | `pnpm check` | Biome check (lint + format) |
+| **Lint (fix)** | `pnpm check:fix` | Biome auto-fix |
+| **Type Check** | `pnpm exec tsc --noEmit` | TypeScript compilation check |
+| **Svelte Check** | `pnpm exec svelte-check` | Svelte-specific diagnostics |
+| **Git Hooks** | `pnpm exec lefthook install` | Initialize git hooks |
 ```
 
 #### Part 7: Coding Standards (XML-Tagged for Adherence)
@@ -1020,8 +1029,8 @@ git commit -m "feat(parser): add support for needs_ss dependency type
 When scaffolding this project, follow these steps in order:
 
 1. **Clone/init repository**
-2. **Run `npm install`** to install all dependencies
-3. **Run `npx lefthook install`** to set up git hooks
+2. **Run `pnpm install`** to install all dependencies
+3. **Run `pnpm exec lefthook install`** to set up git hooks
 4. **Create initial directory structure** as shown in Section 2
 5. **Copy configuration files** (biome.json, lefthook.yml, tsconfig.json)
 6. **Create initial type definitions** in `src/shared/types.ts`
@@ -1053,11 +1062,11 @@ After scaffolding, verify:
 
 ```bash
 # All commands should pass
-npm run check           # Biome linting
-npx tsc --noEmit        # TypeScript compilation
-npx svelte-check        # Svelte type checking
-npm test -- --run       # Tests (will be empty initially)
-npm run dev             # Electron dev server starts
+pnpm check           # Biome linting
+pnpm exec tsc --noEmit        # TypeScript compilation
+pnpm exec svelte-check        # Svelte type checking
+pnpm test -- --run       # Tests (will be empty initially)
+pnpm dev             # Electron dev server starts
 
 # Agent context files
 ls -la CLAUDE.md        # Symlink → AGENTS.md
@@ -1069,7 +1078,7 @@ ls plans/               # Should contain feature spec directories
 
 | Issue | Solution |
 |-------|----------|
-| Lefthook not running | Run `npx lefthook install` |
+| Lefthook not running | Run `pnpm exec lefthook install` |
 | Biome errors on save | Check IDE extension is using project's biome.json |
 | Electron blank window | Check main/index.ts loads renderer correctly |
 | Import path errors | Verify tsconfig paths match actual structure |

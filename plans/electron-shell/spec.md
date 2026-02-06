@@ -61,8 +61,8 @@ This is the integration layer — it doesn't implement business logic itself, bu
 - [ ] Application handles lifecycle events (ready, window-all-closed, activate for macOS)
 - [ ] `App.svelte` supports view switching between Gantt, Kanban, and Graph
 - [ ] Renderer receives plan updates via IPC and computes DAG for views
-- [ ] `npm run dev` starts Electron with Vite HMR for the renderer
-- [ ] `npm run build` produces a distributable application
+- [ ] `pnpm dev` starts Electron with Vite HMR for the renderer
+- [ ] `pnpm build` produces a distributable application
 - [ ] electron-builder config produces platform-specific packages (dmg, exe, AppImage)
 
 ### Regression Guardrails

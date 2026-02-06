@@ -65,7 +65,7 @@ Create `package.json` with project metadata, scripts, and install all production
 
 **Scope:**
 - `package.json`
-- `package-lock.json` (generated)
+- `pnpm-lock.yaml` (generated)
 - Do NOT create any `src/` files
 
 #### Dependencies
@@ -78,9 +78,9 @@ Read: `docs/scaffolding.md` — Section 3 (Project Initialization)
 #### Verification
 - [ ] `package.json` contains all scripts: dev, build, preview, check, check:fix, test, test:coverage, prepare
 - [ ] `package.json` has `"type": "module"` and `"engines": { "node": ">=20.0.0" }`
-- [ ] `npm install` completes without errors
+- [ ] `pnpm install` completes without errors
 - [ ] All dependencies from scaffolding Section 3 Step 2 are present (electron, svelte, d3, yaml, chokidar, graphlib, zod, biome, lefthook, vitest, etc.)
-- [ ] `npm run check` does not crash (biome is callable)
+- [ ] `pnpm check` does not crash (biome is callable)
 
 #### Refinement Protocol
 If a dependency version conflict arises, resolve it and document the resolution in the commit message body.
@@ -104,7 +104,7 @@ Create `tsconfig.json` with strict mode, ES2022 target, bundler module resolutio
 Read: `docs/scaffolding.md` — Section 4 (TypeScript Configuration)
 
 #### Verification
-- [ ] `npx tsc --version` runs successfully
+- [ ] `pnpm exec tsc --version` runs successfully
 - [ ] `tsconfig.json` has `"strict": true`
 - [ ] `tsconfig.json` has path aliases: `@shared/*`, `@main/*`, `@renderer/*`
 - [ ] `tsconfig.json` targets `ES2022` with `ESNext` module
@@ -130,7 +130,7 @@ Create `biome.json` with project formatting and linting rules: tab indentation, 
 Read: `docs/scaffolding.md` — Section 5 (Biome Configuration)
 
 #### Verification
-- [ ] `npx biome check .` runs without crashing
+- [ ] `pnpm exec biome check .` runs without crashing
 - [ ] `biome.json` uses tab indentation, single quotes, no semicolons
 - [ ] `biome.json` ignores `dist/`, `node_modules/`, `*.plan`
 - [ ] Linter rules include `noExplicitAny: warn`, `useConst: error`, `noNonNullAssertion: warn`
@@ -143,7 +143,7 @@ If Biome version requires schema updates, use the latest stable schema URL.
 ### PBI-004: Add Lefthook git hooks and Conventional Commits enforcement
 
 #### Directive
-Create `lefthook.yml` with pre-commit (biome check + format), commit-msg (Conventional Commits regex), and pre-push (test + typecheck + svelte-check) hooks. Run `npx lefthook install`.
+Create `lefthook.yml` with pre-commit (biome check + format), commit-msg (Conventional Commits regex), and pre-push (test + typecheck + svelte-check) hooks. Run `pnpm exec lefthook install`.
 
 **Scope:**
 - `lefthook.yml`
@@ -157,7 +157,7 @@ Create `lefthook.yml` with pre-commit (biome check + format), commit-msg (Conven
 Read: `docs/scaffolding.md` — Section 7 (Lefthook Configuration) and Section 8 (Conventional Commits)
 
 #### Verification
-- [ ] `npx lefthook install` completes successfully
+- [ ] `pnpm exec lefthook install` completes successfully
 - [ ] A commit with message `bad message` is rejected by commit-msg hook
 - [ ] A commit with message `feat(parser): add something` is accepted
 - [ ] Pre-commit hook runs biome check on staged files
@@ -244,7 +244,7 @@ Read: `docs/scaffolding.md` — Section 10 (Initial Files, types.ts)
 - [ ] `Task` interface has `id`, `title`, `done?`, `needs?`, `parent?`, and `[key: string]: unknown`
 - [ ] `TaskExtended` extends `Task` with `type?`, `state?`, `needs_fs?`, `needs_ss?`, `needs_ff?`, `needs_sf?`
 - [ ] `DependencyType` is `'fs' | 'ss' | 'ff' | 'sf'`
-- [ ] `npx tsc --noEmit` passes
+- [ ] `pnpm exec tsc --noEmit` passes
 - [ ] All exported types have JSDoc comments
 
 #### Refinement Protocol
@@ -275,8 +275,8 @@ Read: `plans/plan-parser/spec.md` — Contract → Scenarios (Invalid YAML, Defa
 - [ ] `validatePlan(data)` returns `{ success: true, data: PlanFile }` or `{ success: false, errors: ZodError }`
 - [ ] Validation rejects a plan missing `project` field with an actionable error message
 - [ ] Validation accepts a plan with extra unknown fields (round-trip safe)
-- [ ] Tests pass: `npm test -- --run tests/shared/schemas.test.ts`
-- [ ] `npx tsc --noEmit` passes
+- [ ] Tests pass: `pnpm test -- --run tests/shared/schemas.test.ts`
+- [ ] `pnpm exec tsc --noEmit` passes
 
 #### Refinement Protocol
 If Zod's `.passthrough()` doesn't preserve nested unknown fields, document the limitation and propose a workaround.
@@ -308,7 +308,7 @@ Read: `docs/scaffolding.md` — Section 10 (parser.ts)
 - [ ] Invalid YAML throws a typed error with line/column when available
 - [ ] Empty string input returns a valid empty `PlanFile`
 - [ ] Unknown fields at root and task level are preserved in the output
-- [ ] Tests pass: `npm test -- --run tests/main/parser.test.ts`
+- [ ] Tests pass: `pnpm test -- --run tests/main/parser.test.ts`
 - [ ] Test coverage for `parsePlan` >= 90%
 
 #### Refinement Protocol
@@ -337,7 +337,7 @@ Read: `plans/plan-parser/spec.md` — Blueprint → Architecture → `stringifyP
 - [ ] Indentation is 2 spaces, no line wrapping
 - [ ] Input `PlanFile` object is not mutated
 - [ ] Field order is stable across calls with identical input
-- [ ] Tests pass: `npm test -- --run tests/main/parser.test.ts`
+- [ ] Tests pass: `pnpm test -- --run tests/main/parser.test.ts`
 
 #### Refinement Protocol
 If `yaml` stringify options change, update the call and document in commit body.
@@ -367,7 +367,7 @@ Read: `plans/plan-parser/spec.md` — Contract → Scenarios (Basic round-trip, 
 - [ ] Round-trip preserves nested unknown fields
 - [ ] Round-trip handles all four dependency types (`needs_fs`, `needs_ss`, `needs_ff`, `needs_sf`)
 - [ ] At least 3 fixture `.plan` files covering different complexities
-- [ ] All tests pass: `npm test -- --run tests/main/parser.roundtrip.test.ts`
+- [ ] All tests pass: `pnpm test -- --run tests/main/parser.roundtrip.test.ts`
 
 #### Refinement Protocol
 If round-trip reveals YAML library quirks (comment stripping, key reordering), document as known limitations in spec.
@@ -398,7 +398,7 @@ Read: `plans/dag-engine/spec.md` — Full spec
 - [ ] All four dependency types (`needs_fs`, `needs_ss`, `needs_ff`, `needs_sf`) produce typed edges
 - [ ] Missing dependency reference throws an error identifying the broken reference
 - [ ] Disconnected subgraphs are correctly represented
-- [ ] Tests pass: `npm test -- --run tests/shared/dag.test.ts`
+- [ ] Tests pass: `pnpm test -- --run tests/shared/dag.test.ts`
 - [ ] All exported functions have JSDoc comments
 
 #### Refinement Protocol
@@ -624,7 +624,7 @@ Implement `src/main/index.ts` as the Electron main process entry. Create a `Brow
 Read: `plans/electron-shell/spec.md` — Blueprint → Architecture (Main Process Responsibilities)
 
 #### Verification
-- [ ] `npm run dev` starts Electron and shows a window
+- [ ] `pnpm dev` starts Electron and shows a window
 - [ ] `BrowserWindow` has `contextIsolation: true`, `nodeIntegration: false`
 - [ ] macOS: app stays running when all windows close; dock click recreates window
 - [ ] Windows/Linux: app quits when all windows close
@@ -657,7 +657,7 @@ Read: `plans/electron-shell/spec.md` — Blueprint → Architecture (IPC Channel
 - [ ] All 5 IPC channels are registered as constants in `src/shared/ipc.ts`
 - [ ] Payload types for each channel are defined and exported
 - [ ] Main process `ipcMain.handle` is used (async), not `ipcMain.on` for request/response
-- [ ] `npx tsc --noEmit` passes
+- [ ] `pnpm exec tsc --noEmit` passes
 - [ ] Renderer cannot access `require`, `fs`, or `process` (contextIsolation enforced)
 
 #### Refinement Protocol
@@ -714,11 +714,11 @@ Create the Svelte 5 application bootstrap: `src/renderer/main.ts` mounts `App.sv
 Read: `plans/electron-shell/spec.md` — Blueprint → Architecture (Renderer Architecture)
 
 #### Verification
-- [ ] `npm run dev` shows the Svelte app in the Electron window
+- [ ] `pnpm dev` shows the Svelte app in the Electron window
 - [ ] `App.svelte` renders a placeholder UI
 - [ ] Svelte 5 runes syntax works (`$state`, `$derived`)
 - [ ] HMR updates the renderer without full reload
-- [ ] `npx svelte-check` passes
+- [ ] `pnpm exec svelte-check` passes
 - [ ] No `export let` or `$:` syntax (Svelte 4 patterns)
 
 #### Refinement Protocol
@@ -751,7 +751,7 @@ Read: `plans/electron-shell/spec.md` — Contract → Scenarios (View switching)
 - [ ] Plan data received from IPC is stored in `$state`
 - [ ] DAG computed via `$derived` from plan data
 - [ ] Switching views does not lose plan state
-- [ ] `npx svelte-check` passes
+- [ ] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 None.
@@ -780,7 +780,7 @@ Read: `plans/gantt-view/spec.md` — Blueprint (TaskCard usage)
 - [ ] Visual distinction between done, blocked, ready, and in-progress states
 - [ ] Uses scoped Svelte styles (no CSS frameworks)
 - [ ] Uses Svelte 5 runes syntax exclusively
-- [ ] `npx svelte-check` passes
+- [ ] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 None.
@@ -814,7 +814,7 @@ Read: `plans/kanban-view/spec.md` — Full spec
 - [ ] Updates reactively when plan prop changes
 - [ ] Empty plan renders without errors
 - [ ] Uses Svelte 5 runes, scoped styles, no CSS frameworks
-- [ ] `npx svelte-check` passes
+- [ ] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If column definitions need to be configurable, flag for spec update.
@@ -846,7 +846,7 @@ Read: `plans/gantt-view/spec.md` — Full spec
 - [ ] Empty plan renders empty state (no errors)
 - [ ] Uses D3 for layout calculation, Svelte for DOM
 - [ ] Uses Svelte 5 runes, scoped styles
-- [ ] `npx svelte-check` passes
+- [ ] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If D3 integration pattern with Svelte 5 requires specific approach, document the chosen pattern.
@@ -879,7 +879,7 @@ Read: `plans/graph-view/spec.md` — Full spec
 - [ ] Simulation restarts only on topology changes, not metadata changes
 - [ ] No CPU consumption after convergence
 - [ ] Uses Svelte 5 runes, scoped styles
-- [ ] `npx svelte-check` passes
+- [ ] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If force simulation parameters need tuning, document chosen values.
@@ -1024,7 +1024,7 @@ Read: `docs/scaffolding.md` — Section 6 (Electron Builder Configuration)
 
 #### Verification
 - [ ] `electron-builder.json` matches scaffolding spec
-- [ ] `npm run build` completes without errors (produces `dist/`)
+- [ ] `pnpm build` completes without errors (produces `dist/`)
 - [ ] Build scripts added: `build:mac`, `build:win`, `build:linux`, `release`
 - [ ] `appId` is `com.partial.app`, `productName` is `Partial`
 
@@ -1052,7 +1052,7 @@ Read: `docs/scaffolding.md` — Section 9 (CI Workflow)
 - [ ] Workflow triggers on push to `main` and pull requests to `main`
 - [ ] Jobs: `check` (lint, typecheck, test) and `build` (matrix: ubuntu, windows, macos)
 - [ ] `build` job depends on `check` passing
-- [ ] Node.js 20 with npm cache
+- [ ] Node.js 20 with pnpm cache
 - [ ] Coverage uploaded to Codecov
 
 #### Refinement Protocol
@@ -1135,16 +1135,16 @@ Create a comprehensive `.gitignore` for the project covering build artifacts, de
 Read: `docs/scaffolding.md` — Section 2 (Repository Structure, implied by `dist/`, `node_modules/` references)
 
 #### Verification
-- [ ] Ignores `node_modules/`
-- [ ] Ignores `dist/`
-- [ ] Ignores `release/` (electron-builder output)
-- [ ] Ignores `coverage/` (vitest coverage output)
-- [ ] Ignores OS files (`.DS_Store`, `Thumbs.db`)
-- [ ] Ignores editor files (`.vscode/`, `.idea/`, `*.swp`)
-- [ ] Ignores `CLAUDE.local.md` (personal agent overrides)
-- [ ] Ignores `.env` and `.env.*`
-- [ ] Does NOT ignore `*.plan` files (they are source data)
-- [ ] `git status` does not show ignored file types after creation
+- [x] Ignores `node_modules/`
+- [x] Ignores `dist/`
+- [x] Ignores `release/` (electron-builder output)
+- [x] Ignores `coverage/` (vitest coverage output)
+- [x] Ignores OS files (`.DS_Store`, `Thumbs.db`)
+- [x] Ignores editor files (`.vscode/`, `.idea/`, `*.swp`)
+- [x] Ignores `CLAUDE.local.md` (personal agent overrides)
+- [x] Ignores `.env` and `.env.*`
+- [x] Does NOT ignore `*.plan` files (they are source data)
+- [x] `git status` does not show ignored file types after creation
 
 #### Refinement Protocol
 None.
@@ -1154,7 +1154,7 @@ None.
 ### PBI-038: Create README.md
 
 #### Directive
-Create a `README.md` with project name, one-line description, tech stack summary, quick start instructions (`npm install`, `npm run dev`, `npm test`), and links to `docs/scaffolding.md` and `AGENTS.md` for further reading.
+Create a `README.md` with project name, one-line description, tech stack summary, quick start instructions (`pnpm install`, `pnpm dev`, `pnpm test`), and links to `docs/scaffolding.md` and `AGENTS.md` for further reading.
 
 **Scope:**
 - `README.md`
@@ -1170,8 +1170,8 @@ Read: `docs/scaffolding.md` — Section 1 (Overview) and Section 2 (Repository S
 - [ ] `README.md` exists in repo root
 - [ ] Contains project name "Partial" and one-line description
 - [ ] Lists the tech stack (Node.js, TypeScript, Electron, Svelte, D3)
-- [ ] Contains quick start: clone, `npm install`, `npm run dev`
-- [ ] Contains test command: `npm test`
+- [ ] Contains quick start: clone, `pnpm install`, `pnpm dev`
+- [ ] Contains test command: `pnpm test`
 - [ ] Links to `docs/scaffolding.md` for full setup
 - [ ] Links to `AGENTS.md` for agent contributors
 - [ ] Contains MIT license badge or reference
@@ -1201,7 +1201,7 @@ Read: `docs/scaffolding.md` — Section 3 (`"dev": "electron-vite dev"`, `"build
 - [ ] Defines `main`, `preload`, and `renderer` build entries
 - [ ] Renderer config includes `@sveltejs/vite-plugin-svelte`
 - [ ] Path aliases (`@shared/*`, `@main/*`, `@renderer/*`) resolve correctly
-- [ ] `npx electron-vite build` does not error on config parsing (may fail on missing source files — that's expected)
+- [ ] `pnpm exec electron-vite build` does not error on config parsing (may fail on missing source files — that's expected)
 
 #### Refinement Protocol
 If electron-vite's config API differs from expectation, adapt to current API and document.
@@ -1211,7 +1211,7 @@ If electron-vite's config API differs from expectation, adapt to current API and
 ### PBI-040: Create Vitest configuration
 
 #### Directive
-Create Vitest configuration for the project. Configure path alias resolution matching `tsconfig.json`. Set up coverage provider (`@vitest/coverage-v8`). Ensure `npm test` and `npm run test:coverage` work.
+Create Vitest configuration for the project. Configure path alias resolution matching `tsconfig.json`. Set up coverage provider (`@vitest/coverage-v8`). Ensure `pnpm test` and `pnpm test:coverage` work.
 
 **Scope:**
 - `vitest.config.ts` (or vitest section in `vite.config.ts`)
@@ -1224,8 +1224,8 @@ Create Vitest configuration for the project. Configure path alias resolution mat
 Read: `docs/scaffolding.md` — Section 3 (`"test": "vitest"`, `"test:coverage": "vitest --coverage"`)
 
 #### Verification
-- [ ] `npm test -- --run` executes without config errors (may report "no tests found" — that's expected)
-- [ ] `npm run test:coverage` executes with v8 coverage provider
+- [ ] `pnpm test -- --run` executes without config errors (may report "no tests found" — that's expected)
+- [ ] `pnpm test:coverage` executes with v8 coverage provider
 - [ ] Path aliases (`@shared/*`, `@main/*`) resolve in test files
 - [ ] Coverage output goes to `coverage/` directory
 - [ ] Config excludes `node_modules/`, `dist/`, and `e2e/` from test collection
@@ -1293,7 +1293,7 @@ Read: `plans/file-watcher/spec.md` — Contract (watcher tests need temp directo
 - [ ] `createPlan(overrides?: Partial<PlanFile>): PlanFile` builds a typed `PlanFile` with sensible defaults
 - [ ] `createTask(overrides?: Partial<Task>): Task` builds a typed `Task` with sensible defaults
 - [ ] Helpers are importable from test files via `tests/helpers`
-- [ ] `npm test -- --run` still passes (no test config regressions)
+- [ ] `pnpm test -- --run` still passes (no test config regressions)
 
 #### Refinement Protocol
 Add helpers as needed when downstream PBIs reveal common test patterns.

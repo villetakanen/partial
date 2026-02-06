@@ -452,7 +452,7 @@ tasks:
     title: Improve self-write detection with content hashing
     parent: watcher
     type: fix
-    done: false
+    done: true
 
   # ── v0.2.0 — Graph Tuning ──────────────────────────────────────
 

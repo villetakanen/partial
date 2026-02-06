@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import { readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import type { OpenFilePayload, PlanSavePayload } from '@shared/ipc'
@@ -12,11 +13,18 @@ import { watchDirectory } from './watcher'
 let activeWatcher: PlanWatcher | null = null
 
 /**
- * Paths written by the app itself via `plan:save`.
- * Used to suppress the watcher's own change event after a self-write,
- * preventing double-parsing.
+ * SHA-256 hashes of content written by the app via `plan:save`.
+ * When the watcher fires, the current file content is hashed and compared
+ * against the stored hash. If they match, the event is a self-write echo
+ * and is suppressed. If they differ, an external edit occurred between
+ * our write and the watcher event, so the change is forwarded.
  */
-const selfWritePaths = new Set<string>()
+const selfWriteHashes = new Map<string, string>()
+
+/** Compute a SHA-256 hex digest of the given content. */
+function hashContent(content: string): string {
+  return createHash('sha256').update(content).digest('hex')
+}
 
 /**
  * Create the main application window with secure web preferences.
@@ -72,23 +80,35 @@ async function openPlanFile(filePath: string): Promise<void> {
 
   const watcher = watchDirectory(dirname(filePath))
 
-  watcher.on('change', (changedPath, changedPlan) => {
-    if (selfWritePaths.has(changedPath)) {
-      selfWritePaths.delete(changedPath)
-      return
+  watcher.on('change', async (changedPath, changedPlan) => {
+    const expectedHash = selfWriteHashes.get(changedPath)
+    if (expectedHash) {
+      selfWriteHashes.delete(changedPath)
+      try {
+        const currentContent = await readFile(changedPath, 'utf-8')
+        if (hashContent(currentContent) === expectedHash) return
+      } catch {
+        // File disappeared between watcher event and read — forward the event
+      }
     }
     sendToAllWindows(IPC_CHANNELS.PLAN_UPDATED, { filePath: changedPath, plan: changedPlan })
   })
 
   watcher.on('delete', (deletedPath) => {
-    selfWritePaths.delete(deletedPath)
+    selfWriteHashes.delete(deletedPath)
     sendToAllWindows(IPC_CHANNELS.PLAN_DELETED, { filePath: deletedPath })
   })
 
-  watcher.on('error', (errorPath, error) => {
-    if (selfWritePaths.has(errorPath)) {
-      selfWritePaths.delete(errorPath)
-      return
+  watcher.on('error', async (errorPath, error) => {
+    const expectedHash = selfWriteHashes.get(errorPath)
+    if (expectedHash) {
+      selfWriteHashes.delete(errorPath)
+      try {
+        const currentContent = await readFile(errorPath, 'utf-8')
+        if (hashContent(currentContent) === expectedHash) return
+      } catch {
+        // File disappeared — forward the error
+      }
     }
     sendToAllWindows(IPC_CHANNELS.PLAN_ERROR, {
       filePath: errorPath,
@@ -185,7 +205,7 @@ function registerIpcHandlers(): void {
 
   ipcMain.handle(IPC_CHANNELS.SAVE, async (_event, payload: PlanSavePayload) => {
     const content = stringifyPlan(payload.plan)
-    selfWritePaths.add(payload.filePath)
+    selfWriteHashes.set(payload.filePath, hashContent(content))
     await writeFile(payload.filePath, content, 'utf-8')
   })
 }

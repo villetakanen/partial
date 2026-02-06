@@ -304,12 +304,12 @@ Read: `docs/0.1.0-findings.md` — Finding 7 (Self-write Set simplistic)
 Read: `plans/file-watcher/spec.md` — Anti-Patterns (Re-parsing on own writes)
 
 #### Verification
-- [ ] Self-writes are still suppressed (no duplicate re-parse)
-- [ ] External writes to the same file between save and watcher event are NOT suppressed
-- [ ] Hash is computed using Node.js `crypto.createHash('sha256')`
-- [ ] Hash entry is cleared after the watcher event fires (no memory leak)
-- [ ] Tests cover: self-write suppressed, external-write-during-gap detected
-- [ ] `pnpm exec tsc --noEmit` passes
+- [x] Self-writes are still suppressed (no duplicate re-parse)
+- [x] External writes to the same file between save and watcher event are NOT suppressed
+- [x] Hash is computed using Node.js `crypto.createHash('sha256')`
+- [x] Hash entry is cleared after the watcher event fires (no memory leak)
+- [x] Tests cover: self-write suppressed, external-write-during-gap detected
+- [x] `pnpm exec tsc --noEmit` passes
 
 #### Refinement Protocol
 If performance of hashing large `.plan` files becomes a concern, consider mtime+size as a cheaper alternative.

@@ -49,7 +49,7 @@ tasks:
     needs:
       - pbi-001
       - pbi-003
-    done: false
+    done: true
 
   - id: pbi-005
     title: Create initial directory structure

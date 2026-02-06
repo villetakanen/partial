@@ -157,10 +157,10 @@ Create `lefthook.yml` with pre-commit (biome check + format), commit-msg (Conven
 Read: `docs/scaffolding.md` — Section 7 (Lefthook Configuration) and Section 8 (Conventional Commits)
 
 #### Verification
-- [ ] `pnpm exec lefthook install` completes successfully
-- [ ] A commit with message `bad message` is rejected by commit-msg hook
-- [ ] A commit with message `feat(parser): add something` is accepted
-- [ ] Pre-commit hook runs biome check on staged files
+- [x] `pnpm exec lefthook install` completes successfully
+- [x] A commit with message `bad message` is rejected by commit-msg hook
+- [x] A commit with message `feat(parser): add something` is accepted
+- [x] Pre-commit hook runs biome check on staged files
 
 #### Refinement Protocol
 If lefthook version changes hook API, update `lefthook.yml` syntax accordingly.

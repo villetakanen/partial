@@ -1023,10 +1023,10 @@ Create `electron-builder.json` with platform-specific build targets (dmg/zip for
 Read: `docs/scaffolding.md` — Section 6 (Electron Builder Configuration)
 
 #### Verification
-- [ ] `electron-builder.json` matches scaffolding spec
-- [ ] `pnpm build` completes without errors (produces `dist/`)
-- [ ] Build scripts added: `build:mac`, `build:win`, `build:linux`, `release`
-- [ ] `appId` is `com.partial.app`, `productName` is `Partial`
+- [x] `electron-builder.json` matches scaffolding spec
+- [x] `pnpm build` completes without errors (produces `out/`)
+- [x] Build scripts added: `build:mac`, `build:win`, `build:linux`, `release`
+- [x] `appId` is `com.partial.app`, `productName` is `Partial`
 
 #### Refinement Protocol
 If electron-builder version requires schema changes, update accordingly.

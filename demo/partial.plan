@@ -364,7 +364,7 @@ tasks:
     type: chore
     needs:
       - pbi-019
-    done: false
+    done: true
 
   - id: pbi-033
     title: Add GitHub Actions CI workflow

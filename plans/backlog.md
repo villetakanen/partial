@@ -566,11 +566,11 @@ Add configurable debouncing (default 100ms) to the file watcher to coalesce rapi
 Read: `plans/file-watcher/spec.md` — Contract → Scenarios (Rapid saves debounced)
 
 #### Verification
-- [ ] 5 rapid writes within 50ms produce exactly 1 `change` event
-- [ ] Debounce interval is configurable via `watchDirectory` options
-- [ ] Default debounce is 100ms
-- [ ] Event contains the final file state, not an intermediate one
-- [ ] Tests pass
+- [x] 5 rapid writes within 50ms produce exactly 1 `change` event
+- [x] Debounce interval is configurable via `watchDirectory` options
+- [x] Default debounce is 100ms
+- [x] Event contains the final file state, not an intermediate one
+- [x] Tests pass
 
 #### Refinement Protocol
 None.

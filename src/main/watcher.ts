@@ -9,6 +9,12 @@ type ChangeHandler = (filePath: string, plan: PlanFile) => void
 /** Handler for delete events (file removed from disk). */
 type DeleteHandler = (filePath: string) => void
 
+/** Options for {@link watchDirectory}. */
+export interface WatchOptions {
+	/** Debounce interval in milliseconds. Defaults to 100. */
+	debounce?: number
+}
+
 /**
  * Watcher instance returned by {@link watchDirectory}.
  *
@@ -19,7 +25,7 @@ export interface PlanWatcher {
 	/** Register a handler for file change (create/modify) or delete events. */
 	on(event: 'change', handler: ChangeHandler): void
 	on(event: 'delete', handler: DeleteHandler): void
-	/** Stop watching and clean up all resources. */
+	/** Stop watching and clean up all resources including pending debounce timers. */
 	close(): Promise<void>
 	/** Resolves when the watcher has finished initial scan and is ready. */
 	ready: Promise<void>
@@ -34,14 +40,20 @@ export interface PlanWatcher {
  * the parsed {@link PlanFile}. When a `.plan` file is deleted, a
  * `delete` event is emitted with the file path.
  *
+ * Rapid successive events for the same file are debounced — only the
+ * final state is emitted after the debounce interval elapses.
+ *
  * Hidden files (starting with `.`) and non-`.plan` files are ignored.
  *
  * @param dirPath - Absolute path to the directory to watch
+ * @param options - Optional configuration (debounce interval, etc.)
  * @returns A {@link PlanWatcher} instance for subscribing to events
  */
-export function watchDirectory(dirPath: string): PlanWatcher {
+export function watchDirectory(dirPath: string, options?: WatchOptions): PlanWatcher {
+	const debounceMs = options?.debounce ?? 100
 	const changeHandlers: ChangeHandler[] = []
 	const deleteHandlers: DeleteHandler[] = []
+	const pendingTimers = new Map<string, ReturnType<typeof setTimeout>>()
 
 	const watcher = watch(dirPath, {
 		ignoreInitial: true,
@@ -59,7 +71,7 @@ export function watchDirectory(dirPath: string): PlanWatcher {
 		watcher.on('ready', () => resolve())
 	})
 
-	const handleFileChange = async (filePath: string) => {
+	const emitChange = async (filePath: string) => {
 		const content = await readFile(filePath, 'utf-8')
 		const plan = parsePlan(content)
 		for (const handler of changeHandlers) {
@@ -67,15 +79,33 @@ export function watchDirectory(dirPath: string): PlanWatcher {
 		}
 	}
 
+	const scheduleChange = (filePath: string) => {
+		const existing = pendingTimers.get(filePath)
+		if (existing) clearTimeout(existing)
+		pendingTimers.set(
+			filePath,
+			setTimeout(() => {
+				pendingTimers.delete(filePath)
+				emitChange(filePath)
+			}, debounceMs),
+		)
+	}
+
 	watcher.on('add', (path) => {
-		handleFileChange(path)
+		scheduleChange(path)
 	})
 
 	watcher.on('change', (path) => {
-		handleFileChange(path)
+		scheduleChange(path)
 	})
 
 	watcher.on('unlink', (path) => {
+		// Cancel any pending change for a deleted file
+		const existing = pendingTimers.get(path)
+		if (existing) {
+			clearTimeout(existing)
+			pendingTimers.delete(path)
+		}
 		for (const handler of deleteHandlers) {
 			handler(path)
 		}
@@ -90,6 +120,10 @@ export function watchDirectory(dirPath: string): PlanWatcher {
 			}
 		},
 		async close() {
+			for (const timer of pendingTimers.values()) {
+				clearTimeout(timer)
+			}
+			pendingTimers.clear()
 			await watcher.close()
 		},
 		ready: readyPromise,

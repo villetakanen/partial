@@ -38,6 +38,20 @@ function waitForDelete(watcher: PlanWatcher, timeout = 5000): Promise<string> {
 	})
 }
 
+/** Collect all change events over a duration. */
+function collectChanges(
+	watcher: PlanWatcher,
+	duration: number,
+): Promise<Array<{ filePath: string; plan: PlanFile }>> {
+	return new Promise((resolve) => {
+		const events: Array<{ filePath: string; plan: PlanFile }> = []
+		watcher.on('change', (filePath, plan) => {
+			events.push({ filePath, plan })
+		})
+		setTimeout(() => resolve(events), duration)
+	})
+}
+
 describe('watchDirectory', () => {
 	let tmpDir: string
 	let watcher: PlanWatcher
@@ -140,5 +154,82 @@ describe('watchDirectory', () => {
 
 		await new Promise((r) => setTimeout(r, 500))
 		expect(eventFired).toBe(false)
+	})
+})
+
+describe('watchDirectory debouncing', () => {
+	let tmpDir: string
+	let watcher: PlanWatcher
+
+	beforeEach(async () => {
+		tmpDir = await mkdtemp(join(tmpdir(), 'partial-debounce-'))
+	})
+
+	afterEach(async () => {
+		if (watcher) {
+			await watcher.close()
+		}
+		await rm(tmpDir, { recursive: true, force: true })
+	})
+
+	it('debounces 5 rapid writes into 1 event', async () => {
+		watcher = watchDirectory(tmpDir, { debounce: 100 })
+		await watcher.ready
+
+		const filePath = join(tmpDir, 'rapid.plan')
+		// Collect events over 1 second (enough for debounce to settle)
+		const eventsPromise = collectChanges(watcher, 1000)
+
+		// Write 5 times rapidly (within 50ms)
+		for (let i = 1; i <= 5; i++) {
+			await writeFile(filePath, VALID_PLAN.replace('Test', `Version${i}`))
+		}
+
+		const events = await eventsPromise
+		expect(events).toHaveLength(1)
+		expect(events[0].plan.project).toBe('Version5')
+	})
+
+	it('debounce interval is configurable', async () => {
+		// Use a very short debounce to verify configurability
+		watcher = watchDirectory(tmpDir, { debounce: 10 })
+		await watcher.ready
+
+		const promise = waitForChange(watcher)
+		await writeFile(join(tmpDir, 'quick.plan'), VALID_PLAN)
+
+		const result = await promise
+		expect(result.plan.project).toBe('Test')
+	})
+
+	it('default debounce is 100ms', async () => {
+		watcher = watchDirectory(tmpDir)
+		await watcher.ready
+
+		const filePath = join(tmpDir, 'default.plan')
+		const eventsPromise = collectChanges(watcher, 1000)
+
+		// Write twice rapidly — should be debounced into 1 event
+		await writeFile(filePath, VALID_PLAN.replace('Test', 'First'))
+		await writeFile(filePath, VALID_PLAN.replace('Test', 'Second'))
+
+		const events = await eventsPromise
+		expect(events).toHaveLength(1)
+		expect(events[0].plan.project).toBe('Second')
+	})
+
+	it('emits the final file state after debounce', async () => {
+		watcher = watchDirectory(tmpDir, { debounce: 50 })
+		await watcher.ready
+
+		const filePath = join(tmpDir, 'final.plan')
+		const promise = waitForChange(watcher)
+
+		await writeFile(filePath, VALID_PLAN.replace('Test', 'Initial'))
+		await writeFile(filePath, VALID_PLAN.replace('Test', 'Middle'))
+		await writeFile(filePath, VALID_PLAN.replace('Test', 'Final'))
+
+		const result = await promise
+		expect(result.plan.project).toBe('Final')
 	})
 }, 30000)

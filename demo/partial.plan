@@ -222,7 +222,7 @@ tasks:
     type: feat
     needs:
       - pbi-016
-    done: false
+    done: true
 
   - id: pbi-018
     title: Add error handling to file watcher

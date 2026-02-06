@@ -1,9 +1,9 @@
-import { writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
-import type { OpenDirectoryPayload, PlanSavePayload } from '@shared/ipc'
+import { readFile, writeFile } from 'node:fs/promises'
+import { dirname, join } from 'node:path'
+import type { OpenFilePayload, PlanSavePayload } from '@shared/ipc'
 import { IPC_CHANNELS } from '@shared/ipc'
 import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
-import { stringifyPlan } from './parser'
+import { parsePlan, stringifyPlan } from './parser'
 import type { PlanWatcher } from './watcher'
 import { watchDirectory } from './watcher'
 
@@ -51,36 +51,43 @@ function sendToAllWindows(channel: string, payload: unknown): void {
 }
 
 /**
- * Start watching a directory and wire watcher events to IPC channels.
+ * Open a .plan file: read, parse, send to renderer, and watch for changes.
+ * Closes any previously active watcher before starting a new one.
  */
-async function startWatching(dirPath: string): Promise<void> {
+async function openPlanFile(filePath: string): Promise<void> {
+  // Read and parse the file immediately
+  const content = await readFile(filePath, 'utf-8')
+  const plan = parsePlan(content)
+  sendToAllWindows(IPC_CHANNELS.PLAN_UPDATED, { filePath, plan })
+
+  // Watch the file's parent directory for changes to *.plan files
   if (activeWatcher) {
     await activeWatcher.close()
     activeWatcher = null
   }
 
-  const watcher = watchDirectory(dirPath)
+  const watcher = watchDirectory(dirname(filePath))
 
-  watcher.on('change', (filePath, plan) => {
-    if (selfWritePaths.has(filePath)) {
-      selfWritePaths.delete(filePath)
+  watcher.on('change', (changedPath, changedPlan) => {
+    if (selfWritePaths.has(changedPath)) {
+      selfWritePaths.delete(changedPath)
       return
     }
-    sendToAllWindows(IPC_CHANNELS.PLAN_UPDATED, { filePath, plan })
+    sendToAllWindows(IPC_CHANNELS.PLAN_UPDATED, { filePath: changedPath, plan: changedPlan })
   })
 
-  watcher.on('delete', (filePath) => {
-    selfWritePaths.delete(filePath)
-    sendToAllWindows(IPC_CHANNELS.PLAN_DELETED, { filePath })
+  watcher.on('delete', (deletedPath) => {
+    selfWritePaths.delete(deletedPath)
+    sendToAllWindows(IPC_CHANNELS.PLAN_DELETED, { filePath: deletedPath })
   })
 
-  watcher.on('error', (filePath, error) => {
-    if (selfWritePaths.has(filePath)) {
-      selfWritePaths.delete(filePath)
+  watcher.on('error', (errorPath, error) => {
+    if (selfWritePaths.has(errorPath)) {
+      selfWritePaths.delete(errorPath)
       return
     }
     sendToAllWindows(IPC_CHANNELS.PLAN_ERROR, {
-      filePath,
+      filePath: errorPath,
       error: error.message,
     })
   })
@@ -90,25 +97,25 @@ async function startWatching(dirPath: string): Promise<void> {
 }
 
 /**
- * Show a native directory picker and start watching the selected directory.
+ * Show a native file picker for .plan files and open the selected file.
  * Does nothing if the user cancels.
  */
-async function openDirectoryDialog(): Promise<void> {
+async function openFileDialog(): Promise<void> {
   const result = await dialog.showOpenDialog({
-    properties: ['openDirectory'],
-    title: 'Open Project Directory',
+    properties: ['openFile'],
+    title: 'Open Plan File',
+    filters: [{ name: 'Plan Files', extensions: ['plan'] }],
   })
 
   if (result.canceled || result.filePaths.length === 0) {
     return
   }
 
-  const dirPath = result.filePaths[0]
-  await startWatching(dirPath)
+  await openPlanFile(result.filePaths[0])
 }
 
 /**
- * Build the native application menu with File > Open Directory.
+ * Build the native application menu with File > Open.
  */
 function buildAppMenu(): void {
   const isMac = process.platform === 'darwin'
@@ -130,10 +137,10 @@ function buildAppMenu(): void {
       label: 'File',
       submenu: [
         {
-          label: 'Open Directory...',
+          label: 'Open...',
           accelerator: 'CmdOrCtrl+O',
           click: () => {
-            openDirectoryDialog()
+            openFileDialog()
           },
         },
         { type: 'separator' },
@@ -164,8 +171,12 @@ function buildAppMenu(): void {
  * Register IPC handlers for renderer → main communication.
  */
 function registerIpcHandlers(): void {
-  ipcMain.handle(IPC_CHANNELS.OPEN_DIRECTORY, async (_event, payload: OpenDirectoryPayload) => {
-    await startWatching(payload.dirPath)
+  ipcMain.handle(IPC_CHANNELS.OPEN_FILE, async (_event, payload: OpenFilePayload) => {
+    await openPlanFile(payload.filePath)
+  })
+
+  ipcMain.handle(IPC_CHANNELS.SHOW_OPEN_DIALOG, async () => {
+    await openFileDialog()
   })
 
   ipcMain.handle(IPC_CHANNELS.SAVE, async (_event, payload: PlanSavePayload) => {

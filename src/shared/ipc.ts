@@ -11,8 +11,10 @@ export const IPC_CHANNELS = {
   PLAN_DELETED: 'plan:deleted',
   /** main → renderer: Parse error on a plan file */
   PLAN_ERROR: 'plan:error',
-  /** renderer → main: User selects a project directory */
-  OPEN_DIRECTORY: 'plan:open-directory',
+  /** renderer → main: Open a .plan file by path */
+  OPEN_FILE: 'plan:open-file',
+  /** renderer → main: Show the native file picker dialog */
+  SHOW_OPEN_DIALOG: 'plan:show-open-dialog',
   /** renderer → main: User saves changes from UI */
   SAVE: 'plan:save',
 } as const
@@ -34,9 +36,9 @@ export interface PlanErrorPayload {
   error: string
 }
 
-/** Payload for the `plan:open-directory` channel (renderer → main) */
-export interface OpenDirectoryPayload {
-  dirPath: string
+/** Payload for the `plan:open-file` channel (renderer → main) */
+export interface OpenFilePayload {
+  filePath: string
 }
 
 /** Payload for the `plan:save` channel (renderer → main) */
@@ -50,8 +52,10 @@ export interface PlanSavePayload {
  * The renderer accesses this as `window.api`.
  */
 export interface PartialAPI {
-  /** Send a request to open and watch a directory */
-  openDirectory(payload: OpenDirectoryPayload): Promise<void>
+  /** Send a request to open a .plan file by path */
+  openFile(payload: OpenFilePayload): Promise<void>
+  /** Show the native file picker dialog to select a .plan file */
+  showOpenDialog(): Promise<void>
   /** Send a request to save a plan file */
   savePlan(payload: PlanSavePayload): Promise<void>
   /** Register a callback for plan updates */

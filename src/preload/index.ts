@@ -1,5 +1,5 @@
 import type {
-  OpenDirectoryPayload,
+  OpenFilePayload,
   PartialAPI,
   PlanDeletedPayload,
   PlanErrorPayload,
@@ -14,8 +14,12 @@ import { contextBridge, ipcRenderer } from 'electron'
  * The renderer accesses this as `window.api`.
  */
 const api: PartialAPI = {
-  openDirectory(payload: OpenDirectoryPayload): Promise<void> {
-    return ipcRenderer.invoke(IPC_CHANNELS.OPEN_DIRECTORY, payload)
+  openFile(payload: OpenFilePayload): Promise<void> {
+    return ipcRenderer.invoke(IPC_CHANNELS.OPEN_FILE, payload)
+  },
+
+  showOpenDialog(): Promise<void> {
+    return ipcRenderer.invoke(IPC_CHANNELS.SHOW_OPEN_DIALOG)
   },
 
   savePlan(payload: PlanSavePayload): Promise<void> {

@@ -30,14 +30,14 @@ PBI-056 (v0.2.0 demo plan update)    ← PBI-044, PBI-047, PBI-050, PBI-051
 
 ## P0 — Critical (app is broken without these)
 
-### PBI-047: Add native Electron menu with File > Open Directory
+### PBI-047: Add native Electron menu with File > Open
 
 #### Directive
-Add a native Electron application menu with a File > Open Directory item that uses `dialog.showOpenDialog` to let the user select a project folder. Wire the selected path to the existing `plan:open-directory` IPC channel. This is the primary mechanism for loading `.plan` files into the app.
+Add a native Electron application menu with a File > Open item that uses `dialog.showOpenDialog` to let the user select a `.plan` file. Wire the selected path to the `plan:open-file` IPC channel. This is the primary mechanism for loading `.plan` files into the app.
 
 **Scope:**
-- `src/main/index.ts` (add menu creation, open-directory dialog handler)
-- `src/shared/ipc.ts` (add any new channel constants if needed)
+- `src/main/index.ts` (add menu creation, open-file dialog handler)
+- `src/shared/ipc.ts` (add `OPEN_FILE`, `SHOW_OPEN_DIALOG` channel constants)
 
 **Spec Amendments Required:**
 - `plans/electron-shell/spec.md` — Add "File Open" scenario, update Architecture section with menu creation, update Definition of Done
@@ -51,9 +51,9 @@ Read: `plans/electron-shell/spec.md` — Blueprint → Architecture (IPC Channel
 Read: `docs/0.1.0-findings.md` — HF-2 (No way to open a file)
 
 #### Verification
-- [x] File > Open Directory menu item exists on all platforms
-- [x] Clicking it opens a native directory picker dialog
-- [x] Selecting a directory triggers `plan:open-directory` IPC with the chosen path
+- [x] File > Open menu item exists on all platforms
+- [x] Clicking it opens a native file picker dialog filtered to `.plan` files
+- [x] Selecting a file triggers `plan:open-file` IPC with the chosen path
 - [x] Canceling the dialog does nothing (no error, no crash)
 - [x] Keyboard shortcut Cmd/Ctrl+O triggers the dialog
 - [x] On macOS, the menu integrates with the native menu bar (not a custom HTML menu)
@@ -65,10 +65,10 @@ If additional menu items are discovered as needed (e.g., File > Recent), defer t
 
 ---
 
-### PBI-048: Add Welcome screen with Open Folder button
+### PBI-048: Add Welcome screen with Open Plan File button
 
 #### Directive
-When no `.plan` files are loaded, show a Welcome screen in the renderer with the project name and an "Open Folder" button that calls `window.api.openDirectory()`. Once a directory is opened and plans are loaded, the Welcome screen is replaced by the active view.
+When no `.plan` file is loaded, show a Welcome screen in the renderer with the project name and an "Open Plan File" button that calls `window.api.showOpenDialog()`. Once a file is opened and the plan is loaded, the Welcome screen is replaced by the active view.
 
 **Scope:**
 - `src/renderer/App.svelte` (add welcome state, conditional rendering)
@@ -78,19 +78,19 @@ When no `.plan` files are loaded, show a Welcome screen in the renderer with the
 - `plans/electron-shell/spec.md` — Add "Welcome screen" scenario
 
 #### Dependencies
-- Blocked by: PBI-047 (the open-directory IPC must work first)
+- Blocked by: PBI-047 (the open-file IPC must work first)
 - Must merge before: PBI-056
 
 #### Context
-Read: `plans/electron-shell/spec.md` — Contract → Scenarios (Directory selection)
+Read: `plans/electron-shell/spec.md` — Contract → Scenarios (File selection)
 Read: `docs/0.1.0-findings.md` — HF-2
 
 #### Verification
-- [ ] Welcome screen shown when app starts with no loaded plans
-- [ ] "Open Folder" button is visible and calls `window.api.openDirectory()`
-- [ ] After selecting a directory, Welcome screen disappears and active view shows
-- [ ] Welcome screen uses Svelte 5 runes syntax
-- [ ] Welcome screen uses scoped Svelte styles (no CSS frameworks)
+- [x] Welcome screen shown when app starts with no loaded plan
+- [x] "Open Plan File" button is visible and calls `window.api.showOpenDialog()`
+- [x] After selecting a file, Welcome screen disappears and active view shows
+- [x] Welcome screen uses Svelte 5 runes syntax
+- [x] Welcome screen uses scoped Svelte styles (no CSS frameworks)
 - [ ] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
@@ -98,25 +98,25 @@ None — keep the Welcome screen minimal. Branding and onboarding can be enhance
 
 ---
 
-### PBI-049: Persist and auto-load last-opened directory
+### PBI-049: Persist and auto-load last-opened .plan file
 
 #### Directive
-Store the last successfully opened directory path using Electron's `app.getPath('userData')` and a simple JSON file. On app launch, if a last-opened path exists, automatically start the watcher on it. If the path no longer exists, fall through to the Welcome screen.
+Store the last successfully opened `.plan` file path using Electron's `app.getPath('userData')` and a simple JSON file. On app launch, if a last-opened path exists, automatically open and parse it. If the file no longer exists, fall through to the Welcome screen.
 
 **Scope:**
 - `src/main/index.ts` (add persistence logic at startup)
 - `src/main/store.ts` (new file — simple JSON read/write for app settings)
 
 #### Dependencies
-- Blocked by: PBI-047 (needs the open-directory flow to exist)
+- Blocked by: PBI-047 (needs the open-file flow to exist)
 - Must merge before: None
 
 #### Context
 Read: `docs/0.1.0-findings.md` — HF-2 (recommendation: auto-load from last-opened)
 
 #### Verification
-- [ ] After opening a directory, the path is persisted to a JSON file in `userData`
-- [ ] On next app launch, the last-opened directory is loaded automatically
+- [ ] After opening a `.plan` file, the path is persisted to a JSON file in `userData`
+- [ ] On next app launch, the last-opened file is loaded automatically
 - [ ] If the persisted path no longer exists on disk, the Welcome screen is shown
 - [ ] The settings file is not committed to git (lives in OS user data)
 - [ ] `store.ts` has JSDoc comments on all exported functions
@@ -124,7 +124,7 @@ Read: `docs/0.1.0-findings.md` — HF-2 (recommendation: auto-load from last-ope
 - [ ] `pnpm exec tsc --noEmit` passes
 
 #### Refinement Protocol
-If multiple recent directories are needed, defer to a future PBI. This PBI stores only the single last-opened path.
+If multiple recent files are needed, defer to a future PBI. This PBI stores only the single last-opened path.
 
 ---
 
@@ -386,7 +386,7 @@ ASK before adding `@testing-library/svelte` (Tier 2: new dependency). If Svelte 
 ### PBI-055: Add Electron IPC integration tests
 
 #### Directive
-Add integration tests that verify the IPC wiring between main and renderer processes. Test that `plan:open-directory` triggers the watcher, `plan:updated` delivers parsed plans, and `plan:error` forwards parse errors.
+Add integration tests that verify the IPC wiring between main and renderer processes. Test that `plan:open-file` triggers the file read and watcher, `plan:updated` delivers parsed plans, and `plan:error` forwards parse errors.
 
 **Scope:**
 - `tests/main/ipc.test.ts` (new file)
@@ -401,7 +401,7 @@ Read: `docs/0.1.0-findings.md` — Finding 4 (No IPC tests)
 Read: `plans/electron-shell/spec.md` — Contract → Scenarios
 
 #### Verification
-- [ ] Test: `plan:open-directory` with valid path starts watcher
+- [ ] Test: `plan:open-file` with valid path reads, parses, and starts watcher
 - [ ] Test: `plan:updated` fires when a watched `.plan` file changes
 - [ ] Test: `plan:error` fires when a watched `.plan` file has invalid YAML
 - [ ] Tests use mocked IPC (not full Electron app launch) for speed
@@ -469,7 +469,7 @@ Update this file as PBIs are completed during the release cycle.
 - `pnpm check` passes
 - `pnpm exec tsc --noEmit` passes
 - `pnpm test -- --run` passes (including new component + IPC tests)
-- App launches, user can open a folder via menu or Welcome screen
+- App launches, user can open a `.plan` file via menu or Welcome screen
 - Views render responsively at 1280–2560px widths
 - Pre-push hook works without `--no-verify`
 - `demo/partial.plan` loads and renders in all three views

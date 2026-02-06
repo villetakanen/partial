@@ -3,17 +3,16 @@ import type { Graph } from '@shared/dag'
 import { buildDAG } from '@shared/dag'
 import type { PartialAPI, PlanUpdatedPayload } from '@shared/ipc'
 import type { PlanFile } from '@shared/types'
+import Welcome from './components/Welcome.svelte'
 import Gantt from './views/Gantt.svelte'
 import GraphView from './views/Graph.svelte'
 import Kanban from './views/Kanban.svelte'
 
 let view = $state<'gantt' | 'kanban' | 'graph'>('gantt')
 
-const emptyPlan: PlanFile = { version: '1.0.0', project: '', tasks: [] }
+let plan = $state<PlanFile | null>(null)
 
-let plan = $state<PlanFile>(emptyPlan)
-
-const dag: Graph = $derived(buildDAG(plan.tasks))
+const dag: Graph = $derived(plan ? buildDAG(plan.tasks) : buildDAG([]))
 
 const api = (window as unknown as { api: PartialAPI }).api
 
@@ -25,24 +24,28 @@ $effect(() => {
 </script>
 
 <main>
-	<header>
-		<h1>Partial</h1>
-		<nav>
-			<button class:active={view === 'gantt'} onclick={() => (view = 'gantt')}>Gantt</button>
-			<button class:active={view === 'kanban'} onclick={() => (view = 'kanban')}>Kanban</button>
-			<button class:active={view === 'graph'} onclick={() => (view = 'graph')}>Graph</button>
-		</nav>
-	</header>
+	{#if plan}
+		<header>
+			<h1>Partial</h1>
+			<nav>
+				<button class:active={view === 'gantt'} onclick={() => (view = 'gantt')}>Gantt</button>
+				<button class:active={view === 'kanban'} onclick={() => (view = 'kanban')}>Kanban</button>
+				<button class:active={view === 'graph'} onclick={() => (view = 'graph')}>Graph</button>
+			</nav>
+		</header>
 
-	<section class="view-container">
-		{#if view === 'gantt'}
-			<Gantt {plan} {dag} />
-		{:else if view === 'kanban'}
-			<Kanban {plan} {dag} />
-		{:else}
-			<GraphView {plan} {dag} />
-		{/if}
-	</section>
+		<section class="view-container">
+			{#if view === 'gantt'}
+				<Gantt plan={plan} {dag} />
+			{:else if view === 'kanban'}
+				<Kanban plan={plan} {dag} />
+			{:else}
+				<GraphView plan={plan} {dag} />
+			{/if}
+		</section>
+	{:else}
+		<Welcome />
+	{/if}
 </main>
 
 <style>

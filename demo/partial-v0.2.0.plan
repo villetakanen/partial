@@ -407,7 +407,7 @@ tasks:
     done: true
 
   - id: pbi-047
-    title: Add native Electron menu with File > Open Directory
+    title: Add native Electron menu with File > Open
     parent: electron
     type: feat
     needs:
@@ -415,15 +415,15 @@ tasks:
     done: true
 
   - id: pbi-048
-    title: Add Welcome screen with Open Folder button
+    title: Add Welcome screen with Open Plan File button
     parent: renderer
     type: feat
     needs:
       - pbi-047
-    done: false
+    done: true
 
   - id: pbi-049
-    title: Persist and auto-load last-opened directory
+    title: Persist and auto-load last-opened .plan file
     parent: electron
     type: feat
     needs:

@@ -29,7 +29,8 @@ This is the integration layer — it doesn't implement business logic itself, bu
 | main → renderer | `plan:updated` | `{ filePath: string, plan: PlanFile }` | Plan file changed on disk |
 | main → renderer | `plan:deleted` | `{ filePath: string }` | Plan file deleted |
 | main → renderer | `plan:error` | `{ filePath: string, error: string }` | Parse error |
-| renderer → main | `plan:open-directory` | `{ dirPath: string }` | User selects project directory |
+| renderer → main | `plan:open-file` | `{ filePath: string }` | User opens a .plan file by path |
+| renderer → main | `plan:show-open-dialog` | (none) | Show native file picker for .plan files |
 | renderer → main | `plan:save` | `{ filePath: string, plan: PlanFile }` | User saves changes from UI |
 
 **Renderer Architecture:**
@@ -55,13 +56,13 @@ This is the integration layer — it doesn't implement business logic itself, bu
 
 - [ ] Application starts and shows a `BrowserWindow` loading the Svelte renderer
 - [ ] Main process initializes file watcher on a configurable project directory
-- [ ] IPC channels are registered for all documented channels (plan:updated, plan:deleted, plan:error, plan:open-directory, plan:save)
+- [ ] IPC channels are registered for all documented channels (plan:updated, plan:deleted, plan:error, plan:open-file, plan:show-open-dialog, plan:save)
 - [ ] `contextIsolation: true` and `nodeIntegration: false` in web preferences
 - [ ] Preload script exposes a typed API for renderer-to-main communication
 - [ ] Application handles lifecycle events (ready, window-all-closed → quit on all platforms)
-- [ ] Native Electron menu with File > Open Directory (Cmd/Ctrl+O)
-- [ ] Welcome screen shown when no plans are loaded
-- [ ] Last-opened directory persisted and auto-loaded on relaunch
+- [ ] Native Electron menu with File > Open (Cmd/Ctrl+O) for .plan files
+- [ ] Welcome screen shown when no plan is loaded
+- [ ] Last-opened file path persisted and auto-loaded on relaunch
 - [ ] `App.svelte` supports view switching between Gantt, Kanban, and Graph
 - [ ] Renderer receives plan updates via IPC and computes DAG for views
 - [ ] `pnpm dev` starts Electron with Vite HMR for the renderer
@@ -84,10 +85,10 @@ This is the integration layer — it doesn't implement business logic itself, bu
 - When: Electron's `ready` event fires
 - Then: A `BrowserWindow` is created, the Svelte app loads, and the default view is shown
 
-**Scenario: Directory selection**
-- Given: The application is running with no project loaded
-- When: The user selects a project directory via the UI
-- Then: `plan:open-directory` IPC is sent to main, watcher starts on the directory, existing `.plan` files are parsed and sent to renderer
+**Scenario: File selection**
+- Given: The application is running with no plan loaded
+- When: The user selects a .plan file via the native file picker
+- Then: The file is read, parsed, and sent to the renderer via `plan:updated`; the file's parent directory is watched for changes
 
 **Scenario: Live file update**
 - Given: A project directory is being watched
@@ -116,18 +117,18 @@ This is the integration layer — it doesn't implement business logic itself, bu
 - Then: `plan:save` IPC sends the updated `PlanFile` to main, which writes it to disk; the watcher ignores its own write
 
 **Scenario: File open via native menu (v0.2.0)**
-- Given: The app is running with no project loaded
-- When: The user selects File > Open Directory (or presses Cmd/Ctrl+O)
-- Then: A native directory picker dialog opens; selecting a directory triggers `plan:open-directory` IPC; canceling does nothing
+- Given: The app is running with no plan loaded
+- When: The user selects File > Open (or presses Cmd/Ctrl+O)
+- Then: A native file picker dialog opens filtered to .plan files; selecting a file reads, parses, and displays it; canceling does nothing
 
 **Scenario: Welcome screen (v0.2.0)**
-- Given: The app launches with no previously opened directory
+- Given: The app launches with no previously opened file
 - When: The renderer loads
-- Then: A Welcome screen is shown with project name and an "Open Folder" button
-- When: The user clicks "Open Folder" or uses the menu
-- Then: After a directory is selected and plans are loaded, the Welcome screen is replaced by the active view
+- Then: A Welcome screen is shown with project name and an "Open Plan File" button
+- When: The user clicks "Open Plan File" or uses the menu
+- Then: After a file is selected and parsed, the Welcome screen is replaced by the active view
 
-**Scenario: Last-opened directory persistence (v0.2.0)**
-- Given: The user has previously opened a directory
+**Scenario: Last-opened file persistence (v0.2.0)**
+- Given: The user has previously opened a .plan file
 - When: The app is relaunched
-- Then: The last-opened directory is automatically loaded; if the path no longer exists, the Welcome screen is shown
+- Then: The last-opened file is automatically loaded; if the path no longer exists, the Welcome screen is shown

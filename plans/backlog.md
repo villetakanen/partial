@@ -624,11 +624,11 @@ Implement `src/main/index.ts` as the Electron main process entry. Create a `Brow
 Read: `plans/electron-shell/spec.md` — Blueprint → Architecture (Main Process Responsibilities)
 
 #### Verification
-- [ ] `pnpm dev` starts Electron and shows a window
-- [ ] `BrowserWindow` has `contextIsolation: true`, `nodeIntegration: false`
-- [ ] macOS: app stays running when all windows close; dock click recreates window
-- [ ] Windows/Linux: app quits when all windows close
-- [ ] No console errors on startup
+- [x] `pnpm dev` starts Electron and shows a window
+- [x] `BrowserWindow` has `contextIsolation: true`, `nodeIntegration: false`
+- [x] macOS: app stays running when all windows close; dock click recreates window
+- [x] Windows/Linux: app quits when all windows close
+- [x] No console errors on startup
 
 #### Refinement Protocol
 If electron-vite requires specific main process configuration, adapt and document.

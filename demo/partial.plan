@@ -241,7 +241,7 @@ tasks:
     needs:
       - pbi-005
       - pbi-039
-    done: false
+    done: true
 
   - id: pbi-020
     title: Add preload script and IPC channel registration

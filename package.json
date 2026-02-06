@@ -1,62 +1,66 @@
 {
-  "name": "partial",
-  "version": "0.1.0",
-  "description": "Agent-native project management via .plan files",
-  "main": "dist/main/index.js",
-  "bin": {
-    "partial": "./dist/cli/index.js"
-  },
-  "scripts": {
-    "dev": "electron-vite dev",
-    "build": "electron-vite build",
-    "preview": "electron-vite preview",
-    "check": "biome check .",
-    "check:fix": "biome check --write .",
-    "test": "vitest",
-    "test:coverage": "vitest --coverage",
-    "prepare": "lefthook install",
-    "build:mac": "electron-vite build && electron-builder --mac",
-    "build:win": "electron-vite build && electron-builder --win",
-    "build:linux": "electron-vite build && electron-builder --linux",
-    "release": "electron-vite build && electron-builder --publish always"
-  },
-  "type": "module",
-  "packageManager": "pnpm@10.4.1",
-  "engines": {
-    "node": ">=20.0.0"
-  },
-  "keywords": [
-    "project-management",
-    "plan",
-    "dag",
-    "electron",
-    "ai-agent"
-  ],
-  "license": "MIT",
-  "pnpm": {
-    "onlyBuiltDependencies": ["electron", "esbuild", "lefthook"]
-  },
-  "dependencies": {
-    "chokidar": "^5.0.0",
-    "d3": "^7.9.0",
-    "graphlib": "^2.1.8",
-    "svelte": "^5.49.2",
-    "yaml": "^2.8.2",
-    "zod": "^4.3.6"
-  },
-  "devDependencies": {
-    "@biomejs/biome": "^2.3.14",
-    "@sveltejs/vite-plugin-svelte": "^6.2.4",
-    "@types/d3": "^7.4.3",
-    "@types/node": "^25.2.1",
-    "@vitest/coverage-v8": "^4.0.18",
-    "electron": "^40.2.1",
-    "electron-builder": "^26.7.0",
-    "electron-vite": "^5.0.0",
-    "lefthook": "^2.1.0",
-    "svelte-check": "^4.3.6",
-    "typescript": "^5.9.3",
-    "vite": "^7.3.1",
-    "vitest": "^4.0.18"
-  }
+	"name": "partial",
+	"version": "0.1.0",
+	"description": "Agent-native project management via .plan files",
+	"main": "out/main/index.js",
+	"bin": {
+		"partial": "./dist/cli/index.js"
+	},
+	"scripts": {
+		"dev": "electron-vite dev",
+		"build": "electron-vite build",
+		"preview": "electron-vite preview",
+		"check": "biome check .",
+		"check:fix": "biome check --write .",
+		"test": "vitest",
+		"test:coverage": "vitest --coverage",
+		"prepare": "lefthook install",
+		"build:mac": "electron-vite build && electron-builder --mac",
+		"build:win": "electron-vite build && electron-builder --win",
+		"build:linux": "electron-vite build && electron-builder --linux",
+		"release": "electron-vite build && electron-builder --publish always"
+	},
+	"type": "module",
+	"packageManager": "pnpm@10.4.1",
+	"engines": {
+		"node": ">=20.0.0"
+	},
+	"keywords": [
+		"project-management",
+		"plan",
+		"dag",
+		"electron",
+		"ai-agent"
+	],
+	"license": "MIT",
+	"pnpm": {
+		"onlyBuiltDependencies": [
+			"electron",
+			"esbuild",
+			"lefthook"
+		]
+	},
+	"dependencies": {
+		"chokidar": "^5.0.0",
+		"d3": "^7.9.0",
+		"graphlib": "^2.1.8",
+		"svelte": "^5.49.2",
+		"yaml": "^2.8.2",
+		"zod": "^4.3.6"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "^2.3.14",
+		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"@types/d3": "^7.4.3",
+		"@types/node": "^25.2.1",
+		"@vitest/coverage-v8": "^4.0.18",
+		"electron": "^40.2.1",
+		"electron-builder": "^26.7.0",
+		"electron-vite": "^5.0.0",
+		"lefthook": "^2.1.0",
+		"svelte-check": "^4.3.6",
+		"typescript": "^5.9.3",
+		"vite": "^7.3.1",
+		"vitest": "^4.0.18"
+	}
 }

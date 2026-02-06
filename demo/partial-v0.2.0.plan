@@ -479,7 +479,7 @@ tasks:
     type: test
     needs:
       - pbi-047
-    done: false
+    done: true
 
   # ── v0.2.0 — Dogfood Update ────────────────────────────────────
 

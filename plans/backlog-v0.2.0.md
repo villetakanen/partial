@@ -401,12 +401,12 @@ Read: `docs/0.1.0-findings.md` — Finding 4 (No IPC tests)
 Read: `plans/electron-shell/spec.md` — Contract → Scenarios
 
 #### Verification
-- [ ] Test: `plan:open-file` with valid path reads, parses, and starts watcher
-- [ ] Test: `plan:updated` fires when a watched `.plan` file changes
-- [ ] Test: `plan:error` fires when a watched `.plan` file has invalid YAML
-- [ ] Tests use mocked IPC (not full Electron app launch) for speed
-- [ ] All tests pass: `pnpm test -- --run`
-- [ ] `pnpm exec tsc --noEmit` passes
+- [x] Test: `plan:open-file` with valid path reads, parses, and starts watcher
+- [x] Test: `plan:updated` fires when a watched `.plan` file changes
+- [x] Test: `plan:error` fires when a watched `.plan` file has invalid YAML
+- [x] Tests use mocked IPC (not full Electron app launch) for speed
+- [x] All tests pass: `pnpm test -- --run`
+- [x] `pnpm exec tsc --noEmit` passes
 
 #### Refinement Protocol
 If full Electron test setup is too heavy, use mocked `ipcMain`/`ipcRenderer` and test the handler functions directly.

@@ -107,7 +107,7 @@ tasks:
     type: test
     needs:
       - pbi-040
-    done: false
+    done: true
 
   - id: pbi-035
     title: Create AGENTS.md and CLAUDE.md symlink

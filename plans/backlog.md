@@ -1289,11 +1289,11 @@ Read: `plans/plan-parser/spec.md` — Contract (testing scenarios inform what he
 Read: `plans/file-watcher/spec.md` — Contract (watcher tests need temp directory helpers)
 
 #### Verification
-- [ ] `loadFixture(name: string): string` reads a fixture file from `tests/fixtures/` and returns contents
-- [ ] `createPlan(overrides?: Partial<PlanFile>): PlanFile` builds a typed `PlanFile` with sensible defaults
-- [ ] `createTask(overrides?: Partial<Task>): Task` builds a typed `Task` with sensible defaults
-- [ ] Helpers are importable from test files via `tests/helpers`
-- [ ] `pnpm test -- --run` still passes (no test config regressions)
+- [x] `loadFixture(name: string): string` reads a fixture file from `tests/fixtures/` and returns contents
+- [x] `createPlan(overrides?: Partial<PlanFile>): PlanFile` builds a typed `PlanFile` with sensible defaults
+- [x] `createTask(overrides?: Partial<Task>): Task` builds a typed `Task` with sensible defaults
+- [x] Helpers are importable from test files via `tests/helpers`
+- [x] `pnpm test -- --run` still passes (no test config regressions)
 
 #### Refinement Protocol
 Add helpers as needed when downstream PBIs reveal common test patterns.

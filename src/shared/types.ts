@@ -12,11 +12,11 @@
  * Unknown fields are preserved for forward compatibility.
  */
 export interface PlanFile {
-	version: string
-	project: string
-	tasks: Task[]
-	/** Preserve unknown fields for forward compatibility */
-	[key: string]: unknown
+  version: string
+  project: string
+  tasks: Task[]
+  /** Preserve unknown fields for forward compatibility */
+  [key: string]: unknown
 }
 
 /**
@@ -25,13 +25,13 @@ export interface PlanFile {
  * Unknown fields are preserved for forward compatibility.
  */
 export interface Task {
-	id: string
-	title: string
-	done?: boolean
-	needs?: string[]
-	parent?: string
-	/** Preserve unknown fields */
-	[key: string]: unknown
+  id: string
+  title: string
+  done?: boolean
+  needs?: string[]
+  parent?: string
+  /** Preserve unknown fields */
+  [key: string]: unknown
 }
 
 /**
@@ -49,10 +49,10 @@ export type DependencyType = 'fs' | 'ss' | 'ff' | 'sf'
  * and workflow metadata fields.
  */
 export interface TaskExtended extends Task {
-	type?: string
-	state?: string
-	needs_fs?: string[]
-	needs_ss?: string[]
-	needs_ff?: string[]
-	needs_sf?: string[]
+  type?: string
+  state?: string
+  needs_fs?: string[]
+  needs_ss?: string[]
+  needs_ff?: string[]
+  needs_sf?: string[]
 }

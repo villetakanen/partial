@@ -5,20 +5,20 @@ import type { PlanFile, Task } from '@shared/types'
 import * as d3 from 'd3'
 
 interface Props {
-	plan: PlanFile
-	dag: DAGGraph
+  plan: PlanFile
+  dag: DAGGraph
 }
 
 let { plan, dag }: Props = $props()
 
 interface SimNode extends d3.SimulationNodeDatum {
-	id: string
-	task: Task
-	status: 'done' | 'blocked' | 'ready'
+  id: string
+  task: Task
+  status: 'done' | 'blocked' | 'ready'
 }
 
 interface SimLink extends d3.SimulationLinkDatum<SimNode> {
-	depType: string
+  depType: string
 }
 
 let svgEl = $state<SVGSVGElement | null>(null)
@@ -31,166 +31,166 @@ let simulation: d3.Simulation<SimNode, SimLink> | null = null
 let prevTopologyKey = ''
 
 function getTopologyKey(): string {
-	const nodeKeys = plan.tasks
-		.map((t) => t.id)
-		.sort()
-		.join(',')
-	const edgeKeys = dag
-		.edges()
-		.map((e) => `${e.v}->${e.w}`)
-		.sort()
-		.join(',')
-	return `${nodeKeys}|${edgeKeys}`
+  const nodeKeys = plan.tasks
+    .map((t) => t.id)
+    .sort()
+    .join(',')
+  const edgeKeys = dag
+    .edges()
+    .map((e) => `${e.v}->${e.w}`)
+    .sort()
+    .join(',')
+  return `${nodeKeys}|${edgeKeys}`
 }
 
 function getStatus(task: Task, unblockedIds: Set<string>): 'done' | 'blocked' | 'ready' {
-	if (task.done) return 'done'
-	if (unblockedIds.has(task.id)) return 'ready'
-	return 'blocked'
+  if (task.done) return 'done'
+  if (unblockedIds.has(task.id)) return 'ready'
+  return 'blocked'
 }
 
 function buildSimData(): { nodes: SimNode[]; links: SimLink[] } {
-	const unblockedIds = new Set(getUnblockedTasks(dag, plan.tasks).map((t) => t.id))
+  const unblockedIds = new Set(getUnblockedTasks(dag, plan.tasks).map((t) => t.id))
 
-	const nodes: SimNode[] = plan.tasks.map((task) => ({
-		id: task.id,
-		task,
-		status: getStatus(task, unblockedIds),
-	}))
+  const nodes: SimNode[] = plan.tasks.map((task) => ({
+    id: task.id,
+    task,
+    status: getStatus(task, unblockedIds),
+  }))
 
-	const nodeMap = new Map(nodes.map((n) => [n.id, n]))
+  const nodeMap = new Map(nodes.map((n) => [n.id, n]))
 
-	const links: SimLink[] = []
-	for (const e of dag.edges()) {
-		const source = nodeMap.get(e.v)
-		const target = nodeMap.get(e.w)
-		if (source && target) {
-			const label = dag.edge(e.v, e.w) as EdgeLabel
-			links.push({ source, target, depType: label.type })
-		}
-	}
+  const links: SimLink[] = []
+  for (const e of dag.edges()) {
+    const source = nodeMap.get(e.v)
+    const target = nodeMap.get(e.w)
+    if (source && target) {
+      const label = dag.edge(e.v, e.w) as EdgeLabel
+      links.push({ source, target, depType: label.type })
+    }
+  }
 
-	return { nodes, links }
+  return { nodes, links }
 }
 
 $effect(() => {
-	if (plan.tasks.length === 0) {
-		if (simulation) {
-			simulation.stop()
-			simulation = null
-		}
-		simNodes = []
-		simLinks = []
-		prevTopologyKey = ''
-		return
-	}
+  if (plan.tasks.length === 0) {
+    if (simulation) {
+      simulation.stop()
+      simulation = null
+    }
+    simNodes = []
+    simLinks = []
+    prevTopologyKey = ''
+    return
+  }
 
-	const topoKey = getTopologyKey()
-	const topologyChanged = topoKey !== prevTopologyKey
-	prevTopologyKey = topoKey
+  const topoKey = getTopologyKey()
+  const topologyChanged = topoKey !== prevTopologyKey
+  prevTopologyKey = topoKey
 
-	if (topologyChanged) {
-		const { nodes, links } = buildSimData()
+  if (topologyChanged) {
+    const { nodes, links } = buildSimData()
 
-		if (simulation) simulation.stop()
+    if (simulation) simulation.stop()
 
-		simulation = d3
-			.forceSimulation(nodes)
-			.force(
-				'link',
-				d3
-					.forceLink<SimNode, SimLink>(links)
-					.id((d) => d.id)
-					.distance(100),
-			)
-			.force('charge', d3.forceManyBody().strength(-300))
-			.force('center', d3.forceCenter(0, 0))
-			.force('collision', d3.forceCollide(40))
-			.alphaDecay(0.02)
-			.on('tick', () => {
-				simNodes = [...nodes]
-				simLinks = [...links]
-			})
-	} else {
-		const unblockedIds = new Set(getUnblockedTasks(dag, plan.tasks).map((t) => t.id))
-		for (const node of simNodes) {
-			const task = plan.tasks.find((t) => t.id === node.id)
-			if (task) {
-				node.task = task
-				node.status = getStatus(task, unblockedIds)
-			}
-		}
-		simNodes = [...simNodes]
-	}
+    simulation = d3
+      .forceSimulation(nodes)
+      .force(
+        'link',
+        d3
+          .forceLink<SimNode, SimLink>(links)
+          .id((d) => d.id)
+          .distance(100),
+      )
+      .force('charge', d3.forceManyBody().strength(-300))
+      .force('center', d3.forceCenter(0, 0))
+      .force('collision', d3.forceCollide(40))
+      .alphaDecay(0.02)
+      .on('tick', () => {
+        simNodes = [...nodes]
+        simLinks = [...links]
+      })
+  } else {
+    const unblockedIds = new Set(getUnblockedTasks(dag, plan.tasks).map((t) => t.id))
+    for (const node of simNodes) {
+      const task = plan.tasks.find((t) => t.id === node.id)
+      if (task) {
+        node.task = task
+        node.status = getStatus(task, unblockedIds)
+      }
+    }
+    simNodes = [...simNodes]
+  }
 })
 
 $effect(() => {
-	if (!svgEl) return
+  if (!svgEl) return
 
-	const zoom = d3
-		.zoom<SVGSVGElement, unknown>()
-		.scaleExtent([0.1, 4])
-		.on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
-			transform = event.transform
-		})
+  const zoom = d3
+    .zoom<SVGSVGElement, unknown>()
+    .scaleExtent([0.1, 4])
+    .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+      transform = event.transform
+    })
 
-	d3.select(svgEl).call(zoom)
+  d3.select(svgEl).call(zoom)
 
-	return () => {
-		if (svgEl) d3.select(svgEl).on('.zoom', null)
-		if (simulation) {
-			simulation.stop()
-			simulation = null
-		}
-	}
+  return () => {
+    if (svgEl) d3.select(svgEl).on('.zoom', null)
+    if (simulation) {
+      simulation.stop()
+      simulation = null
+    }
+  }
 })
 
 function edgeDash(depType: string): string {
-	switch (depType) {
-		case 'fs':
-			return 'none'
-		case 'ss':
-			return '6,3'
-		case 'ff':
-			return '3,3'
-		case 'sf':
-			return '8,3,2,3'
-		default:
-			return 'none'
-	}
+  switch (depType) {
+    case 'fs':
+      return 'none'
+    case 'ss':
+      return '6,3'
+    case 'ff':
+      return '3,3'
+    case 'sf':
+      return '8,3,2,3'
+    default:
+      return 'none'
+  }
 }
 
 function nodeColor(status: string): string {
-	switch (status) {
-		case 'done':
-			return '#4caf50'
-		case 'ready':
-			return '#42a5f5'
-		case 'blocked':
-			return '#ef5350'
-		default:
-			return '#888'
-	}
+  switch (status) {
+    case 'done':
+      return '#4caf50'
+    case 'ready':
+      return '#42a5f5'
+    case 'blocked':
+      return '#ef5350'
+    default:
+      return '#888'
+  }
 }
 
 function handleNodeClick(task: Task): void {
-	selectedTask = selectedTask?.id === task.id ? null : task
+  selectedTask = selectedTask?.id === task.id ? null : task
 }
 
 function sourceX(link: SimLink): number {
-	return (link.source as SimNode).x ?? 0
+  return (link.source as SimNode).x ?? 0
 }
 
 function sourceY(link: SimLink): number {
-	return (link.source as SimNode).y ?? 0
+  return (link.source as SimNode).y ?? 0
 }
 
 function targetX(link: SimLink): number {
-	return (link.target as SimNode).x ?? 0
+  return (link.target as SimNode).x ?? 0
 }
 
 function targetY(link: SimLink): number {
-	return (link.target as SimNode).y ?? 0
+  return (link.target as SimNode).y ?? 0
 }
 </script>
 

@@ -1,38 +1,38 @@
 {
-	"$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
-	"appId": "com.partial.app",
-	"productName": "Partial",
-	"directories": {
-		"output": "release"
-	},
-	"files": ["out/**/*"],
-	"mac": {
-		"target": [
-			{ "target": "dmg", "arch": ["x64", "arm64"] },
-			{ "target": "zip", "arch": ["x64", "arm64"] }
-		],
-		"category": "public.app-category.developer-tools",
-		"icon": "build/icon.icns"
-	},
-	"win": {
-		"target": [{ "target": "nsis", "arch": ["x64"] }, { "target": "portable", "arch": ["x64"] }],
-		"icon": "build/icon.ico"
-	},
-	"linux": {
-		"target": [
-			{ "target": "AppImage", "arch": ["x64"] },
-			{ "target": "deb", "arch": ["x64"] },
-			{ "target": "rpm", "arch": ["x64"] }
-		],
-		"category": "Development",
-		"icon": "build/icons"
-	},
-	"nsis": {
-		"oneClick": false,
-		"allowToChangeInstallationDirectory": true
-	},
-	"publish": {
-		"provider": "github",
-		"releaseType": "release"
-	}
+  "$schema": "https://raw.githubusercontent.com/electron-userland/electron-builder/master/packages/app-builder-lib/scheme.json",
+  "appId": "com.partial.app",
+  "productName": "Partial",
+  "directories": {
+    "output": "release"
+  },
+  "files": ["out/**/*"],
+  "mac": {
+    "target": [
+      { "target": "dmg", "arch": ["x64", "arm64"] },
+      { "target": "zip", "arch": ["x64", "arm64"] }
+    ],
+    "category": "public.app-category.developer-tools",
+    "icon": "build/icon.icns"
+  },
+  "win": {
+    "target": [{ "target": "nsis", "arch": ["x64"] }, { "target": "portable", "arch": ["x64"] }],
+    "icon": "build/icon.ico"
+  },
+  "linux": {
+    "target": [
+      { "target": "AppImage", "arch": ["x64"] },
+      { "target": "deb", "arch": ["x64"] },
+      { "target": "rpm", "arch": ["x64"] }
+    ],
+    "category": "Development",
+    "icon": "build/icons"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true
+  },
+  "publish": {
+    "provider": "github",
+    "releaseType": "release"
+  }
 }

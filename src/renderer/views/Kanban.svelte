@@ -5,8 +5,8 @@ import type { PlanFile, Task } from '@shared/types'
 import TaskCard from '../components/TaskCard.svelte'
 
 interface Props {
-	plan: PlanFile
-	dag: Graph
+  plan: PlanFile
+  dag: Graph
 }
 
 let { plan, dag }: Props = $props()
@@ -14,37 +14,37 @@ let { plan, dag }: Props = $props()
 type TaskStatus = 'done' | 'blocked' | 'ready' | 'in_progress'
 
 interface Column {
-	key: TaskStatus
-	label: string
-	tasks: Task[]
+  key: TaskStatus
+  label: string
+  tasks: Task[]
 }
 
 const columns = $derived.by<Column[]>(() => {
-	const done: Task[] = []
-	const inProgress: Task[] = []
-	const ready: Task[] = []
-	const blocked: Task[] = []
+  const done: Task[] = []
+  const inProgress: Task[] = []
+  const ready: Task[] = []
+  const blocked: Task[] = []
 
-	const unblockedSet = new Set(getUnblockedTasks(dag, plan.tasks).map((t) => t.id))
+  const unblockedSet = new Set(getUnblockedTasks(dag, plan.tasks).map((t) => t.id))
 
-	for (const task of plan.tasks) {
-		if (task.done) {
-			done.push(task)
-		} else if (task.state === 'in_progress' && unblockedSet.has(task.id)) {
-			inProgress.push(task)
-		} else if (unblockedSet.has(task.id)) {
-			ready.push(task)
-		} else {
-			blocked.push(task)
-		}
-	}
+  for (const task of plan.tasks) {
+    if (task.done) {
+      done.push(task)
+    } else if (task.state === 'in_progress' && unblockedSet.has(task.id)) {
+      inProgress.push(task)
+    } else if (unblockedSet.has(task.id)) {
+      ready.push(task)
+    } else {
+      blocked.push(task)
+    }
+  }
 
-	return [
-		{ key: 'blocked', label: 'Blocked', tasks: blocked },
-		{ key: 'ready', label: 'Ready', tasks: ready },
-		{ key: 'in_progress', label: 'In Progress', tasks: inProgress },
-		{ key: 'done', label: 'Done', tasks: done },
-	]
+  return [
+    { key: 'blocked', label: 'Blocked', tasks: blocked },
+    { key: 'ready', label: 'Ready', tasks: ready },
+    { key: 'in_progress', label: 'In Progress', tasks: inProgress },
+    { key: 'done', label: 'Done', tasks: done },
+  ]
 })
 </script>
 

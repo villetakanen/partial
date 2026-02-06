@@ -11,7 +11,7 @@ const FIXTURES_DIR = resolve(import.meta.dirname, 'fixtures')
  * @returns The file content as a UTF-8 string
  */
 export async function loadFixture(name: string): Promise<string> {
-	return readFile(resolve(FIXTURES_DIR, name), 'utf-8')
+  return readFile(resolve(FIXTURES_DIR, name), 'utf-8')
 }
 
 /**
@@ -22,12 +22,12 @@ export async function loadFixture(name: string): Promise<string> {
  * @returns A complete `PlanFile` object
  */
 export function createPlan(overrides?: Partial<PlanFile>): PlanFile {
-	return {
-		version: '1.0.0',
-		project: 'test-project',
-		tasks: [],
-		...overrides,
-	}
+  return {
+    version: '1.0.0',
+    project: 'test-project',
+    tasks: [],
+    ...overrides,
+  }
 }
 
 /**
@@ -38,10 +38,10 @@ export function createPlan(overrides?: Partial<PlanFile>): PlanFile {
  * @returns A complete `Task` object
  */
 export function createTask(overrides?: Partial<Task>): Task {
-	return {
-		id: 'task-1',
-		title: 'Test task',
-		done: false,
-		...overrides,
-	}
+  return {
+    id: 'task-1',
+    title: 'Test task',
+    done: false,
+    ...overrides,
+  }
 }

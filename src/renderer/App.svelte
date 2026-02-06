@@ -18,9 +18,9 @@ const dag: Graph = $derived(buildDAG(plan.tasks))
 const api = (window as unknown as { api: PartialAPI }).api
 
 $effect(() => {
-	api?.onPlanUpdated((payload: PlanUpdatedPayload) => {
-		plan = payload.plan
-	})
+  api?.onPlanUpdated((payload: PlanUpdatedPayload) => {
+    plan = payload.plan
+  })
 })
 </script>
 

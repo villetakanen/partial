@@ -4,8 +4,8 @@ import type { Task } from '@shared/types'
 type TaskStatus = 'done' | 'blocked' | 'ready' | 'in_progress'
 
 interface Props {
-	task: Task
-	status: TaskStatus
+  task: Task
+  status: TaskStatus
 }
 
 let { task, status }: Props = $props()

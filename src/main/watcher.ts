@@ -14,8 +14,8 @@ type ErrorHandler = (filePath: string, error: PlanParseError) => void
 
 /** Options for {@link watchDirectory}. */
 export interface WatchOptions {
-	/** Debounce interval in milliseconds. Defaults to 100. */
-	debounce?: number
+  /** Debounce interval in milliseconds. Defaults to 100. */
+  debounce?: number
 }
 
 /**
@@ -25,14 +25,14 @@ export interface WatchOptions {
  * created, modified, or deleted.
  */
 export interface PlanWatcher {
-	/** Register a handler for file change, delete, or error events. */
-	on(event: 'change', handler: ChangeHandler): void
-	on(event: 'delete', handler: DeleteHandler): void
-	on(event: 'error', handler: ErrorHandler): void
-	/** Stop watching and clean up all resources including pending debounce timers. */
-	close(): Promise<void>
-	/** Resolves when the watcher has finished initial scan and is ready. */
-	ready: Promise<void>
+  /** Register a handler for file change, delete, or error events. */
+  on(event: 'change', handler: ChangeHandler): void
+  on(event: 'delete', handler: DeleteHandler): void
+  on(event: 'error', handler: ErrorHandler): void
+  /** Stop watching and clean up all resources including pending debounce timers. */
+  close(): Promise<void>
+  /** Resolves when the watcher has finished initial scan and is ready. */
+  ready: Promise<void>
 }
 
 /**
@@ -54,95 +54,95 @@ export interface PlanWatcher {
  * @returns A {@link PlanWatcher} instance for subscribing to events
  */
 export function watchDirectory(dirPath: string, options?: WatchOptions): PlanWatcher {
-	const debounceMs = options?.debounce ?? 100
-	const changeHandlers: ChangeHandler[] = []
-	const deleteHandlers: DeleteHandler[] = []
-	const errorHandlers: ErrorHandler[] = []
-	const pendingTimers = new Map<string, ReturnType<typeof setTimeout>>()
+  const debounceMs = options?.debounce ?? 100
+  const changeHandlers: ChangeHandler[] = []
+  const deleteHandlers: DeleteHandler[] = []
+  const errorHandlers: ErrorHandler[] = []
+  const pendingTimers = new Map<string, ReturnType<typeof setTimeout>>()
 
-	const watcher = watch(dirPath, {
-		ignoreInitial: true,
-		ignored: (path, stats) => {
-			// Allow directories and unresolved paths through for scanning
-			if (!stats?.isFile()) return false
-			// Ignore hidden files and anything not ending in .plan
-			const base = path.split('/').pop() ?? ''
-			return base.startsWith('.') || !base.endsWith('.plan')
-		},
-		depth: 0,
-	})
+  const watcher = watch(dirPath, {
+    ignoreInitial: true,
+    ignored: (path, stats) => {
+      // Allow directories and unresolved paths through for scanning
+      if (!stats?.isFile()) return false
+      // Ignore hidden files and anything not ending in .plan
+      const base = path.split('/').pop() ?? ''
+      return base.startsWith('.') || !base.endsWith('.plan')
+    },
+    depth: 0,
+  })
 
-	const readyPromise = new Promise<void>((resolve) => {
-		watcher.on('ready', () => resolve())
-	})
+  const readyPromise = new Promise<void>((resolve) => {
+    watcher.on('ready', () => resolve())
+  })
 
-	const emitChange = async (filePath: string) => {
-		try {
-			const content = await readFile(filePath, 'utf-8')
-			const plan = parsePlan(content)
-			for (const handler of changeHandlers) {
-				handler(filePath, plan)
-			}
-		} catch (err) {
-			const parseError =
-				err instanceof PlanParseError
-					? err
-					: new PlanParseError(err instanceof Error ? err.message : String(err))
-			for (const handler of errorHandlers) {
-				handler(filePath, parseError)
-			}
-		}
-	}
+  const emitChange = async (filePath: string) => {
+    try {
+      const content = await readFile(filePath, 'utf-8')
+      const plan = parsePlan(content)
+      for (const handler of changeHandlers) {
+        handler(filePath, plan)
+      }
+    } catch (err) {
+      const parseError =
+        err instanceof PlanParseError
+          ? err
+          : new PlanParseError(err instanceof Error ? err.message : String(err))
+      for (const handler of errorHandlers) {
+        handler(filePath, parseError)
+      }
+    }
+  }
 
-	const scheduleChange = (filePath: string) => {
-		const existing = pendingTimers.get(filePath)
-		if (existing) clearTimeout(existing)
-		pendingTimers.set(
-			filePath,
-			setTimeout(() => {
-				pendingTimers.delete(filePath)
-				emitChange(filePath)
-			}, debounceMs),
-		)
-	}
+  const scheduleChange = (filePath: string) => {
+    const existing = pendingTimers.get(filePath)
+    if (existing) clearTimeout(existing)
+    pendingTimers.set(
+      filePath,
+      setTimeout(() => {
+        pendingTimers.delete(filePath)
+        emitChange(filePath)
+      }, debounceMs),
+    )
+  }
 
-	watcher.on('add', (path) => {
-		scheduleChange(path)
-	})
+  watcher.on('add', (path) => {
+    scheduleChange(path)
+  })
 
-	watcher.on('change', (path) => {
-		scheduleChange(path)
-	})
+  watcher.on('change', (path) => {
+    scheduleChange(path)
+  })
 
-	watcher.on('unlink', (path) => {
-		// Cancel any pending change for a deleted file
-		const existing = pendingTimers.get(path)
-		if (existing) {
-			clearTimeout(existing)
-			pendingTimers.delete(path)
-		}
-		for (const handler of deleteHandlers) {
-			handler(path)
-		}
-	})
+  watcher.on('unlink', (path) => {
+    // Cancel any pending change for a deleted file
+    const existing = pendingTimers.get(path)
+    if (existing) {
+      clearTimeout(existing)
+      pendingTimers.delete(path)
+    }
+    for (const handler of deleteHandlers) {
+      handler(path)
+    }
+  })
 
-	return {
-		on(event: string, handler: ChangeHandler | DeleteHandler | ErrorHandler) {
-			if (event === 'change') {
-				changeHandlers.push(handler as ChangeHandler)
-			} else if (event === 'delete') {
-				deleteHandlers.push(handler as DeleteHandler)
-			} else if (event === 'error') {
-				errorHandlers.push(handler as ErrorHandler)
-			}
-		},
-		async close() {
-			for (const timer of pendingTimers.values()) {
-				clearTimeout(timer)
-			}
-			pendingTimers.clear()
-			await watcher.close()
-		},
-		ready: readyPromise,
-	}
+  return {
+    on(event: string, handler: ChangeHandler | DeleteHandler | ErrorHandler) {
+      if (event === 'change') {
+        changeHandlers.push(handler as ChangeHandler)
+      } else if (event === 'delete') {
+        deleteHandlers.push(handler as DeleteHandler)
+      } else if (event === 'error') {
+        errorHandlers.push(handler as ErrorHandler)
+      }
+    },
+    async close() {
+      for (const timer of pendingTimers.values()) {
+        clearTimeout(timer)
+      }
+      pendingTimers.clear()
+      await watcher.close()
+    },
+    ready: readyPromise,
+  }
 }

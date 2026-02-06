@@ -5,8 +5,8 @@ import type { PlanFile, Task } from '@shared/types'
 import * as d3 from 'd3'
 
 interface Props {
-	plan: PlanFile
-	dag: Graph
+  plan: PlanFile
+  dag: Graph
 }
 
 let { plan, dag }: Props = $props()
@@ -21,84 +21,84 @@ let containerEl = $state<HTMLDivElement | null>(null)
 let containerWidth = $state(800)
 
 $effect(() => {
-	if (!containerEl) return
-	const observer = new ResizeObserver((entries) => {
-		for (const entry of entries) {
-			containerWidth = entry.contentRect.width
-		}
-	})
-	observer.observe(containerEl)
-	return () => observer.disconnect()
+  if (!containerEl) return
+  const observer = new ResizeObserver((entries) => {
+    for (const entry of entries) {
+      containerWidth = entry.contentRect.width
+    }
+  })
+  observer.observe(containerEl)
+  return () => observer.disconnect()
 })
 
 const sorted = $derived(topologicalSort(dag))
 const critPath = $derived(new Set(criticalPath(dag).map((t) => t.id)))
 
 interface BarData {
-	task: Task
-	x: number
-	y: number
-	width: number
-	isCritical: boolean
+  task: Task
+  x: number
+  y: number
+  width: number
+  isCritical: boolean
 }
 
 interface EdgeData {
-	x1: number
-	y1: number
-	x2: number
-	y2: number
+  x1: number
+  y1: number
+  x2: number
+  y2: number
 }
 
 const layout = $derived.by<{
-	bars: BarData[]
-	edges: EdgeData[]
-	svgWidth: number
-	svgHeight: number
+  bars: BarData[]
+  edges: EdgeData[]
+  svgWidth: number
+  svgHeight: number
 }>(() => {
-	if (sorted.length === 0) {
-		return { bars: [], edges: [], svgWidth: 0, svgHeight: 0 }
-	}
+  if (sorted.length === 0) {
+    return { bars: [], edges: [], svgWidth: 0, svgHeight: 0 }
+  }
 
-	const posMap = new Map<string, number>()
-	for (let i = 0; i < sorted.length; i++) {
-		posMap.set(sorted[i].id, i)
-	}
+  const posMap = new Map<string, number>()
+  for (let i = 0; i < sorted.length; i++) {
+    posMap.set(sorted[i].id, i)
+  }
 
-	const colCount = sorted.length
-	const chartWidth = Math.max(containerWidth - LABEL_WIDTH, colCount * MIN_BAR_WIDTH)
-	const xScale = d3.scaleLinear().domain([0, colCount]).range([0, chartWidth])
+  const colCount = sorted.length
+  const chartWidth = Math.max(containerWidth - LABEL_WIDTH, colCount * MIN_BAR_WIDTH)
+  const xScale = d3.scaleLinear().domain([0, colCount]).range([0, chartWidth])
 
-	const bars: BarData[] = sorted.map((task, i) => ({
-		task,
-		x: xScale(i),
-		y: i * ROW_HEIGHT + BAR_PAD,
-		width: xScale(1) - xScale(0) - 4,
-		isCritical: critPath.has(task.id),
-	}))
+  const bars: BarData[] = sorted.map((task, i) => ({
+    task,
+    x: xScale(i),
+    y: i * ROW_HEIGHT + BAR_PAD,
+    width: xScale(1) - xScale(0) - 4,
+    isCritical: critPath.has(task.id),
+  }))
 
-	const barMap = new Map<string, BarData>()
-	for (const bar of bars) {
-		barMap.set(bar.task.id, bar)
-	}
+  const barMap = new Map<string, BarData>()
+  for (const bar of bars) {
+    barMap.set(bar.task.id, bar)
+  }
 
-	const edges: EdgeData[] = []
-	for (const e of dag.edges()) {
-		const src = barMap.get(e.v)
-		const tgt = barMap.get(e.w)
-		if (src && tgt) {
-			edges.push({
-				x1: src.x + src.width,
-				y1: src.y + BAR_HEIGHT / 2,
-				x2: tgt.x,
-				y2: tgt.y + BAR_HEIGHT / 2,
-			})
-		}
-	}
+  const edges: EdgeData[] = []
+  for (const e of dag.edges()) {
+    const src = barMap.get(e.v)
+    const tgt = barMap.get(e.w)
+    if (src && tgt) {
+      edges.push({
+        x1: src.x + src.width,
+        y1: src.y + BAR_HEIGHT / 2,
+        x2: tgt.x,
+        y2: tgt.y + BAR_HEIGHT / 2,
+      })
+    }
+  }
 
-	const svgWidth = chartWidth
-	const svgHeight = sorted.length * ROW_HEIGHT
+  const svgWidth = chartWidth
+  const svgHeight = sorted.length * ROW_HEIGHT
 
-	return { bars, edges, svgWidth, svgHeight }
+  return { bars, edges, svgWidth, svgHeight }
 })
 </script>
 

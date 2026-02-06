@@ -7,20 +7,20 @@ import type { PlanFile } from './types'
  * unknown fields via `.passthrough()` for forward compatibility.
  */
 export const TaskSchema = z
-	.object({
-		id: z.string(),
-		title: z.string(),
-		done: z.boolean().optional(),
-		needs: z.array(z.string()).optional(),
-		parent: z.string().optional(),
-		type: z.string().optional(),
-		state: z.string().optional(),
-		needs_fs: z.array(z.string()).optional(),
-		needs_ss: z.array(z.string()).optional(),
-		needs_ff: z.array(z.string()).optional(),
-		needs_sf: z.array(z.string()).optional(),
-	})
-	.passthrough()
+  .object({
+    id: z.string(),
+    title: z.string(),
+    done: z.boolean().optional(),
+    needs: z.array(z.string()).optional(),
+    parent: z.string().optional(),
+    type: z.string().optional(),
+    state: z.string().optional(),
+    needs_fs: z.array(z.string()).optional(),
+    needs_ss: z.array(z.string()).optional(),
+    needs_ff: z.array(z.string()).optional(),
+    needs_sf: z.array(z.string()).optional(),
+  })
+  .passthrough()
 
 /**
  * Zod schema for a `.plan` file.
@@ -28,19 +28,19 @@ export const TaskSchema = z
  * unknown fields via `.passthrough()` for forward compatibility.
  */
 export const PlanFileSchema = z
-	.object({
-		version: z.string(),
-		project: z.string(),
-		tasks: z.array(TaskSchema),
-	})
-	.passthrough()
+  .object({
+    version: z.string(),
+    project: z.string(),
+    tasks: z.array(TaskSchema),
+  })
+  .passthrough()
 
 /**
  * Result type for plan validation.
  */
 export type ValidationResult<T> =
-	| { success: true; data: T }
-	| { success: false; errors: z.ZodError }
+  | { success: true; data: T }
+  | { success: false; errors: z.ZodError }
 
 /**
  * Validate raw data against the PlanFile schema.
@@ -48,9 +48,9 @@ export type ValidationResult<T> =
  * or a `ZodError` containing actionable error messages.
  */
 export function validatePlan(data: unknown): ValidationResult<PlanFile> {
-	const result = PlanFileSchema.safeParse(data)
-	if (result.success) {
-		return { success: true, data: result.data as PlanFile }
-	}
-	return { success: false, errors: result.error }
+  const result = PlanFileSchema.safeParse(data)
+  if (result.success) {
+    return { success: true, data: result.data as PlanFile }
+  }
+  return { success: false, errors: result.error }
 }

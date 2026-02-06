@@ -1,0 +1,36 @@
+{
+  "name": "partial",
+  "version": "0.1.0",
+  "description": "Agent-native project management via .plan files",
+  "main": "dist/main/index.js",
+  "bin": {
+    "partial": "./dist/cli/index.js"
+  },
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "check": "biome check .",
+    "check:fix": "biome check --write .",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "prepare": "lefthook install",
+    "build:mac": "electron-vite build && electron-builder --mac",
+    "build:win": "electron-vite build && electron-builder --win",
+    "build:linux": "electron-vite build && electron-builder --linux",
+    "release": "electron-vite build && electron-builder --publish always"
+  },
+  "type": "module",
+  "packageManager": "pnpm@10.4.1",
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "keywords": [
+    "project-management",
+    "plan",
+    "dag",
+    "electron",
+    "ai-agent"
+  ],
+  "license": "MIT"
+}

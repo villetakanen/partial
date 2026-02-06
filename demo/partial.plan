@@ -82,7 +82,7 @@ tasks:
     needs:
       - pbi-001
       - pbi-002
-    done: false
+    done: true
 
   - id: pbi-040
     title: Create Vitest configuration

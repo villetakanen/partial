@@ -1197,11 +1197,11 @@ Create `electron.vite.config.ts` (or equivalent) configuring electron-vite for t
 Read: `docs/scaffolding.md` — Section 3 (`"dev": "electron-vite dev"`, `"build": "electron-vite build"`)
 
 #### Verification
-- [ ] `electron.vite.config.ts` exists and is valid TypeScript
-- [ ] Defines `main`, `preload`, and `renderer` build entries
-- [ ] Renderer config includes `@sveltejs/vite-plugin-svelte`
-- [ ] Path aliases (`@shared/*`, `@main/*`, `@renderer/*`) resolve correctly
-- [ ] `pnpm exec electron-vite build` does not error on config parsing (may fail on missing source files — that's expected)
+- [x] `electron.vite.config.ts` exists and is valid TypeScript
+- [x] Defines `main`, `preload`, and `renderer` build entries
+- [x] Renderer config includes `@sveltejs/vite-plugin-svelte`
+- [x] Path aliases (`@shared/*`, `@main/*`, `@renderer/*`) resolve correctly
+- [x] `pnpm exec electron-vite build` does not error on config parsing (may fail on missing source files — that's expected)
 
 #### Refinement Protocol
 If electron-vite's config API differs from expectation, adapt to current API and document.

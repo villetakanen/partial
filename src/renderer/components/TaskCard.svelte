@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { Task } from '@shared/types'
+import { getContext } from 'svelte'
 
 type TaskStatus = 'done' | 'blocked' | 'ready' | 'in_progress'
 
@@ -10,13 +11,25 @@ interface Props {
 
 let { task, status }: Props = $props()
 
+const toggleDone = getContext<((taskId: string) => void) | undefined>('partial:toggleDone')
+
 const depCount = $derived((task.needs?.length ?? 0) as number)
+
+function handleToggle(event: MouseEvent) {
+  event.stopPropagation()
+  toggleDone?.(task.id)
+}
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <article class="task-card {status}" tabindex="0">
 	<div class="header">
-		<span class="status-dot"></span>
+		<button
+			class="status-dot"
+			onclick={handleToggle}
+			aria-label="Toggle done: {task.title}"
+			type="button"
+		></button>
 		<h3 class="title">{task.title}</h3>
 	</div>
 	<div class="meta">
@@ -57,6 +70,11 @@ const depCount = $derived((task.needs?.length ?? 0) as number)
 		height: 8px;
 		border-radius: 50%;
 		flex-shrink: 0;
+		padding: 0;
+		border: none;
+		background: transparent;
+		cursor: pointer;
+		appearance: none;
 	}
 
 	.title {

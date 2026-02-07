@@ -3,6 +3,7 @@ import type { Graph } from '@shared/dag'
 import { buildDAG } from '@shared/dag'
 import type { PartialAPI, PlanUpdatedPayload } from '@shared/ipc'
 import type { PlanFile } from '@shared/types'
+import { setContext } from 'svelte'
 import Welcome from './components/Welcome.svelte'
 import Gantt from './views/Gantt.svelte'
 import GraphView from './views/Graph.svelte'
@@ -11,6 +12,7 @@ import Kanban from './views/Kanban.svelte'
 let view = $state<'gantt' | 'kanban' | 'graph'>('gantt')
 
 let plan = $state<PlanFile | null>(null)
+let filePath = $state<string | null>(null)
 
 const dag: Graph = $derived(plan ? buildDAG(plan.tasks) : buildDAG([]))
 
@@ -19,7 +21,22 @@ const api = (window as unknown as { api: PartialAPI }).api
 $effect(() => {
   api?.onPlanUpdated((payload: PlanUpdatedPayload) => {
     plan = payload.plan
+    filePath = payload.filePath
   })
+})
+
+/**
+ * Provide a done-toggle function to descendant components via Svelte context.
+ * TaskCard reads this to handle status-dot clicks.
+ */
+setContext('partial:toggleDone', (taskId: string) => {
+  if (!plan || !filePath) return
+  const updatedPlan: PlanFile = {
+    ...plan,
+    tasks: plan.tasks.map((t) => (t.id === taskId ? { ...t, done: !t.done } : t)),
+  }
+  plan = updatedPlan
+  api?.savePlan({ filePath, plan: updatedPlan })
 })
 </script>
 

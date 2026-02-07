@@ -77,15 +77,15 @@ Read: `docs/0.1.0-findings.md` — HF-4 (No way to manage project settings — i
 Read: `plans/electron-shell/spec.md` — IPC Channel Contract (`plan:save`)
 
 #### Verification
-- [ ] Clicking the status dot on a not-done task sets `done: true` and saves
-- [ ] Clicking the status dot on a done task sets `done: false` and saves
-- [ ] The `.plan` file on disk is updated with the new `done` value
-- [ ] Unknown fields in the `.plan` file are preserved after save (round-trip safe)
-- [ ] The file watcher does NOT re-trigger a parse for the self-write
-- [ ] Optimistic UI: the card updates immediately, before the file write completes
-- [ ] Works in all three views (Kanban, Gantt, Graph)
-- [ ] `pnpm test -- --run` passes
-- [ ] `pnpm exec tsc --noEmit` passes
+- [x] Clicking the status dot on a not-done task sets `done: true` and saves
+- [x] Clicking the status dot on a done task sets `done: false` and saves
+- [x] The `.plan` file on disk is updated with the new `done` value
+- [x] Unknown fields in the `.plan` file are preserved after save (round-trip safe)
+- [x] The file watcher does NOT re-trigger a parse for the self-write
+- [x] Optimistic UI: the card updates immediately, before the file write completes
+- [x] Works in all three views (Kanban, Gantt, Graph)
+- [x] `pnpm test -- --run` passes
+- [x] `pnpm exec tsc --noEmit` passes
 
 #### Refinement Protocol
 If save failures need to be surfaced to the user (e.g., file locked), defer error UX to a follow-up PBI. For now, log errors to console.

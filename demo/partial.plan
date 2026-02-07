@@ -56,7 +56,7 @@ tasks:
     title: Add inline done-toggle editing to TaskCard
     parent: editing
     type: feat
-    done: false
+    done: true
 
   - id: pbi-060
     title: Add inline title editing to TaskCard

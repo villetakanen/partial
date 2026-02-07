@@ -1,4 +1,5 @@
-import { readFile, writeFile } from "node:fs/promises";
+import { createHash } from "node:crypto";
+import { readFile, mkdir, writeFile } from "node:fs/promises";
 import { join, dirname } from "node:path";
 import { app, Menu, ipcMain, BrowserWindow, dialog } from "electron";
 import { z } from "zod";
@@ -22,6 +23,8 @@ const IPC_CHANNELS = {
   /** renderer → main: User saves changes from UI */
   SAVE: "plan:save"
 };
+const isoDateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expected ISO 8601 date (YYYY-MM-DD)");
+const durationString = z.string().regex(/^\d+[dhwm]$/, "Expected duration like 3d, 1w, 2h, 1m");
 const TaskSchema = z.object({
   id: z.string(),
   title: z.string(),
@@ -33,11 +36,15 @@ const TaskSchema = z.object({
   needs_fs: z.array(z.string()).optional(),
   needs_ss: z.array(z.string()).optional(),
   needs_ff: z.array(z.string()).optional(),
-  needs_sf: z.array(z.string()).optional()
+  needs_sf: z.array(z.string()).optional(),
+  start: isoDateString.optional(),
+  due: isoDateString.optional(),
+  duration: durationString.optional()
 }).passthrough();
 const PlanFileSchema = z.object({
   version: z.string(),
   project: z.string(),
+  description: z.string().optional(),
   tasks: z.array(TaskSchema)
 }).passthrough();
 class PlanParseError extends Error {
@@ -92,6 +99,38 @@ function stringifyPlan(plan) {
     indent: 2,
     lineWidth: 0
   });
+}
+function getSettingsPath() {
+  return join(app.getPath("userData"), "partial-settings.json");
+}
+async function readSettings() {
+  try {
+    const content = await readFile(getSettingsPath(), "utf-8");
+    const parsed = JSON.parse(content);
+    if (typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)) {
+      return parsed;
+    }
+    return {};
+  } catch {
+    return {};
+  }
+}
+async function writeSettings(partial) {
+  const existing = await readSettings();
+  const merged = { ...existing, ...partial };
+  const settingsPath = getSettingsPath();
+  await mkdir(dirname(settingsPath), { recursive: true });
+  await writeFile(settingsPath, JSON.stringify(merged, null, 2), "utf-8");
+}
+async function getLastOpenedFile() {
+  const settings = await readSettings();
+  if (typeof settings.lastOpenedFile === "string" && settings.lastOpenedFile.length > 0) {
+    return settings.lastOpenedFile;
+  }
+  return void 0;
+}
+async function setLastOpenedFile(filePath) {
+  await writeSettings({ lastOpenedFile: filePath });
 }
 function watchDirectory(dirPath, options) {
   const debounceMs = 100;
@@ -173,7 +212,10 @@ function watchDirectory(dirPath, options) {
   };
 }
 let activeWatcher = null;
-const selfWritePaths = /* @__PURE__ */ new Set();
+const selfWriteHashes = /* @__PURE__ */ new Map();
+function hashContent(content) {
+  return createHash("sha256").update(content).digest("hex");
+}
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1200,
@@ -201,26 +243,37 @@ async function openPlanFile(filePath) {
   const content = await readFile(filePath, "utf-8");
   const plan = parsePlan(content);
   sendToAllWindows(IPC_CHANNELS.PLAN_UPDATED, { filePath, plan });
+  await setLastOpenedFile(filePath);
   if (activeWatcher) {
     await activeWatcher.close();
     activeWatcher = null;
   }
   const watcher = watchDirectory(dirname(filePath));
-  watcher.on("change", (changedPath, changedPlan) => {
-    if (selfWritePaths.has(changedPath)) {
-      selfWritePaths.delete(changedPath);
-      return;
+  watcher.on("change", async (changedPath, changedPlan) => {
+    const expectedHash = selfWriteHashes.get(changedPath);
+    if (expectedHash) {
+      selfWriteHashes.delete(changedPath);
+      try {
+        const currentContent = await readFile(changedPath, "utf-8");
+        if (hashContent(currentContent) === expectedHash) return;
+      } catch {
+      }
     }
     sendToAllWindows(IPC_CHANNELS.PLAN_UPDATED, { filePath: changedPath, plan: changedPlan });
   });
   watcher.on("delete", (deletedPath) => {
-    selfWritePaths.delete(deletedPath);
+    selfWriteHashes.delete(deletedPath);
     sendToAllWindows(IPC_CHANNELS.PLAN_DELETED, { filePath: deletedPath });
   });
-  watcher.on("error", (errorPath, error) => {
-    if (selfWritePaths.has(errorPath)) {
-      selfWritePaths.delete(errorPath);
-      return;
+  watcher.on("error", async (errorPath, error) => {
+    const expectedHash = selfWriteHashes.get(errorPath);
+    if (expectedHash) {
+      selfWriteHashes.delete(errorPath);
+      try {
+        const currentContent = await readFile(errorPath, "utf-8");
+        if (hashContent(currentContent) === expectedHash) return;
+      } catch {
+      }
     }
     sendToAllWindows(IPC_CHANNELS.PLAN_ERROR, {
       filePath: errorPath,
@@ -295,14 +348,22 @@ function registerIpcHandlers() {
   });
   ipcMain.handle(IPC_CHANNELS.SAVE, async (_event, payload) => {
     const content = stringifyPlan(payload.plan);
-    selfWritePaths.add(payload.filePath);
+    selfWriteHashes.set(payload.filePath, hashContent(content));
     await writeFile(payload.filePath, content, "utf-8");
   });
 }
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
   buildAppMenu();
   registerIpcHandlers();
-  createWindow();
+  const win = createWindow();
+  win.webContents.once("did-finish-load", async () => {
+    const lastFile = await getLastOpenedFile();
+    if (!lastFile) return;
+    try {
+      await openPlanFile(lastFile);
+    } catch {
+    }
+  });
 });
 app.on("window-all-closed", () => {
   app.quit();

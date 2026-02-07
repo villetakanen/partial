@@ -4,6 +4,7 @@ import { parseArgs } from 'node:util'
 import { PlanParseError, parsePlan } from '@main/parser'
 import type { EdgeLabel } from '@shared/dag'
 import { buildDAG, getUnblockedTasks } from '@shared/dag'
+import type { Task } from '@shared/types'
 
 /** Version from package.json, injected at build time or read dynamically. */
 const VERSION = '0.1.0'
@@ -58,12 +59,13 @@ Options:
 
 const GRAPH_USAGE = `Usage: partial graph [file.plan] [options]
 
-Show the dependency graph as text edges or JSON adjacency list.
+Show the dependency graph as text edges, JSON adjacency list, or DOT format.
 
 Options:
-  --json      Output JSON adjacency structure
-  --quiet     Suppress non-error output
-  --help      Print this help`
+  --format <fmt>  Output format: text (default) or dot (Graphviz DOT)
+  --json          Output JSON adjacency structure
+  --quiet         Suppress non-error output
+  --help          Print this help`
 
 /**
  * Read plan content from a file path or stdin.
@@ -244,19 +246,64 @@ async function runUnblocked(
 }
 
 /**
+ * Escape a string for use inside a DOT label (double-quoted context).
+ * Escapes backslashes, double quotes, and newlines.
+ */
+function dotEscape(s: string): string {
+  return s.replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n')
+}
+
+/**
+ * Generate a Graphviz DOT representation of the dependency graph.
+ *
+ * Done tasks are styled with a gray fill. Edge labels show the dependency type.
+ *
+ * @param graph - The built DAG
+ * @param tasks - The task list (for done status lookup)
+ * @returns A DOT format string
+ */
+function generateDot(graph: ReturnType<typeof buildDAG>, tasks: Task[]): string {
+  const taskMap = new Map(tasks.map((t) => [t.id, t]))
+  const lines: string[] = ['digraph dependencies {']
+  lines.push('  rankdir=LR;')
+  lines.push('  node [shape=box, style=filled, fillcolor="#42a5f5", fontcolor=white];')
+
+  for (const nodeId of graph.nodes()) {
+    const task = taskMap.get(nodeId)
+    const label = task ? `${nodeId}\\n${dotEscape(task.title)}` : nodeId
+    if (task?.done) {
+      lines.push(`  "${dotEscape(nodeId)}" [label="${label}", fillcolor="#9e9e9e"];`)
+    } else {
+      lines.push(`  "${dotEscape(nodeId)}" [label="${label}"];`)
+    }
+  }
+
+  for (const e of graph.edges()) {
+    const edgeLabel = graph.edge(e.v, e.w) as EdgeLabel
+    lines.push(`  "${dotEscape(e.v)}" -> "${dotEscape(e.w)}" [label="${edgeLabel.type}"];`)
+  }
+
+  lines.push('}')
+  return lines.join('\n')
+}
+
+/**
  * Run the `graph` command.
  *
  * Parses a `.plan` file, builds the DAG, and displays the dependency
- * graph as text edges (e.g. `A → B (fs)`) or JSON adjacency structure.
+ * graph as text edges (e.g. `A → B (fs)`), JSON adjacency structure,
+ * or Graphviz DOT format.
  *
  * @param filePath - Optional path to the .plan file (reads stdin if omitted)
  * @param json - Whether to output structured JSON
  * @param quiet - Whether to suppress non-error output
+ * @param format - Output format: 'text' (default) or 'dot'
  */
 async function runGraph(
   filePath: string | undefined,
   json: boolean,
   quiet: boolean,
+  format: string,
 ): Promise<void> {
   const plan = await readAndParse(filePath, json)
   if (!plan) return
@@ -274,6 +321,8 @@ async function runGraph(
       adjacency[e.v].push({ target: e.w, type: label.type })
     }
     process.stdout.write(`${JSON.stringify(adjacency)}\n`)
+  } else if (format === 'dot') {
+    process.stdout.write(`${generateDot(graph, plan.tasks)}\n`)
   } else if (!quiet) {
     if (edges.length === 0) {
       process.stdout.write('No dependencies\n')
@@ -287,6 +336,45 @@ async function runGraph(
   process.exitCode = 0
 }
 
+/** Command help text by command name. */
+const COMMAND_HELP: Record<string, string> = {
+  validate: VALIDATE_USAGE,
+  status: STATUS_USAGE,
+  unblocked: UNBLOCKED_USAGE,
+  graph: GRAPH_USAGE,
+}
+
+/** Dispatch the parsed command to the appropriate handler. */
+async function dispatchCommand(
+  command: string,
+  filePath: string | undefined,
+  flags: { json: boolean; quiet: boolean; help: boolean; format: string },
+): Promise<void> {
+  const helpText = COMMAND_HELP[command]
+  if (flags.help && helpText) {
+    process.stdout.write(`${helpText}\n`)
+    return
+  }
+
+  switch (command) {
+    case 'validate':
+      await runValidate(filePath, flags.json, flags.quiet)
+      break
+    case 'status':
+      await runStatus(filePath, flags.json, flags.quiet)
+      break
+    case 'unblocked':
+      await runUnblocked(filePath, flags.json, flags.quiet)
+      break
+    case 'graph':
+      await runGraph(filePath, flags.json, flags.quiet, flags.format)
+      break
+    default:
+      process.stderr.write(`Unknown command: ${command}\n\n${USAGE}\n`)
+      process.exitCode = 1
+  }
+}
+
 /** CLI entry point. Parses arguments and dispatches to the appropriate command. */
 async function main(): Promise<void> {
   const { values, positionals } = parseArgs({
@@ -296,6 +384,7 @@ async function main(): Promise<void> {
       quiet: { type: 'boolean', default: false },
       version: { type: 'boolean', default: false },
       help: { type: 'boolean', default: false },
+      format: { type: 'string', default: 'text' },
     },
   })
 
@@ -310,50 +399,18 @@ async function main(): Promise<void> {
   }
 
   const command = positionals[0]
-  const filePath = positionals[1]
-
   if (!command) {
     process.stderr.write(`${USAGE}\n`)
     process.exitCode = 1
     return
   }
 
-  const jsonFlag = values.json ?? false
-  const quietFlag = values.quiet ?? false
-
-  switch (command) {
-    case 'validate':
-      if (values.help) {
-        process.stdout.write(`${VALIDATE_USAGE}\n`)
-        return
-      }
-      await runValidate(filePath, jsonFlag, quietFlag)
-      break
-    case 'status':
-      if (values.help) {
-        process.stdout.write(`${STATUS_USAGE}\n`)
-        return
-      }
-      await runStatus(filePath, jsonFlag, quietFlag)
-      break
-    case 'unblocked':
-      if (values.help) {
-        process.stdout.write(`${UNBLOCKED_USAGE}\n`)
-        return
-      }
-      await runUnblocked(filePath, jsonFlag, quietFlag)
-      break
-    case 'graph':
-      if (values.help) {
-        process.stdout.write(`${GRAPH_USAGE}\n`)
-        return
-      }
-      await runGraph(filePath, jsonFlag, quietFlag)
-      break
-    default:
-      process.stderr.write(`Unknown command: ${command}\n\n${USAGE}\n`)
-      process.exitCode = 1
-  }
+  await dispatchCommand(command, positionals[1], {
+    json: values.json ?? false,
+    quiet: values.quiet ?? false,
+    help: values.help ?? false,
+    format: values.format ?? 'text',
+  })
 }
 
 main()

@@ -114,7 +114,7 @@ tasks:
     title: Add DOT format export to CLI graph command
     parent: cli
     type: feat
-    done: false
+    done: true
 
   # ── Stretch ──────────────────────────────────────────────────
 

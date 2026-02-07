@@ -52,6 +52,20 @@ tasks:
     title: Task Y
 `
 
+const PLAN_WITH_DONE = `
+version: "1.0.0"
+project: DoneTest
+tasks:
+  - id: a
+    title: Task A
+    done: true
+  - id: b
+    title: Task B
+    needs:
+      - a
+    done: false
+`
+
 /** Run the CLI via tsx and capture stdout, stderr, and exit code. */
 function runCLI(
   args: string[],
@@ -187,6 +201,82 @@ describe('partial graph', () => {
 
     const result = await runCLI(['graph', filePath, '--quiet'])
     expect(result.stdout).toBe('')
+    expect(result.exitCode).toBe(0)
+  })
+
+  it('outputs valid DOT syntax with --format dot', async () => {
+    const filePath = join(tmpDir, 'dot-basic.plan')
+    await writeFile(filePath, PLAN_WITH_DEPS)
+
+    const result = await runCLI(['graph', filePath, '--format', 'dot'])
+    expect(result.stdout).toContain('digraph dependencies {')
+    expect(result.stdout).toContain('}')
+    expect(result.exitCode).toBe(0)
+  })
+
+  it('DOT output includes node labels with task titles', async () => {
+    const filePath = join(tmpDir, 'dot-labels.plan')
+    await writeFile(filePath, PLAN_WITH_DEPS)
+
+    const result = await runCLI(['graph', filePath, '--format', 'dot'])
+    expect(result.stdout).toContain('Task A')
+    expect(result.stdout).toContain('Task B')
+    expect(result.stdout).toContain('Task C')
+  })
+
+  it('DOT output includes directed edges', async () => {
+    const filePath = join(tmpDir, 'dot-edges.plan')
+    await writeFile(filePath, PLAN_WITH_DEPS)
+
+    const result = await runCLI(['graph', filePath, '--format', 'dot'])
+    expect(result.stdout).toContain('"a" -> "b"')
+    expect(result.stdout).toContain('"b" -> "c"')
+  })
+
+  it('DOT output styles done tasks differently', async () => {
+    const filePath = join(tmpDir, 'dot-done.plan')
+    await writeFile(filePath, PLAN_WITH_DONE)
+
+    const result = await runCLI(['graph', filePath, '--format', 'dot'])
+    // Done task should have gray fill
+    expect(result.stdout).toMatch(/"a".*fillcolor="#9e9e9e"/)
+    // Not-done task should NOT have gray fill
+    expect(result.stdout).not.toMatch(/"b".*fillcolor="#9e9e9e"/)
+    expect(result.exitCode).toBe(0)
+  })
+
+  it('default graph output is unchanged when --format is not specified', async () => {
+    const filePath = join(tmpDir, 'dot-default.plan')
+    await writeFile(filePath, PLAN_WITH_DEPS)
+
+    const result = await runCLI(['graph', filePath])
+    // Should be text format, not DOT
+    expect(result.stdout).toContain('a → b (fs)')
+    expect(result.stdout).not.toContain('digraph')
+    expect(result.exitCode).toBe(0)
+  })
+
+  it('--json flag still works alongside --format', async () => {
+    const filePath = join(tmpDir, 'dot-json.plan')
+    await writeFile(filePath, PLAN_WITH_DEPS)
+
+    // --json should take precedence over --format dot
+    const result = await runCLI(['graph', filePath, '--json', '--format', 'dot'])
+    const parsed = JSON.parse(result.stdout.trim())
+    expect(parsed.a).toEqual([{ target: 'b', type: 'fs' }])
+    expect(result.exitCode).toBe(0)
+  })
+
+  it('DOT output handles plans with no dependencies', async () => {
+    const filePath = join(tmpDir, 'dot-nodeps.plan')
+    await writeFile(filePath, PLAN_NO_DEPS)
+
+    const result = await runCLI(['graph', filePath, '--format', 'dot'])
+    expect(result.stdout).toContain('digraph dependencies {')
+    expect(result.stdout).toContain('"x"')
+    expect(result.stdout).toContain('"y"')
+    // No edges
+    expect(result.stdout).not.toContain('->')
     expect(result.exitCode).toBe(0)
   })
 })

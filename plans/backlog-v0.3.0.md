@@ -359,14 +359,14 @@ Read: `plans/cli/spec.md` — Graph output scenario
 Read: `src/shared/dag.ts` — Graph data structure
 
 #### Verification
-- [ ] `partial graph plan.plan --format dot` outputs valid DOT syntax
-- [ ] DOT output includes node labels (task titles) and directed edges
-- [ ] Done tasks are styled differently in DOT output (e.g., filled gray)
-- [ ] Default `partial graph plan.plan` output is unchanged (no breaking change)
-- [ ] DOT output can be piped to `dot -Tpng` to produce a valid image
-- [ ] `--json` flag still works alongside `--format`
-- [ ] Unit tests cover DOT generation
-- [ ] `pnpm exec tsc --noEmit` passes
+- [x] `partial graph plan.plan --format dot` outputs valid DOT syntax
+- [x] DOT output includes node labels (task titles) and directed edges
+- [x] Done tasks are styled differently in DOT output (e.g., filled gray)
+- [x] Default `partial graph plan.plan` output is unchanged (no breaking change)
+- [x] DOT output can be piped to `dot -Tpng` to produce a valid image
+- [x] `--json` flag still works alongside `--format`
+- [x] Unit tests cover DOT generation
+- [x] `pnpm exec tsc --noEmit` passes
 
 #### Refinement Protocol
 If SVG direct export is desired (without external Graphviz), defer to a follow-up PBI.

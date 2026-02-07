@@ -38,6 +38,20 @@ setContext('partial:toggleDone', (taskId: string) => {
   plan = updatedPlan
   api?.savePlan({ filePath, plan: updatedPlan })
 })
+
+/**
+ * Provide a title-update function to descendant components via Svelte context.
+ * TaskCard reads this to handle inline title editing.
+ */
+setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
+  if (!plan || !filePath) return
+  const updatedPlan: PlanFile = {
+    ...plan,
+    tasks: plan.tasks.map((t) => (t.id === taskId ? { ...t, title: newTitle } : t)),
+  }
+  plan = updatedPlan
+  api?.savePlan({ filePath, plan: updatedPlan })
+})
 </script>
 
 <main>

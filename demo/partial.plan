@@ -64,7 +64,7 @@ tasks:
     type: feat
     needs:
       - pbi-059
-    done: false
+    done: true
 
   - id: pbi-061
     title: Add new task creation from UI

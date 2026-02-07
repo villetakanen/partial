@@ -108,14 +108,14 @@ Double-clicking (or pressing Enter on a focused card) activates an inline text i
 Read: `plans/kanban-view/spec.md` — Anti-Patterns (Heavy DOM updates)
 
 #### Verification
-- [ ] Double-click on title activates inline input pre-filled with current title
-- [ ] Enter confirms and saves; Escape cancels
-- [ ] Blur (click elsewhere) confirms and saves
-- [ ] Empty title is rejected (no save, revert to original)
-- [ ] Round-trip safety: unknown fields preserved
-- [ ] Input is auto-focused and text is selected on activation
-- [ ] Svelte 5 runes syntax, scoped styles
-- [ ] `pnpm exec svelte-check` passes
+- [x] Double-click on title activates inline input pre-filled with current title
+- [x] Enter confirms and saves; Escape cancels
+- [x] Blur (click elsewhere) confirms and saves
+- [x] Empty title is rejected (no save, revert to original)
+- [x] Round-trip safety: unknown fields preserved
+- [x] Input is auto-focused and text is selected on activation
+- [x] Svelte 5 runes syntax, scoped styles
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If multi-field editing (type, parent, needs) is desired, defer to a follow-up PBI. This PBI is title-only.

@@ -12,17 +12,68 @@ interface Props {
 let { task, status }: Props = $props()
 
 const toggleDone = getContext<((taskId: string) => void) | undefined>('partial:toggleDone')
+const updateTitle = getContext<((taskId: string, newTitle: string) => void) | undefined>(
+  'partial:updateTitle',
+)
 
 const depCount = $derived((task.needs?.length ?? 0) as number)
+
+let editing = $state(false)
+let editValue = $state('')
 
 function handleToggle(event: MouseEvent) {
   event.stopPropagation()
   toggleDone?.(task.id)
 }
+
+function startEditing() {
+  editValue = task.title
+  editing = true
+}
+
+function confirmEdit() {
+  const trimmed = editValue.trim()
+  if (trimmed === '' || trimmed === task.title) {
+    editing = false
+    return
+  }
+  updateTitle?.(task.id, trimmed)
+  editing = false
+}
+
+function cancelEdit() {
+  editing = false
+}
+
+function handleTitleDblClick(event: MouseEvent) {
+  event.stopPropagation()
+  startEditing()
+}
+
+function handleCardKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter' && !editing) {
+    startEditing()
+  }
+}
+
+function handleInputKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    confirmEdit()
+  } else if (event.key === 'Escape') {
+    event.preventDefault()
+    cancelEdit()
+  }
+}
+
+function handleInputMount(node: HTMLInputElement) {
+  node.focus()
+  node.select()
+}
 </script>
 
-<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-<article class="task-card {status}" tabindex="0">
+<!-- svelte-ignore a11y_no_noninteractive_tabindex a11y_no_noninteractive_element_interactions -->
+<article class="task-card {status}" tabindex="0" onkeydown={handleCardKeydown}>
 	<div class="header">
 		<button
 			class="status-dot"
@@ -30,7 +81,19 @@ function handleToggle(event: MouseEvent) {
 			aria-label="Toggle done: {task.title}"
 			type="button"
 		></button>
-		<h3 class="title">{task.title}</h3>
+		{#if editing}
+			<input
+				class="title-input"
+				type="text"
+				bind:value={editValue}
+				onkeydown={handleInputKeydown}
+				onblur={confirmEdit}
+				use:handleInputMount
+			/>
+		{:else}
+			<!-- svelte-ignore a11y_no_static_element_interactions -->
+			<h3 class="title" ondblclick={handleTitleDblClick}>{task.title}</h3>
+		{/if}
 	</div>
 	<div class="meta">
 		<span class="id">{task.id}</span>
@@ -83,6 +146,21 @@ function handleToggle(event: MouseEvent) {
 		font-weight: 500;
 		color: #e0e0e0;
 		line-height: 1.3;
+	}
+
+	.title-input {
+		flex: 1;
+		margin: 0;
+		padding: 0 0.25rem;
+		font-size: 0.875rem;
+		font-weight: 500;
+		font-family: inherit;
+		color: #e0e0e0;
+		background: #1a1a2e;
+		border: 1px solid #5a5a9a;
+		border-radius: 3px;
+		line-height: 1.3;
+		outline: none;
 	}
 
 	.meta {

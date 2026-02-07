@@ -256,12 +256,12 @@ function targetY(link: SimLink): number {
 }
 </script>
 
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_no_redundant_roles -->
 <section class="graph-view" role="region" aria-label="Dependency graph" onkeydown={handleGraphKeydown}>
 	{#if plan.tasks.length === 0}
 		<p class="empty-placeholder">No tasks to display</p>
 	{:else}
-		<svg bind:this={svgEl} class="graph-svg" role="img" aria-label="Task dependency graph">
+		<svg bind:this={svgEl} class="graph-svg" aria-label="Task dependency graph">
 			<defs>
 				<marker
 					id="arrowhead"
@@ -327,7 +327,7 @@ function targetY(link: SimLink): number {
 						<dd>{selectedTask.parent}</dd>
 					{/if}
 				</dl>
-				<button class="detail-close" onclick={() => (selectedTask = null)}>Close</button>
+				<button class="detail-close" onclick={() => (selectedTask = null)} aria-label="Close task details">Close</button>
 			</div>
 		{/if}
 	{/if}

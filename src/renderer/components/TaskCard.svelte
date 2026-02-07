@@ -78,12 +78,12 @@ function handleInputMount(node: HTMLInputElement) {
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex a11y_no_noninteractive_element_interactions -->
-<article class="task-card {status}" tabindex="0" onkeydown={handleCardKeydown}>
+<article class="task-card {status}" tabindex="0" role="listitem" aria-label="{task.title} — {status === 'done' ? 'done' : status === 'ready' ? 'ready' : status === 'blocked' ? 'blocked' : 'in progress'}" onkeydown={handleCardKeydown}>
 	<div class="header">
 		<button
 			class="status-dot"
 			onclick={handleToggle}
-			aria-label="Toggle done: {task.title}"
+			aria-label="Mark {task.title} as {task.done ? 'not done' : 'done'}"
 			type="button"
 		></button>
 		{#if editing}

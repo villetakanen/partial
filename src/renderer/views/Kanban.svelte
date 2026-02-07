@@ -113,7 +113,7 @@ function handleBoardKeydown(event: KeyboardEvent) {
 }
 </script>
 
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_no_redundant_roles -->
 <section class="kanban-view" role="region" aria-label="Kanban board" bind:this={boardEl} onkeydown={handleBoardKeydown}>
 	{#each columns as column (column.key)}
 		<div
@@ -131,7 +131,7 @@ function handleBoardKeydown(event: KeyboardEvent) {
 				<span class="column-count">{column.tasks.length}</span>
 			</header>
 			{#if column.tasks.length > 0}
-				<div class="column-body">
+				<div class="column-body" role="list" aria-label="{column.label} tasks">
 					{#each column.tasks as task (task.id)}
 						<TaskCard {task} status={column.key} />
 					{/each}

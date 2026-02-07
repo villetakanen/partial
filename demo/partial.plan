@@ -106,7 +106,7 @@ tasks:
     type: feat
     needs:
       - pbi-064
-    done: false
+    done: true
 
   # ── CLI ──────────────────────────────────────────────────────
 

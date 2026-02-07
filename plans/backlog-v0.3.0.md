@@ -329,13 +329,13 @@ Read: `plans/kanban-view/spec.md` — DoD: "columns are labeled with ARIA roles"
 Read: `plans/gantt-view/spec.md` — DoD: "ARIA labels on chart elements"
 
 #### Verification
-- [ ] Each view container has `role="region"` with `aria-label`
-- [ ] Kanban columns have `role="list"`, cards have `role="listitem"`
-- [ ] Status dots have `aria-label` describing the state
-- [ ] Navigation buttons have `aria-label`
-- [ ] Plan status area has `aria-live="polite"`
+- [x] Each view container has `role="region"` with `aria-label`
+- [x] Kanban columns have `role="list"`, cards have `role="listitem"`
+- [x] Status dots have `aria-label` describing the state
+- [x] Navigation buttons have `aria-label`
+- [x] Plan status area has `aria-live="polite"`
 - [ ] axe-core automated audit shows no critical violations
-- [ ] `pnpm exec svelte-check` passes
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If axe-core integration as a test is desired, create a follow-up PBI for `vitest-axe`.

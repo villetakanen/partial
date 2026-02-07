@@ -58,11 +58,14 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 	{#if plan}
 		<header>
 			<h1>Partial</h1>
-			<nav>
-				<button class:active={view === 'gantt'} onclick={() => (view = 'gantt')}>Gantt</button>
-				<button class:active={view === 'kanban'} onclick={() => (view = 'kanban')}>Kanban</button>
-				<button class:active={view === 'graph'} onclick={() => (view = 'graph')}>Graph</button>
+			<nav aria-label="View navigation">
+				<button class:active={view === 'gantt'} onclick={() => (view = 'gantt')} aria-label="Gantt chart view" aria-pressed={view === 'gantt'}>Gantt</button>
+				<button class:active={view === 'kanban'} onclick={() => (view = 'kanban')} aria-label="Kanban board view" aria-pressed={view === 'kanban'}>Kanban</button>
+				<button class:active={view === 'graph'} onclick={() => (view = 'graph')} aria-label="Dependency graph view" aria-pressed={view === 'graph'}>Graph</button>
 			</nav>
+			{#if filePath}
+				<span class="plan-status" aria-live="polite">{filePath}</span>
+			{/if}
 		</header>
 
 		<section class="view-container">
@@ -129,6 +132,16 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 		background: var(--color-surface-active);
 		color: var(--color-text-inverse);
 		border-color: var(--color-border-accent);
+	}
+
+	.plan-status {
+		margin-left: auto;
+		font-size: 0.75rem;
+		color: var(--color-text-dim);
+		font-family: monospace;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.view-container {

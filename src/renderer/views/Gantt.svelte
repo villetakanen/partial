@@ -129,7 +129,7 @@ function handleGanttKeydown(event: KeyboardEvent) {
 }
 </script>
 
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_no_redundant_roles -->
 <section class="gantt-view" role="region" aria-label="Gantt chart" onkeydown={handleGanttKeydown}>
 	{#if sorted.length === 0}
 		<p class="empty-placeholder">No tasks to display</p>
@@ -154,7 +154,6 @@ function handleGanttKeydown(event: KeyboardEvent) {
 					<svg
 						width={layout.svgWidth}
 						height={layout.svgHeight}
-						role="img"
 						aria-label="Task dependency timeline"
 					>
 						{#each layout.edges as edge, i}
@@ -164,22 +163,24 @@ function handleGanttKeydown(event: KeyboardEvent) {
 								aria-hidden="true"
 							/>
 						{/each}
-						{#each layout.bars as bar (bar.task.id)}
-							<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
-							<rect
-								x={bar.x}
-								y={bar.y}
-								width={bar.width}
-								height={BAR_HEIGHT}
-								rx="4"
-								class="bar"
-								class:done={bar.task.done}
-								class:critical={bar.isCritical && !bar.task.done}
-								tabindex="0"
-								role="listitem"
-								aria-label="{bar.task.title}{bar.task.done ? ' (done)' : ''}{bar.isCritical ? ' (critical path)' : ''}"
-							/>
-						{/each}
+						<g role="list" aria-label="Task bars">
+							{#each layout.bars as bar (bar.task.id)}
+								<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
+								<rect
+									x={bar.x}
+									y={bar.y}
+									width={bar.width}
+									height={BAR_HEIGHT}
+									rx="4"
+									class="bar"
+									class:done={bar.task.done}
+									class:critical={bar.isCritical && !bar.task.done}
+									tabindex="0"
+									role="listitem"
+									aria-label="{bar.task.title}{bar.task.done ? ' (done)' : ''}{bar.isCritical ? ' (critical path)' : ''}"
+								/>
+							{/each}
+						</g>
 					</svg>
 				</div>
 			</div>

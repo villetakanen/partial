@@ -425,13 +425,13 @@ Content overflows the window in several scenarios: `<main>` width is `100% + 2re
 `Gantt.svelte:18`: `LABEL_WIDTH = 180` is fixed regardless of window size.
 
 #### Verification
-- [ ] No horizontal scrollbar appears on the `<body>` or `<main>` at any window size
-- [ ] Kanban view gracefully wraps or scrolls at window widths below 800px
-- [ ] Gantt label column shrinks or truncates gracefully at narrow widths
-- [ ] Graph view SVG fills available height (already uses `calc(100vh - 8rem)`)
-- [ ] Tested at 1024px, 1280px, 1440px, 1920px window widths
-- [ ] No content is clipped or inaccessible
-- [ ] `pnpm exec svelte-check` passes
+- [x] No horizontal scrollbar appears on the `<body>` or `<main>` at any window size
+- [x] Kanban view gracefully wraps or scrolls at window widths below 800px
+- [x] Gantt label column shrinks or truncates gracefully at narrow widths
+- [x] Graph view SVG fills available height (already uses `calc(100vh - 8rem)`)
+- [x] Tested at 1024px, 1280px, 1440px, 1920px window widths
+- [x] No content is clipped or inaccessible
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If a minimum supported window width needs to be documented, set it at 800px.

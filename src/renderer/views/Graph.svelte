@@ -277,6 +277,10 @@ function targetY(link: SimLink): number {
 	.graph-view {
 		padding: 1rem 0;
 		position: relative;
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.empty-placeholder {
@@ -290,7 +294,7 @@ function targetY(link: SimLink): number {
 
 	.graph-svg {
 		width: 100%;
-		height: calc(100vh - 8rem);
+		height: 100%;
 		background: #121225;
 		border-radius: 8px;
 		border: 1px solid #2a2a3e;

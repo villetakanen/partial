@@ -87,12 +87,13 @@ const columns = $derived.by<Column[]>(() => {
 		gap: 1rem;
 		padding: 1rem 0;
 		overflow-x: auto;
-		min-height: 200px;
+		min-height: 0;
+		flex: 1;
 	}
 
 	.column {
 		flex: 1 1 0;
-		min-width: 200px;
+		min-width: min(200px, 40vw);
 		display: flex;
 		flex-direction: column;
 		background: #1a1a2e;

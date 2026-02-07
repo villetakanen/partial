@@ -40,7 +40,7 @@ tasks:
     type: fix
     needs:
       - pbi-069
-    done: false
+    done: true
 
   - id: pbi-071
     title: Extract color scheme to CSS custom properties

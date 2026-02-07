@@ -14,7 +14,7 @@ let { plan, dag }: Props = $props()
 const ROW_HEIGHT = 36
 const BAR_HEIGHT = 24
 const BAR_PAD = (ROW_HEIGHT - BAR_HEIGHT) / 2
-const LABEL_WIDTH = 180
+const MAX_LABEL_WIDTH = 180
 const MIN_BAR_WIDTH = 40
 
 let containerEl = $state<HTMLDivElement | null>(null)
@@ -65,7 +65,8 @@ const layout = $derived.by<{
   }
 
   const colCount = sorted.length
-  const chartWidth = Math.max(containerWidth - LABEL_WIDTH, colCount * MIN_BAR_WIDTH)
+  const labelWidth = Math.min(MAX_LABEL_WIDTH, containerWidth * 0.25)
+  const chartWidth = Math.max(containerWidth - labelWidth, colCount * MIN_BAR_WIDTH)
   const xScale = d3.scaleLinear().domain([0, colCount]).range([0, chartWidth])
 
   const bars: BarData[] = sorted.map((task, i) => ({
@@ -162,6 +163,10 @@ const layout = $derived.by<{
 <style>
 	.gantt-view {
 		padding: 1rem 0;
+		flex: 1;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
 	}
 
 	.empty-placeholder {
@@ -176,6 +181,8 @@ const layout = $derived.by<{
 	.gantt-container {
 		width: 100%;
 		overflow: hidden;
+		flex: 1;
+		min-height: 0;
 	}
 
 	.gantt-scroll {
@@ -185,7 +192,7 @@ const layout = $derived.by<{
 
 	.gantt-labels {
 		flex-shrink: 0;
-		width: 180px;
+		width: min(180px, 25vw);
 		position: relative;
 		border-right: 1px solid #2a2a3e;
 	}

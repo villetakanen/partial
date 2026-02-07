@@ -84,7 +84,10 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 		font-family: system-ui, -apple-system, sans-serif;
 		color: #e0e0e0;
 		background: #1a1a2e;
-		min-height: 100vh;
+		height: 100vh;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
 	}
 
 	header {
@@ -93,6 +96,7 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 		gap: 2rem;
 		border-bottom: 1px solid #333;
 		padding: 1rem 1rem 0.75rem;
+		flex-shrink: 0;
 	}
 
 	h1 {
@@ -129,5 +133,10 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 
 	.view-container {
 		padding: 1rem;
+		flex: 1;
+		overflow: auto;
+		min-height: 0;
+		display: flex;
+		flex-direction: column;
 	}
 </style>

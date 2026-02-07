@@ -2,9 +2,10 @@
 import type { Graph } from '@shared/dag'
 import { buildDAG } from '@shared/dag'
 import type { PartialAPI, PlanUpdatedPayload } from '@shared/ipc'
-import type { PlanFile } from '@shared/types'
+import type { PlanFile, Task } from '@shared/types'
 import { setContext } from 'svelte'
 import SettingsPanel from './components/SettingsPanel.svelte'
+import TaskDetailPanel from './components/TaskDetailPanel.svelte'
 import Welcome from './components/Welcome.svelte'
 import Gantt from './views/Gantt.svelte'
 import GraphView from './views/Graph.svelte'
@@ -12,6 +13,7 @@ import Kanban from './views/Kanban.svelte'
 
 let view = $state<'gantt' | 'kanban' | 'graph'>('gantt')
 let showSettings = $state(false)
+let detailTask = $state<Task | null>(null)
 
 let plan = $state<PlanFile | null>(null)
 let filePath = $state<string | null>(null)
@@ -87,6 +89,15 @@ setContext('partial:removeTask', (taskId: string) => {
   api?.savePlan({ filePath, plan: updatedPlan })
 })
 
+/**
+ * Provide an open-detail function to descendant components via Svelte context.
+ * TaskCard and Graph view read this to open the task detail panel.
+ */
+setContext('partial:openDetail', (task: Task) => {
+  showSettings = false
+  detailTask = task
+})
+
 /** State for the delete confirmation dialog. */
 let deleteConfirm = $state<{ taskId: string; taskTitle: string; dependents: string[] } | null>(null)
 
@@ -155,6 +166,17 @@ function handleSettingsSave(updatedPlan: PlanFile) {
   plan = updatedPlan
   api?.savePlan({ filePath, plan: updatedPlan })
 }
+
+/** Save updated task from detail panel. */
+function handleDetailSave(updatedTask: Task) {
+  if (!plan || !filePath) return
+  const updatedPlan: PlanFile = {
+    ...plan,
+    tasks: plan.tasks.map((t) => (t.id === updatedTask.id ? updatedTask : t)),
+  }
+  plan = updatedPlan
+  api?.savePlan({ filePath, plan: updatedPlan })
+}
 </script>
 
 <main>
@@ -169,7 +191,7 @@ function handleSettingsSave(updatedPlan: PlanFile) {
 			{#if filePath}
 				<span class="plan-status" aria-live="polite">{filePath}</span>
 			{/if}
-			<button class="settings-btn" onclick={() => (showSettings = true)} aria-label="Project settings" type="button">
+			<button class="settings-btn" onclick={() => { detailTask = null; showSettings = true }} aria-label="Project settings" type="button">
 				<svg class="settings-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
 					<path fill-rule="evenodd" d="M8.34 1.804A1 1 0 019.32 1h1.36a1 1 0 01.98.804l.295 1.473a6.5 6.5 0 011.345.777l1.42-.47a1 1 0 011.12.37l.68 1.177a1 1 0 01-.14 1.173l-1.126 1.003a6.5 6.5 0 010 1.554l1.126 1.003a1 1 0 01.14 1.173l-.68 1.177a1 1 0 01-1.12.37l-1.42-.47a6.5 6.5 0 01-1.345.777l-.295 1.473a1 1 0 01-.98.804H9.32a1 1 0 01-.98-.804l-.295-1.473a6.5 6.5 0 01-1.345-.777l-1.42.47a1 1 0 01-1.12-.37l-.68-1.177a1 1 0 01.14-1.173l1.126-1.003a6.5 6.5 0 010-1.554L3.62 5.63a1 1 0 01-.14-1.173l.68-1.177a1 1 0 011.12-.37l1.42.47a6.5 6.5 0 011.345-.777L8.34 1.804zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
 				</svg>
@@ -191,6 +213,10 @@ function handleSettingsSave(updatedPlan: PlanFile) {
 
 	{#if showSettings && plan}
 		<SettingsPanel {plan} onSave={handleSettingsSave} onClose={() => (showSettings = false)} />
+	{/if}
+
+	{#if detailTask && plan}
+		<TaskDetailPanel task={detailTask} {plan} onSave={handleDetailSave} onClose={() => (detailTask = null)} />
 	{/if}
 
 	{#if deleteConfirm}

@@ -3,6 +3,7 @@ import type { Graph as DAGGraph, EdgeLabel } from '@shared/dag'
 import { getUnblockedTasks } from '@shared/dag'
 import type { PlanFile, Task } from '@shared/types'
 import * as d3 from 'd3'
+import { getContext } from 'svelte'
 import { getSimParams } from './graphSimParams'
 
 interface Props {
@@ -23,10 +24,11 @@ interface SimLink extends d3.SimulationLinkDatum<SimNode> {
 }
 
 let svgEl = $state<SVGSVGElement | null>(null)
-let selectedTask = $state<Task | null>(null)
 let simNodes = $state<SimNode[]>([])
 let simLinks = $state<SimLink[]>([])
 let transform = $state(d3.zoomIdentity)
+
+const openDetail = getContext<((task: Task) => void) | undefined>('partial:openDetail')
 
 let simulation: d3.Simulation<SimNode, SimLink> | null = null
 let prevTopologyKey = ''
@@ -178,7 +180,7 @@ function nodeColor(status: string): string {
 }
 
 function handleNodeClick(task: Task): void {
-  selectedTask = selectedTask?.id === task.id ? null : task
+  openDetail?.(task)
 }
 
 /** Checks if a candidate node is in the correct direction from the origin. */
@@ -310,26 +312,6 @@ function targetY(link: SimLink): number {
 				{/each}
 			</g>
 		</svg>
-		{#if selectedTask}
-			<div class="detail-panel" role="complementary" aria-label="Task details">
-				<h3 class="detail-title">{selectedTask.title}</h3>
-				<dl class="detail-fields">
-					<dt>ID</dt>
-					<dd>{selectedTask.id}</dd>
-					<dt>Status</dt>
-					<dd>{selectedTask.done ? 'Done' : 'Not done'}</dd>
-					{#if selectedTask.needs && selectedTask.needs.length > 0}
-						<dt>Dependencies</dt>
-						<dd>{selectedTask.needs.join(', ')}</dd>
-					{/if}
-					{#if selectedTask.parent}
-						<dt>Parent</dt>
-						<dd>{selectedTask.parent}</dd>
-					{/if}
-				</dl>
-				<button class="detail-close" onclick={() => (selectedTask = null)} aria-label="Close task details">Close</button>
-			</div>
-		{/if}
 	{/if}
 </section>
 
@@ -390,57 +372,4 @@ function targetY(link: SimLink): number {
 		pointer-events: none;
 	}
 
-	.detail-panel {
-		position: absolute;
-		top: 1rem;
-		right: 1rem;
-		background: var(--color-surface-primary);
-		border: 1px solid var(--color-surface-elevated);
-		border-radius: 8px;
-		padding: 1rem;
-		min-width: 200px;
-		max-width: 300px;
-		z-index: 10;
-	}
-
-	.detail-title {
-		margin: 0 0 0.75rem;
-		font-size: 0.9375rem;
-		font-weight: 600;
-		color: var(--color-text-primary);
-	}
-
-	.detail-fields {
-		margin: 0;
-		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 0.25rem 0.75rem;
-		font-size: 0.8125rem;
-	}
-
-	.detail-fields dt {
-		color: var(--color-text-dim);
-		font-weight: 500;
-	}
-
-	.detail-fields dd {
-		margin: 0;
-		color: var(--color-text-secondary);
-		font-family: monospace;
-	}
-
-	.detail-close {
-		margin-top: 0.75rem;
-		padding: 0.25rem 0.75rem;
-		background: var(--color-surface-elevated);
-		border: 1px solid var(--color-surface-elevated-hover);
-		border-radius: 4px;
-		color: var(--color-text-secondary);
-		font-size: 0.75rem;
-		cursor: pointer;
-	}
-
-	.detail-close:hover {
-		background: var(--color-surface-elevated-hover);
-	}
 </style>

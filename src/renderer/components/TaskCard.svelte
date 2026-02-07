@@ -18,6 +18,7 @@ const updateTitle = getContext<((taskId: string, newTitle: string) => void) | un
 )
 const deleteTask = getContext<((taskId: string) => void) | undefined>('partial:deleteTask')
 const removeTask = getContext<((taskId: string) => void) | undefined>('partial:removeTask')
+const openDetail = getContext<((task: Task) => void) | undefined>('partial:openDetail')
 
 const depCount = $derived((task.needs?.length ?? 0) as number)
 
@@ -100,6 +101,14 @@ function handleInputKeydown(event: KeyboardEvent) {
   }
 }
 
+function handleCardClick(event: MouseEvent) {
+  if (editing) return
+  const target = event.target as HTMLElement
+  // Don't open detail if clicking status dot, delete button, or title (dblclick handler)
+  if (target.closest('.status-dot') || target.closest('.delete-btn')) return
+  openDetail?.(task)
+}
+
 function handleInputMount(node: HTMLInputElement) {
   node.focus()
   node.select()
@@ -107,7 +116,7 @@ function handleInputMount(node: HTMLInputElement) {
 </script>
 
 <!-- svelte-ignore a11y_no_noninteractive_tabindex a11y_no_noninteractive_element_interactions -->
-<article class="task-card {status}" tabindex="0" role="listitem" aria-label="{task.title} — {status === 'done' ? 'done' : status === 'ready' ? 'ready' : status === 'blocked' ? 'blocked' : 'in progress'}" onkeydown={handleCardKeydown}>
+<article class="task-card {status}" tabindex="0" role="listitem" aria-label="{task.title} — {status === 'done' ? 'done' : status === 'ready' ? 'ready' : status === 'blocked' ? 'blocked' : 'in progress'}" onkeydown={handleCardKeydown} onclick={handleCardClick}>
 	<div class="header">
 		<button
 			class="status-dot"

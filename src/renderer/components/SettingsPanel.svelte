@@ -16,8 +16,7 @@ let projectName = $state(plan.project)
 /** Save the updated project name and close the panel. */
 function handleSave() {
   const trimmed = projectName.trim()
-  if (trimmed === '' || trimmed === plan.project) {
-    onClose()
+  if (trimmed === '') {
     return
   }
   onSave({ ...plan, project: trimmed })

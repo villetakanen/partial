@@ -7,20 +7,28 @@ type TaskStatus = 'done' | 'blocked' | 'ready' | 'in_progress'
 interface Props {
   task: Task
   status: TaskStatus
+  autoEdit?: boolean
 }
 
-let { task, status }: Props = $props()
+let { task, status, autoEdit = false }: Props = $props()
 
 const toggleDone = getContext<((taskId: string) => void) | undefined>('partial:toggleDone')
 const updateTitle = getContext<((taskId: string, newTitle: string) => void) | undefined>(
   'partial:updateTitle',
 )
 const deleteTask = getContext<((taskId: string) => void) | undefined>('partial:deleteTask')
+const removeTask = getContext<((taskId: string) => void) | undefined>('partial:removeTask')
 
 const depCount = $derived((task.needs?.length ?? 0) as number)
 
 let editing = $state(false)
 let editValue = $state('')
+
+$effect(() => {
+  if (autoEdit) {
+    startEditing()
+  }
+})
 
 function handleToggle(event: MouseEvent) {
   event.stopPropagation()
@@ -34,7 +42,15 @@ function startEditing() {
 
 function confirmEdit() {
   const trimmed = editValue.trim()
-  if (trimmed === '' || trimmed === task.title) {
+  if (trimmed === '') {
+    // Empty title: if this was a new task (autoEdit), remove it entirely
+    if (autoEdit) {
+      removeTask?.(task.id)
+    }
+    editing = false
+    return
+  }
+  if (trimmed === task.title) {
     editing = false
     return
   }
@@ -43,6 +59,10 @@ function confirmEdit() {
 }
 
 function cancelEdit() {
+  // If canceling a brand-new task (autoEdit with empty title), remove it
+  if (autoEdit && task.title === '') {
+    removeTask?.(task.id)
+  }
   editing = false
 }
 

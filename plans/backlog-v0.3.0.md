@@ -139,13 +139,13 @@ Add an "Add Task" button or affordance to the Kanban view (and optionally other 
 Read: `docs/0.1.0-findings.md` — HF-4
 
 #### Verification
-- [ ] "Add Task" button visible in Kanban Ready column
-- [ ] Clicking it creates a new task and enters edit mode on its title
-- [ ] New task appears in the `.plan` file on disk
-- [ ] Generated task ID is unique within the plan
-- [ ] Canceling the title edit (Escape) removes the newly created task
-- [ ] Round-trip safety: all other tasks and unknown fields preserved
-- [ ] `pnpm test -- --run` passes
+- [x] "Add Task" button visible in Kanban Ready column
+- [x] Clicking it creates a new task and enters edit mode on its title
+- [x] New task appears in the `.plan` file on disk
+- [x] Generated task ID is unique within the plan
+- [x] Canceling the title edit (Escape) removes the newly created task
+- [x] Round-trip safety: all other tasks and unknown fields preserved
+- [x] `pnpm test -- --run` passes
 
 #### Refinement Protocol
 If adding tasks with pre-set dependencies or parent is desired, defer to a follow-up PBI.

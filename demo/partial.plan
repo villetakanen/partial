@@ -72,7 +72,7 @@ tasks:
     type: feat
     needs:
       - pbi-060
-    done: false
+    done: true
 
   - id: pbi-062
     title: Add task deletion from UI

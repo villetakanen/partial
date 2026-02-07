@@ -53,6 +53,38 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
   api?.savePlan({ filePath, plan: updatedPlan })
 })
 
+/**
+ * Provide an add-task function to descendant components via Svelte context.
+ * Creates a new task with a generated ID and saves the plan.
+ * Returns the generated task ID so the caller can track it.
+ */
+setContext('partial:addTask', (): string | null => {
+  if (!plan || !filePath) return null
+  const id = `task-${Date.now()}`
+  const newTask = { id, title: '', done: false }
+  const updatedPlan: PlanFile = {
+    ...plan,
+    tasks: [...plan.tasks, newTask],
+  }
+  plan = updatedPlan
+  api?.savePlan({ filePath, plan: updatedPlan })
+  return id
+})
+
+/**
+ * Provide a remove-task function (silent, no confirmation) via Svelte context.
+ * Used when canceling a newly created task's title edit (Escape on empty title).
+ */
+setContext('partial:removeTask', (taskId: string) => {
+  if (!plan || !filePath) return
+  const updatedPlan: PlanFile = {
+    ...plan,
+    tasks: plan.tasks.filter((t) => t.id !== taskId),
+  }
+  plan = updatedPlan
+  api?.savePlan({ filePath, plan: updatedPlan })
+})
+
 /** State for the delete confirmation dialog. */
 let deleteConfirm = $state<{ taskId: string; taskTitle: string; dependents: string[] } | null>(null)
 

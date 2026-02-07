@@ -2,6 +2,7 @@
 import type { Graph } from '@shared/dag'
 import { getUnblockedTasks } from '@shared/dag'
 import type { PlanFile, Task } from '@shared/types'
+import { getContext } from 'svelte'
 import TaskCard from '../components/TaskCard.svelte'
 
 interface Props {
@@ -11,7 +12,16 @@ interface Props {
 
 let { plan, dag }: Props = $props()
 
+const addTask = getContext<(() => string | null) | undefined>('partial:addTask')
+
 let boardEl = $state<HTMLElement | null>(null)
+let newTaskId = $state<string | null>(null)
+
+/** Creates a new task and tracks its ID so the card auto-enters edit mode. */
+function handleAddTask() {
+  const id = addTask?.() ?? null
+  newTaskId = id
+}
 
 type TaskStatus = 'done' | 'blocked' | 'ready' | 'in_progress'
 
@@ -118,7 +128,7 @@ function handleBoardKeydown(event: KeyboardEvent) {
 	{#each columns as column (column.key)}
 		<div
 			class="column"
-			class:collapsed={column.tasks.length === 0}
+			class:collapsed={column.tasks.length === 0 && column.key !== 'ready'}
 			role="group"
 			aria-label="{column.label} column"
 		>
@@ -129,11 +139,14 @@ function handleBoardKeydown(event: KeyboardEvent) {
 					<h2 class="column-title">{column.label}</h2>
 				{/if}
 				<span class="column-count">{column.tasks.length}</span>
+				{#if column.key === 'ready'}
+					<button class="add-task-btn" onclick={handleAddTask} aria-label="Add new task" type="button">+</button>
+				{/if}
 			</header>
-			{#if column.tasks.length > 0}
+			{#if column.tasks.length > 0 || (column.key === 'ready' && newTaskId)}
 				<div class="column-body" role="list" aria-label="{column.label} tasks">
 					{#each column.tasks as task (task.id)}
-						<TaskCard {task} status={column.key} />
+						<TaskCard {task} status={column.key} autoEdit={task.id === newTaskId} />
 					{/each}
 				</div>
 			{/if}
@@ -209,6 +222,7 @@ function handleBoardKeydown(event: KeyboardEvent) {
 		justify-content: space-between;
 		padding: 0.75rem 1rem;
 		border-bottom: 1px solid var(--color-surface-elevated);
+		gap: 0.5rem;
 	}
 
 	.column-title {
@@ -226,6 +240,30 @@ function handleBoardKeydown(event: KeyboardEvent) {
 		background: var(--color-surface-elevated);
 		padding: 0.125rem 0.5rem;
 		border-radius: 10px;
+	}
+
+	.add-task-btn {
+		margin-left: auto;
+		padding: 0;
+		width: 1.5rem;
+		height: 1.5rem;
+		border: 1px solid var(--color-border-secondary);
+		border-radius: 4px;
+		background: transparent;
+		color: var(--color-text-muted);
+		font-size: 1rem;
+		line-height: 1;
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		transition: color 0.15s, background 0.15s, border-color 0.15s;
+	}
+
+	.add-task-btn:hover {
+		background: var(--color-surface-hover);
+		color: var(--color-text-inverse);
+		border-color: var(--color-border-accent);
 	}
 
 	.column-body {

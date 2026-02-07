@@ -67,15 +67,15 @@ describe('Kanban', () => {
     expect(ipCol.textContent).toContain('WIP task')
   })
 
-  it('collapses empty columns', () => {
-    // Only done tasks — Blocked, Ready, and In Progress should be collapsed
+  it('collapses empty columns (except Ready which has Add button)', () => {
+    // Only done tasks — Blocked and In Progress should be collapsed; Ready stays open for Add button
     const tasks: Task[] = [createTask({ id: 'a', title: 'Done task', done: true })]
 
     const { container } = renderKanban(tasks)
     const collapsed = container.querySelectorAll('.column.collapsed')
 
-    // 3 should be collapsed (blocked, ready, in_progress are empty)
-    expect(collapsed.length).toBe(3)
+    // 2 should be collapsed (blocked, in_progress are empty); Ready stays open
+    expect(collapsed.length).toBe(2)
   })
 
   it('does not collapse columns that have tasks', () => {
@@ -119,12 +119,31 @@ describe('Kanban', () => {
     expect(title?.getAttribute('title')).toBe('Tasks with state: in_progress in the .plan file')
   })
 
+  it('renders Add Task button in Ready column', () => {
+    const { container } = renderKanban([])
+    const columns = getColumns(container)
+    const readyCol = columns[1] // Ready is 2nd column
+    const addBtn = readyCol.querySelector('.add-task-btn')
+    expect(addBtn).not.toBeNull()
+    expect(addBtn?.textContent).toBe('+')
+    expect(addBtn?.getAttribute('aria-label')).toBe('Add new task')
+  })
+
+  it('does not render Add Task button in non-Ready columns', () => {
+    const { container } = renderKanban([])
+    const columns = getColumns(container)
+    // Blocked, In Progress, Done should not have the button
+    expect(columns[0].querySelector('.add-task-btn')).toBeNull()
+    expect(columns[2].querySelector('.add-task-btn')).toBeNull()
+    expect(columns[3].querySelector('.add-task-btn')).toBeNull()
+  })
+
   it('handles empty plan without errors', () => {
     const { container } = renderKanban([])
     const columns = getColumns(container)
     expect(columns.length).toBe(4)
-    // All columns collapsed since no tasks
+    // 3 collapsed (blocked, in_progress, done); Ready stays open for Add button
     const collapsed = container.querySelectorAll('.column.collapsed')
-    expect(collapsed.length).toBe(4)
+    expect(collapsed.length).toBe(3)
   })
 })

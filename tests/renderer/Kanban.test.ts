@@ -17,16 +17,25 @@ function renderKanban(tasks: Task[]) {
 }
 
 /**
- * Get the four column elements from the rendered Kanban board.
- * Returns them in order: Blocked, Ready, In Progress, Done.
+ * Get the column elements from the rendered Kanban board.
  */
 function getColumns(container: HTMLElement) {
   return container.querySelectorAll<HTMLDivElement>('.column')
 }
 
 describe('Kanban', () => {
-  it('renders four column headers', () => {
+  it('renders three column headers when no in_progress tasks', () => {
     const { container } = renderKanban([])
+    const headers = container.querySelectorAll('.column-title')
+    const labels = Array.from(headers).map((h) => h.textContent)
+    expect(labels).toEqual(['Blocked', 'Ready', 'Done'])
+  })
+
+  it('renders four column headers when in_progress tasks exist', () => {
+    const tasks: Task[] = [
+      createTask({ id: 'a', title: 'WIP task', done: false, state: 'in_progress' }),
+    ]
+    const { container } = renderKanban(tasks)
     const headers = container.querySelectorAll('.column-title')
     const labels = Array.from(headers).map((h) => h.textContent)
     expect(labels).toEqual(['Blocked', 'Ready', 'In Progress', 'Done'])
@@ -42,10 +51,10 @@ describe('Kanban', () => {
     const { container } = renderKanban(tasks)
     const columns = getColumns(container)
 
-    // Column order: Blocked, Ready, In Progress, Done
+    // Column order without in_progress: Blocked, Ready, Done
     const blockedCol = columns[0]
     const readyCol = columns[1]
-    const doneCol = columns[3]
+    const doneCol = columns[2]
 
     // Task A is done → Done column
     expect(doneCol.textContent).toContain('Task A')
@@ -62,20 +71,21 @@ describe('Kanban', () => {
 
     const { container } = renderKanban(tasks)
     const columns = getColumns(container)
-    const ipCol = columns[2] // In Progress is the 3rd column
+    // With in_progress tasks: Blocked, Ready, In Progress, Done
+    const ipCol = columns[2]
 
     expect(ipCol.textContent).toContain('WIP task')
   })
 
   it('collapses empty columns (except Ready which has Add button)', () => {
-    // Only done tasks — Blocked and In Progress should be collapsed; Ready stays open for Add button
+    // Only done tasks — Blocked should be collapsed; Ready stays open for Add button; no In Progress column
     const tasks: Task[] = [createTask({ id: 'a', title: 'Done task', done: true })]
 
     const { container } = renderKanban(tasks)
     const collapsed = container.querySelectorAll('.column.collapsed')
 
-    // 2 should be collapsed (blocked, in_progress are empty); Ready stays open
-    expect(collapsed.length).toBe(2)
+    // 1 collapsed (blocked is empty); Ready stays open; In Progress hidden; Done has task
+    expect(collapsed.length).toBe(1)
   })
 
   it('does not collapse columns that have tasks', () => {
@@ -88,9 +98,9 @@ describe('Kanban', () => {
     // Ready column should not be collapsed since it has a task
     expect(readyCol.classList.contains('collapsed')).toBe(false)
 
-    // But Blocked, In Progress, Done should be collapsed
+    // Blocked and Done should be collapsed; In Progress is hidden
     const collapsed = container.querySelectorAll('.column.collapsed')
-    expect(collapsed.length).toBe(3)
+    expect(collapsed.length).toBe(2)
   })
 
   it('shows task count badges on each column', () => {
@@ -103,18 +113,20 @@ describe('Kanban', () => {
     const { container } = renderKanban(tasks)
     const columns = getColumns(container)
 
-    // Done column (index 3) should have count 2
-    expect(columns[3].querySelector('.column-count')?.textContent).toBe('2')
+    // Without in_progress: columns are Blocked, Ready, Done
+    // Done column (index 2) should have count 2
+    expect(columns[2].querySelector('.column-count')?.textContent).toBe('2')
     // Ready column (index 1) should have count 1
     expect(columns[1].querySelector('.column-count')?.textContent).toBe('1')
     // Blocked column (index 0) should have count 0
     expect(columns[0].querySelector('.column-count')?.textContent).toBe('0')
   })
 
-  it('renders tooltip on In Progress column header', () => {
-    const { container } = renderKanban([])
+  it('renders tooltip on In Progress column header when present', () => {
+    const tasks: Task[] = [createTask({ id: 'a', title: 'WIP', done: false, state: 'in_progress' })]
+    const { container } = renderKanban(tasks)
     const columns = getColumns(container)
-    const ipCol = columns[2] // In Progress is 3rd column
+    const ipCol = columns[2] // In Progress is 3rd column when present
     const title = ipCol.querySelector('.column-title')
     expect(title?.getAttribute('title')).toBe('Tasks with state: in_progress in the .plan file')
   })
@@ -130,9 +142,10 @@ describe('Kanban', () => {
   })
 
   it('does not render Add Task button in non-Ready columns', () => {
-    const { container } = renderKanban([])
+    const tasks: Task[] = [createTask({ id: 'a', title: 'WIP', done: false, state: 'in_progress' })]
+    const { container } = renderKanban(tasks)
     const columns = getColumns(container)
-    // Blocked, In Progress, Done should not have the button
+    // With in_progress: Blocked(0), Ready(1), InProgress(2), Done(3)
     expect(columns[0].querySelector('.add-task-btn')).toBeNull()
     expect(columns[2].querySelector('.add-task-btn')).toBeNull()
     expect(columns[3].querySelector('.add-task-btn')).toBeNull()
@@ -141,9 +154,10 @@ describe('Kanban', () => {
   it('handles empty plan without errors', () => {
     const { container } = renderKanban([])
     const columns = getColumns(container)
-    expect(columns.length).toBe(4)
-    // 3 collapsed (blocked, in_progress, done); Ready stays open for Add button
+    // 3 columns (no In Progress when empty)
+    expect(columns.length).toBe(3)
+    // 2 collapsed (blocked, done); Ready stays open for Add button
     const collapsed = container.querySelectorAll('.column.collapsed')
-    expect(collapsed.length).toBe(3)
+    expect(collapsed.length).toBe(2)
   })
 })

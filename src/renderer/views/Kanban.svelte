@@ -55,12 +55,16 @@ const columns = $derived.by<Column[]>(() => {
   return [
     { key: 'blocked', label: 'Blocked', tasks: blocked },
     { key: 'ready', label: 'Ready', tasks: ready },
-    {
-      key: 'in_progress',
-      label: 'In Progress',
-      tasks: inProgress,
-      tooltip: 'Tasks with state: in_progress in the .plan file',
-    },
+    ...(inProgress.length > 0
+      ? [
+          {
+            key: 'in_progress' as TaskStatus,
+            label: 'In Progress',
+            tasks: inProgress,
+            tooltip: 'Tasks with state: in_progress in the .plan file',
+          },
+        ]
+      : []),
     { key: 'done', label: 'Done', tasks: done },
   ]
 })

@@ -471,7 +471,7 @@ tasks:
     needs:
       - pbi-051
       - pbi-050
-    done: false
+    done: true
 
   - id: pbi-055
     title: Add Electron IPC integration tests

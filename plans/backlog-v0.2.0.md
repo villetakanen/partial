@@ -370,13 +370,13 @@ Add component tests for the four Svelte components using `@testing-library/svelt
 Read: `docs/0.1.0-findings.md` — Finding 4 (No component/IPC tests)
 
 #### Verification
-- [ ] Kanban test: tasks assigned to correct columns for known DAG
-- [ ] Kanban test: empty columns are collapsed
-- [ ] TaskCard test: renders correct state dot for done/blocked/ready/in_progress
-- [ ] App test: renders Welcome screen when no plans loaded
-- [ ] Graph test: renders empty state for `tasks: []`
-- [ ] All tests pass: `pnpm test -- --run`
-- [ ] `@testing-library/svelte` added to `devDependencies`
+- [x] Kanban test: tasks assigned to correct columns for known DAG
+- [x] Kanban test: empty columns are collapsed
+- [x] TaskCard test: renders correct state dot for done/blocked/ready/in_progress
+- [x] App test: renders Welcome screen when no plans loaded
+- [x] Graph test: renders empty state for `tasks: []`
+- [x] All tests pass: `pnpm test -- --run`
+- [x] `@testing-library/svelte` added to `devDependencies`
 
 #### Refinement Protocol
 ASK before adding `@testing-library/svelte` (Tier 2: new dependency). If Svelte 5 compatibility is an issue, document and defer.

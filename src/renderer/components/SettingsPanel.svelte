@@ -12,6 +12,8 @@ let { plan, onSave, onClose }: Props = $props()
 // Local edit state — intentionally captures initial value, not reactive
 // svelte-ignore state_referenced_locally
 let projectName = $state(plan.project)
+// svelte-ignore state_referenced_locally
+let description = $state(plan.description ?? '')
 
 /** Save the updated project name and close the panel. */
 function handleSave() {
@@ -19,7 +21,12 @@ function handleSave() {
   if (trimmed === '') {
     return
   }
-  onSave({ ...plan, project: trimmed })
+  const desc = description.trim()
+  onSave({
+    ...plan,
+    project: trimmed,
+    ...(desc ? { description: desc } : { description: undefined }),
+  })
   onClose()
 }
 
@@ -65,6 +72,17 @@ function handleInputKeydown(event: KeyboardEvent) {
           bind:value={projectName}
           onkeydown={handleInputKeydown}
         />
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="settings-description">Description</label>
+        <textarea
+          id="settings-description"
+          class="field-input field-textarea"
+          bind:value={description}
+          rows="3"
+          placeholder="Optional project description"
+        ></textarea>
       </div>
 
       <div class="field">
@@ -183,6 +201,12 @@ function handleInputKeydown(event: KeyboardEvent) {
 
   .field-input:focus {
     border-color: var(--color-border-accent);
+  }
+
+  .field-textarea {
+    resize: vertical;
+    min-height: 3rem;
+    line-height: 1.4;
   }
 
   .field-input-readonly {

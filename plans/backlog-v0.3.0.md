@@ -169,13 +169,13 @@ Add a delete affordance (e.g., trash icon or context menu) to the `TaskCard` com
 Read: `src/shared/dag.ts` — DAG traversal can identify dependents of a deleted task
 
 #### Verification
-- [ ] Delete button visible on TaskCard (on hover or always visible)
-- [ ] Clicking delete on a task with no dependents removes it immediately
-- [ ] Clicking delete on a task with dependents shows confirmation with affected task list
-- [ ] Confirming deletion removes the task and clears it from all `needs` arrays
-- [ ] Canceling deletion does nothing
-- [ ] Round-trip safety: unknown fields preserved
-- [ ] `pnpm test -- --run` passes
+- [x] Delete button visible on TaskCard (on hover or always visible)
+- [x] Clicking delete on a task with no dependents removes it immediately
+- [x] Clicking delete on a task with dependents shows confirmation with affected task list
+- [x] Confirming deletion removes the task and clears it from all `needs` arrays
+- [x] Canceling deletion does nothing
+- [x] Round-trip safety: unknown fields preserved
+- [x] `pnpm test -- --run` passes
 
 #### Refinement Protocol
 If undo/redo is desired, defer to a separate PBI. This PBI is destructive-delete only.

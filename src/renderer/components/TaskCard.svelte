@@ -15,6 +15,7 @@ const toggleDone = getContext<((taskId: string) => void) | undefined>('partial:t
 const updateTitle = getContext<((taskId: string, newTitle: string) => void) | undefined>(
   'partial:updateTitle',
 )
+const deleteTask = getContext<((taskId: string) => void) | undefined>('partial:deleteTask')
 
 const depCount = $derived((task.needs?.length ?? 0) as number)
 
@@ -50,6 +51,11 @@ function handleTitleDblClick(event: MouseEvent) {
   startEditing()
 }
 
+function handleDelete(event: MouseEvent) {
+  event.stopPropagation()
+  deleteTask?.(task.id)
+}
+
 function handleCardKeydown(event: KeyboardEvent) {
   if (editing) return
   if (event.key === 'Enter') {
@@ -58,6 +64,9 @@ function handleCardKeydown(event: KeyboardEvent) {
   } else if (event.key === 'F2') {
     event.preventDefault()
     startEditing()
+  } else if (event.key === 'Delete' || event.key === 'Backspace') {
+    event.preventDefault()
+    deleteTask?.(task.id)
   }
 }
 
@@ -105,6 +114,12 @@ function handleInputMount(node: HTMLInputElement) {
 		{#if depCount > 0}
 			<span class="deps">{depCount} dep{depCount !== 1 ? 's' : ''}</span>
 		{/if}
+		<button
+			class="delete-btn"
+			onclick={handleDelete}
+			aria-label="Delete {task.title}"
+			type="button"
+		>×</button>
 	</div>
 </article>
 
@@ -179,6 +194,35 @@ function handleInputMount(node: HTMLInputElement) {
 
 	.id {
 		font-family: monospace;
+	}
+
+	.delete-btn {
+		margin-left: auto;
+		padding: 0;
+		width: 1.25rem;
+		height: 1.25rem;
+		border: none;
+		border-radius: 3px;
+		background: transparent;
+		color: var(--color-text-dim);
+		font-size: 0.875rem;
+		line-height: 1;
+		cursor: pointer;
+		opacity: 0;
+		transition: opacity 0.15s, color 0.15s, background 0.15s;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+
+	.task-card:hover .delete-btn,
+	.task-card:focus-within .delete-btn {
+		opacity: 1;
+	}
+
+	.delete-btn:hover {
+		background: var(--color-status-blocked-subtle);
+		color: var(--color-status-blocked);
 	}
 
 	/* State: done */

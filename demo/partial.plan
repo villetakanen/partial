@@ -80,7 +80,7 @@ tasks:
     type: feat
     needs:
       - pbi-059
-    done: false
+    done: true
 
   # ── Settings ─────────────────────────────────────────────────
 

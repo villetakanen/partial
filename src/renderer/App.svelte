@@ -52,6 +52,68 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
   plan = updatedPlan
   api?.savePlan({ filePath, plan: updatedPlan })
 })
+
+/** State for the delete confirmation dialog. */
+let deleteConfirm = $state<{ taskId: string; taskTitle: string; dependents: string[] } | null>(null)
+
+/** Execute the actual deletion: remove task and clean needs arrays. */
+function executeDelete(taskId: string) {
+  if (!plan || !filePath) return
+  const updatedPlan: PlanFile = {
+    ...plan,
+    tasks: plan.tasks
+      .filter((t) => t.id !== taskId)
+      .map((t) => {
+        const needsFields = ['needs', 'needs_fs', 'needs_ss', 'needs_ff', 'needs_sf'] as const
+        let changed = false
+        const updated = { ...t }
+        for (const field of needsFields) {
+          const arr = updated[field]
+          if (Array.isArray(arr) && arr.includes(taskId)) {
+            const filtered = arr.filter((id: string) => id !== taskId)
+            if (filtered.length > 0) {
+              updated[field] = filtered
+            } else {
+              delete updated[field]
+            }
+            changed = true
+          }
+        }
+        return changed ? updated : t
+      }),
+  }
+  plan = updatedPlan
+  api?.savePlan({ filePath, plan: updatedPlan })
+}
+
+/**
+ * Provide a delete function to descendant components via Svelte context.
+ * If the task has dependents, opens a confirmation dialog. Otherwise deletes immediately.
+ */
+setContext('partial:deleteTask', (taskId: string) => {
+  if (!plan || !filePath) return
+  const task = plan.tasks.find((t) => t.id === taskId)
+  if (!task) return
+
+  const dependents = dag.successors(taskId) ?? []
+  if (dependents.length === 0) {
+    executeDelete(taskId)
+  } else {
+    deleteConfirm = { taskId, taskTitle: task.title, dependents: dependents as string[] }
+  }
+})
+
+/** Confirm deletion from the dialog. */
+function confirmDelete() {
+  if (!deleteConfirm) return
+  executeDelete(deleteConfirm.taskId)
+  deleteConfirm = null
+}
+
+/** Cancel deletion. */
+function cancelDelete() {
+  deleteConfirm = null
+}
 </script>
 
 <main>
@@ -79,6 +141,29 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 		</section>
 	{:else}
 		<Welcome />
+	{/if}
+
+	{#if deleteConfirm}
+		<!-- svelte-ignore a11y_no_static_element_interactions a11y_no_noninteractive_element_interactions -->
+		<div class="dialog-backdrop" onclick={cancelDelete} onkeydown={(e) => { if (e.key === 'Escape') cancelDelete() }}>
+			<!-- svelte-ignore a11y_no_noninteractive_element_interactions a11y_no_noninteractive_tabindex -->
+			<div class="dialog" role="alertdialog" aria-label="Confirm task deletion" tabindex="-1" onclick={(e) => e.stopPropagation()} onkeydown={(e) => { if (e.key === 'Escape') cancelDelete() }}>
+				<h2 class="dialog-title">Delete task?</h2>
+				<p class="dialog-text">
+					<strong>{deleteConfirm.taskTitle}</strong> ({deleteConfirm.taskId}) is referenced by:
+				</p>
+				<ul class="dialog-list">
+					{#each deleteConfirm.dependents as dep}
+						<li>{dep}</li>
+					{/each}
+				</ul>
+				<p class="dialog-text">Deleting it will remove it from their dependencies.</p>
+				<div class="dialog-actions">
+					<button class="dialog-btn dialog-btn-cancel" onclick={cancelDelete} type="button">Cancel</button>
+					<button class="dialog-btn dialog-btn-delete" onclick={confirmDelete} type="button">Delete</button>
+				</div>
+			</div>
+		</div>
 	{/if}
 </main>
 
@@ -151,5 +236,82 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 		min-height: 0;
 		display: flex;
 		flex-direction: column;
+	}
+
+	.dialog-backdrop {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.5);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 100;
+	}
+
+	.dialog {
+		background: var(--color-surface-primary);
+		border: 1px solid var(--color-border-primary);
+		border-radius: 8px;
+		padding: 1.25rem;
+		max-width: 400px;
+		width: 90%;
+	}
+
+	.dialog-title {
+		margin: 0 0 0.75rem;
+		font-size: 1rem;
+		font-weight: 600;
+		color: var(--color-text-primary);
+	}
+
+	.dialog-text {
+		margin: 0 0 0.5rem;
+		font-size: 0.8125rem;
+		color: var(--color-text-secondary);
+	}
+
+	.dialog-list {
+		margin: 0 0 0.75rem;
+		padding-left: 1.25rem;
+		font-size: 0.8125rem;
+		font-family: monospace;
+		color: var(--color-text-secondary);
+	}
+
+	.dialog-list li {
+		margin: 0.125rem 0;
+	}
+
+	.dialog-actions {
+		display: flex;
+		gap: 0.5rem;
+		justify-content: flex-end;
+	}
+
+	.dialog-btn {
+		padding: 0.375rem 0.75rem;
+		border-radius: 4px;
+		font-size: 0.8125rem;
+		cursor: pointer;
+	}
+
+	.dialog-btn-cancel {
+		background: var(--color-surface-elevated);
+		border: 1px solid var(--color-border-secondary);
+		color: var(--color-text-secondary);
+	}
+
+	.dialog-btn-cancel:hover {
+		background: var(--color-surface-elevated-hover);
+	}
+
+	.dialog-btn-delete {
+		background: var(--color-status-blocked);
+		border: 1px solid var(--color-status-blocked);
+		color: white;
+	}
+
+	.dialog-btn-delete:hover {
+		opacity: 0.9;
 	}
 </style>

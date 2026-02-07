@@ -392,13 +392,13 @@ The app shows a white border on the left and top edges because `index.html` has 
 Root cause: `index.html:12` has bare `<body>` with no styles. `App.svelte:55` sets `padding: 1rem` on `<main>` with `width: 100%`, and the browser's default `body { margin: 8px }` shows white background around the dark app.
 
 #### Verification
-- [ ] No white border visible at any edge of the window
-- [ ] `<body>` and `<html>` have zero margin and padding
-- [ ] `box-sizing: border-box` is set globally via `*, *::before, *::after`
-- [ ] App background color extends fully to all window edges
-- [ ] Welcome screen still centers correctly
-- [ ] All three views still render with appropriate spacing
-- [ ] `pnpm exec svelte-check` passes
+- [x] No white border visible at any edge of the window
+- [x] `<body>` and `<html>` have zero margin and padding
+- [x] `box-sizing: border-box` is set globally via `*, *::before, *::after`
+- [x] App background color extends fully to all window edges
+- [x] Welcome screen still centers correctly
+- [x] All three views still render with appropriate spacing
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 None — this is a CSS fix.

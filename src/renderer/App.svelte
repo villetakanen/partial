@@ -68,8 +68,6 @@ setContext('partial:toggleDone', (taskId: string) => {
 <style>
 	main {
 		font-family: system-ui, -apple-system, sans-serif;
-		width: 100%;
-		padding: 1rem;
 		color: #e0e0e0;
 		background: #1a1a2e;
 		min-height: 100vh;
@@ -80,8 +78,7 @@ setContext('partial:toggleDone', (taskId: string) => {
 		align-items: center;
 		gap: 2rem;
 		border-bottom: 1px solid #333;
-		padding-bottom: 0.75rem;
-		margin-bottom: 1rem;
+		padding: 1rem 1rem 0.75rem;
 	}
 
 	h1 {
@@ -117,6 +114,6 @@ setContext('partial:toggleDone', (taskId: string) => {
 	}
 
 	.view-container {
-		padding: 1rem 0;
+		padding: 1rem;
 	}
 </style>

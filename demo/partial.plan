@@ -32,7 +32,7 @@ tasks:
     title: Add CSS reset and fix body margin/padding
     parent: css
     type: fix
-    done: false
+    done: true
 
   - id: pbi-070
     title: Fix content overflow and window conformance

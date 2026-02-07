@@ -2,139 +2,92 @@ version: "1.0.0"
 project: Partial
 
 # Dogfood: Partial's own backlog as a .plan file.
-# v0.3.0 — "Editable & Extensible"
-# Fresh iteration — only v0.3.0 PBIs, no carried-over items.
+# v0.4.0 — "Polished & Discoverable"
+# Fresh iteration — only v0.4.0 PBIs, no carried-over items.
 
 metadata:
   description: Agent-native project management via .plan files
   repository: https://github.com/villetakanen/partial
   created: 2026-02-07
-  release: v0.3.0
+  release: v0.4.0
 
 tasks:
-  # ── ADRs & Schema Foundations ─────────────────────────────────
+  # ── P0: Bugs ──────────────────────────────────────────────────
 
-  - id: pbi-057
-    title: "ADR: Task date and duration fields for Gantt time axis"
-    parent: foundations
-    type: docs
-    done: true
-
-  - id: pbi-058
-    title: "ADR: Project-level statuses configuration"
-    parent: foundations
-    type: docs
-    done: true
-
-  # ── CSS Foundations ───────────────────────────────────────────
-
-  - id: pbi-069
-    title: Add CSS reset and fix body margin/padding
-    parent: css
+  - id: pbi-072
+    title: "Kanban 3-column default — hide In Progress when empty"
+    parent: bugs
     type: fix
-    done: true
+    done: false
 
-  - id: pbi-070
-    title: Fix content overflow and window conformance
-    parent: css
+  - id: pbi-074
+    title: Fix settings panel save not persisting
+    parent: bugs
     type: fix
-    needs:
-      - pbi-069
-    done: true
+    done: false
 
-  - id: pbi-071
-    title: Extract color scheme to CSS custom properties
-    parent: css
+  # ── P1: Visual Polish ─────────────────────────────────────────
+
+  - id: pbi-073
+    title: "Brighten dark theme — increase saturation and contrast"
+    parent: polish
     type: feat
-    needs:
-      - pbi-069
-    done: true
+    done: false
 
-  # ── Core Editing ─────────────────────────────────────────────
+  # ── P2: Features — Schema ─────────────────────────────────────
 
-  - id: pbi-059
-    title: Add inline done-toggle editing to TaskCard
-    parent: editing
+  - id: pbi-075
+    title: Add description field to PlanFile schema
+    parent: schema
     type: feat
-    done: true
+    done: false
 
-  - id: pbi-060
-    title: Add inline title editing to TaskCard
-    parent: editing
-    type: feat
-    needs:
-      - pbi-059
-    done: true
+  # ── P2: Features — Settings ───────────────────────────────────
 
-  - id: pbi-061
-    title: Add new task creation from UI
-    parent: editing
-    type: feat
-    needs:
-      - pbi-060
-    done: true
-
-  - id: pbi-062
-    title: Add task deletion from UI
-    parent: editing
-    type: feat
-    needs:
-      - pbi-059
-    done: true
-
-  # ── Settings ─────────────────────────────────────────────────
-
-  - id: pbi-063
-    title: Add project settings panel
+  - id: pbi-076
+    title: Add description editing to SettingsPanel
     parent: settings
     type: feat
     needs:
-      - pbi-058
-    done: true
+      - pbi-074
+      - pbi-075
+    done: false
 
-  # ── Accessibility ────────────────────────────────────────────
+  # ── P2: Features — Detail Panel ───────────────────────────────
 
-  - id: pbi-064
-    title: Add keyboard navigation and focus management
-    parent: accessibility
-    type: feat
-    done: true
-
-  - id: pbi-065
-    title: Add ARIA labels and landmark roles
-    parent: accessibility
+  - id: pbi-077
+    title: "Task detail panel — basic fields (title, done, ID, state, parent)"
+    parent: detail-panel
     type: feat
     needs:
-      - pbi-064
-    done: true
+      - pbi-074
+    done: false
 
-  # ── CLI ──────────────────────────────────────────────────────
-
-  - id: pbi-066
-    title: Add DOT format export to CLI graph command
-    parent: cli
-    type: feat
-    done: true
-
-  # ── Stretch ──────────────────────────────────────────────────
-
-  - id: pbi-067
-    title: Implement Gantt time axis with date fields
-    parent: views
+  - id: pbi-078
+    title: "Task detail panel — dependency editing with cycle detection"
+    parent: detail-panel
     type: feat
     needs:
-      - pbi-057
-    done: true
+      - pbi-077
+    done: false
 
-  # ── Release ──────────────────────────────────────────────────
+  - id: pbi-079
+    title: "Task detail panel — date fields (start, due, duration)"
+    parent: detail-panel
+    type: feat
+    needs:
+      - pbi-077
+    done: false
 
-  - id: pbi-068
-    title: Create v0.3.0 demo .plan file
+  # ── P3: Dogfood ───────────────────────────────────────────────
+
+  - id: pbi-080
+    title: v0.4.0 demo .plan file
     parent: release
     type: chore
     needs:
-      - pbi-059
-      - pbi-065
-      - pbi-070
-      - pbi-071
-    done: true
+      - pbi-072
+      - pbi-073
+      - pbi-076
+      - pbi-079
+    done: false

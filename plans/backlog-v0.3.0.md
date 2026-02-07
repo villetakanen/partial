@@ -461,15 +461,15 @@ Extract all hardcoded hex color values across the 6 component files into CSS cus
 Current state: ~50+ unique hex color values scattered across 6 files. Same semantic color (e.g., `#e0e0e0` for primary text) repeated 4+ times. No shared reference, no path to theming or dark/light mode switching.
 
 #### Verification
-- [ ] `src/renderer/theme.css` defines all color tokens as CSS custom properties on `:root`
-- [ ] Zero hardcoded hex color values remain in component `<style>` blocks
-- [ ] All tokens use semantic naming (not `--color-1a1a2e` but `--color-surface-primary`)
-- [ ] App looks identical before and after (visual regression: no color changes)
-- [ ] Token file is organized by category with comments
-- [ ] A future dark/light theme switch could be done by swapping `:root` values
-- [ ] Graph.svelte `nodeColor()` function uses token values (via `getComputedStyle` or passed as props)
-- [ ] `pnpm exec svelte-check` passes
-- [ ] `pnpm check` passes
+- [x] `src/renderer/theme.css` defines all color tokens as CSS custom properties on `:root`
+- [x] Zero hardcoded hex color values remain in component `<style>` blocks
+- [x] All tokens use semantic naming (not `--color-1a1a2e` but `--color-surface-primary`)
+- [x] App looks identical before and after (visual regression: no color changes)
+- [x] Token file is organized by category with comments
+- [x] A future dark/light theme switch could be done by swapping `:root` values
+- [x] Graph.svelte `nodeColor()` function uses token values (via `getComputedStyle` or passed as props)
+- [x] `pnpm exec svelte-check` passes
+- [x] `pnpm check` passes
 
 #### Refinement Protocol
 If CSS-in-JS access to tokens is needed (e.g., for D3 `nodeColor()`), define a parallel `themeTokens` TypeScript const in `src/renderer/themeTokens.ts` that mirrors the CSS values. ASK before adding this extra file.

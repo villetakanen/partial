@@ -164,15 +164,16 @@ function edgeDash(depType: string): string {
 }
 
 function nodeColor(status: string): string {
+  const style = getComputedStyle(document.documentElement)
   switch (status) {
     case 'done':
-      return '#4caf50'
+      return style.getPropertyValue('--color-status-done').trim() || '#4caf50'
     case 'ready':
-      return '#42a5f5'
+      return style.getPropertyValue('--color-status-ready').trim() || '#42a5f5'
     case 'blocked':
-      return '#ef5350'
+      return style.getPropertyValue('--color-status-blocked').trim() || '#ef5350'
     default:
-      return '#888'
+      return style.getPropertyValue('--color-text-dim').trim() || '#888'
   }
 }
 
@@ -212,7 +213,7 @@ function targetY(link: SimLink): number {
 					markerHeight="6"
 					orient="auto-start-reverse"
 				>
-					<path d="M 0 0 L 10 5 L 0 10 Z" fill="#666" />
+					<path d="M 0 0 L 10 5 L 0 10 Z" fill="var(--color-text-hint)" />
 				</marker>
 			</defs>
 			<g transform="translate({transform.x},{transform.y}) scale({transform.k})">
@@ -284,7 +285,7 @@ function targetY(link: SimLink): number {
 	}
 
 	.empty-placeholder {
-		color: #555;
+		color: var(--color-text-placeholder);
 		font-style: italic;
 		font-size: 0.8125rem;
 		text-align: center;
@@ -295,9 +296,9 @@ function targetY(link: SimLink): number {
 	.graph-svg {
 		width: 100%;
 		height: 100%;
-		background: #121225;
+		background: var(--color-surface-inset);
 		border-radius: 8px;
-		border: 1px solid #2a2a3e;
+		border: 1px solid var(--color-surface-elevated);
 		cursor: grab;
 	}
 
@@ -306,7 +307,7 @@ function targetY(link: SimLink): number {
 	}
 
 	.edge {
-		stroke: #666;
+		stroke: var(--color-text-hint);
 		stroke-width: 1.5;
 	}
 
@@ -315,7 +316,7 @@ function targetY(link: SimLink): number {
 	}
 
 	.node:focus-visible circle {
-		stroke: #6a6aff;
+		stroke: var(--color-focus-ring);
 		stroke-width: 3;
 	}
 
@@ -324,7 +325,7 @@ function targetY(link: SimLink): number {
 	}
 
 	.node-label {
-		fill: #ccc;
+		fill: var(--color-text-secondary);
 		font-size: 10px;
 		font-family: monospace;
 		pointer-events: none;
@@ -334,8 +335,8 @@ function targetY(link: SimLink): number {
 		position: absolute;
 		top: 1rem;
 		right: 1rem;
-		background: #1a1a2e;
-		border: 1px solid #2a2a3e;
+		background: var(--color-surface-primary);
+		border: 1px solid var(--color-surface-elevated);
 		border-radius: 8px;
 		padding: 1rem;
 		min-width: 200px;
@@ -347,7 +348,7 @@ function targetY(link: SimLink): number {
 		margin: 0 0 0.75rem;
 		font-size: 0.9375rem;
 		font-weight: 600;
-		color: #e0e0e0;
+		color: var(--color-text-primary);
 	}
 
 	.detail-fields {
@@ -359,28 +360,28 @@ function targetY(link: SimLink): number {
 	}
 
 	.detail-fields dt {
-		color: #888;
+		color: var(--color-text-dim);
 		font-weight: 500;
 	}
 
 	.detail-fields dd {
 		margin: 0;
-		color: #ccc;
+		color: var(--color-text-secondary);
 		font-family: monospace;
 	}
 
 	.detail-close {
 		margin-top: 0.75rem;
 		padding: 0.25rem 0.75rem;
-		background: #2a2a3e;
-		border: 1px solid #3a3a4e;
+		background: var(--color-surface-elevated);
+		border: 1px solid var(--color-surface-elevated-hover);
 		border-radius: 4px;
-		color: #ccc;
+		color: var(--color-text-secondary);
 		font-size: 0.75rem;
 		cursor: pointer;
 	}
 
 	.detail-close:hover {
-		background: #3a3a4e;
+		background: var(--color-surface-elevated-hover);
 	}
 </style>

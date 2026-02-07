@@ -170,7 +170,7 @@ const layout = $derived.by<{
 	}
 
 	.empty-placeholder {
-		color: #555;
+		color: var(--color-text-placeholder);
 		font-style: italic;
 		font-size: 0.8125rem;
 		text-align: center;
@@ -194,7 +194,7 @@ const layout = $derived.by<{
 		flex-shrink: 0;
 		width: min(180px, 25vw);
 		position: relative;
-		border-right: 1px solid #2a2a3e;
+		border-right: 1px solid var(--color-surface-elevated);
 	}
 
 	.label {
@@ -206,7 +206,7 @@ const layout = $derived.by<{
 		gap: 0.375rem;
 		padding: 0 0.5rem;
 		font-size: 0.75rem;
-		color: #ccc;
+		color: var(--color-text-secondary);
 		overflow: hidden;
 		white-space: nowrap;
 	}
@@ -216,12 +216,12 @@ const layout = $derived.by<{
 	}
 
 	.label.critical {
-		color: #ffa726;
+		color: var(--color-status-in-progress);
 	}
 
 	.label-id {
 		font-family: monospace;
-		color: #888;
+		color: var(--color-text-dim);
 		flex-shrink: 0;
 	}
 
@@ -242,33 +242,33 @@ const layout = $derived.by<{
 
 	.edge {
 		fill: none;
-		stroke: #444;
+		stroke: var(--color-border-secondary);
 		stroke-width: 1.5;
 	}
 
 	.bar {
-		fill: #3a5a8a;
+		fill: var(--color-bar-default);
 		cursor: default;
 		transition: fill 0.15s;
 	}
 
 	.bar:hover {
-		fill: #4a6a9a;
+		fill: var(--color-bar-hover);
 	}
 
 	.bar:focus-visible {
-		outline: 2px solid #6a6aff;
+		outline: 2px solid var(--color-focus-ring);
 		outline-offset: 2px;
 	}
 
 	.bar.done {
-		fill: #2a4a2a;
+		fill: var(--color-status-done-subtle);
 		opacity: 0.5;
 	}
 
 	.bar.critical {
-		fill: #8a5a2a;
-		stroke: #ffa726;
+		fill: var(--color-bar-critical);
+		stroke: var(--color-status-in-progress);
 		stroke-width: 2;
 	}
 </style>

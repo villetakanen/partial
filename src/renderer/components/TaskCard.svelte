@@ -105,20 +105,20 @@ function handleInputMount(node: HTMLInputElement) {
 
 <style>
 	.task-card {
-		border: 1px solid #333;
+		border: 1px solid var(--color-border-primary);
 		border-radius: 6px;
 		padding: 0.625rem 0.75rem;
-		background: #222244;
+		background: var(--color-surface-card);
 		cursor: default;
 		transition: border-color 0.15s;
 	}
 
 	.task-card:hover {
-		border-color: #555;
+		border-color: var(--color-border-hover);
 	}
 
 	.task-card:focus-visible {
-		outline: 2px solid #6a6aff;
+		outline: 2px solid var(--color-focus-ring);
 		outline-offset: 2px;
 	}
 
@@ -144,7 +144,7 @@ function handleInputMount(node: HTMLInputElement) {
 		margin: 0;
 		font-size: 0.875rem;
 		font-weight: 500;
-		color: #e0e0e0;
+		color: var(--color-text-primary);
 		line-height: 1.3;
 	}
 
@@ -155,9 +155,9 @@ function handleInputMount(node: HTMLInputElement) {
 		font-size: 0.875rem;
 		font-weight: 500;
 		font-family: inherit;
-		color: #e0e0e0;
-		background: #1a1a2e;
-		border: 1px solid #5a5a9a;
+		color: var(--color-text-primary);
+		background: var(--color-surface-primary);
+		border: 1px solid var(--color-border-accent);
 		border-radius: 3px;
 		line-height: 1.3;
 		outline: none;
@@ -169,7 +169,7 @@ function handleInputMount(node: HTMLInputElement) {
 		margin-top: 0.375rem;
 		padding-left: 1rem;
 		font-size: 0.75rem;
-		color: #888;
+		color: var(--color-text-dim);
 	}
 
 	.id {
@@ -179,46 +179,46 @@ function handleInputMount(node: HTMLInputElement) {
 	/* State: done */
 	.done {
 		opacity: 0.6;
-		border-color: #2a4a2a;
+		border-color: var(--color-status-done-subtle);
 	}
 
 	.done .status-dot {
-		background: #4caf50;
+		background: var(--color-status-done);
 	}
 
 	.done .title {
 		text-decoration: line-through;
-		color: #999;
+		color: var(--color-text-done);
 	}
 
 	/* State: ready */
 	.ready {
-		border-color: #2a3a5a;
+		border-color: var(--color-status-ready-subtle);
 	}
 
 	.ready .status-dot {
-		background: #42a5f5;
+		background: var(--color-status-ready);
 	}
 
 	/* State: blocked */
 	.blocked {
-		border-color: #4a2a2a;
+		border-color: var(--color-status-blocked-subtle);
 	}
 
 	.blocked .status-dot {
-		background: #ef5350;
+		background: var(--color-status-blocked);
 	}
 
 	.blocked .title {
-		color: #aaa;
+		color: var(--color-text-muted);
 	}
 
 	/* State: in_progress */
 	.in_progress {
-		border-color: #4a4a2a;
+		border-color: var(--color-status-in-progress-subtle);
 	}
 
 	.in_progress .status-dot {
-		background: #ffa726;
+		background: var(--color-status-in-progress);
 	}
 </style>

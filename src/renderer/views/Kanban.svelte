@@ -96,9 +96,9 @@ const columns = $derived.by<Column[]>(() => {
 		min-width: min(200px, 40vw);
 		display: flex;
 		flex-direction: column;
-		background: #1a1a2e;
+		background: var(--color-surface-primary);
 		border-radius: 8px;
-		border: 1px solid #2a2a3e;
+		border: 1px solid var(--color-surface-elevated);
 		transition:
 			flex 0.2s ease,
 			min-width 0.2s ease,
@@ -148,22 +148,22 @@ const columns = $derived.by<Column[]>(() => {
 		align-items: center;
 		justify-content: space-between;
 		padding: 0.75rem 1rem;
-		border-bottom: 1px solid #2a2a3e;
+		border-bottom: 1px solid var(--color-surface-elevated);
 	}
 
 	.column-title {
 		margin: 0;
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: #ccc;
+		color: var(--color-text-secondary);
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 	}
 
 	.column-count {
 		font-size: 0.75rem;
-		color: #888;
-		background: #2a2a3e;
+		color: var(--color-text-dim);
+		background: var(--color-surface-elevated);
 		padding: 0.125rem 0.5rem;
 		border-radius: 10px;
 	}

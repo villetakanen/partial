@@ -82,8 +82,8 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 <style>
 	main {
 		font-family: system-ui, -apple-system, sans-serif;
-		color: #e0e0e0;
-		background: #1a1a2e;
+		color: var(--color-text-primary);
+		background: var(--color-surface-primary);
 		height: 100vh;
 		display: flex;
 		flex-direction: column;
@@ -94,7 +94,7 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 		display: flex;
 		align-items: center;
 		gap: 2rem;
-		border-bottom: 1px solid #333;
+		border-bottom: 1px solid var(--color-border-primary);
 		padding: 1rem 1rem 0.75rem;
 		flex-shrink: 0;
 	}
@@ -112,8 +112,8 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 
 	button {
 		background: transparent;
-		border: 1px solid #444;
-		color: #aaa;
+		border: 1px solid var(--color-border-secondary);
+		color: var(--color-text-muted);
 		padding: 0.375rem 0.75rem;
 		border-radius: 4px;
 		cursor: pointer;
@@ -121,14 +121,14 @@ setContext('partial:updateTitle', (taskId: string, newTitle: string) => {
 	}
 
 	button:hover {
-		background: #2a2a4a;
-		color: #fff;
+		background: var(--color-surface-hover);
+		color: var(--color-text-inverse);
 	}
 
 	button.active {
-		background: #3a3a6a;
-		color: #fff;
-		border-color: #5a5a9a;
+		background: var(--color-surface-active);
+		color: var(--color-text-inverse);
+		border-color: var(--color-border-accent);
 	}
 
 	.view-container {

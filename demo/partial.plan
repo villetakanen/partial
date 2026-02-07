@@ -48,7 +48,7 @@ tasks:
     type: feat
     needs:
       - pbi-069
-    done: false
+    done: true
 
   # ── Core Editing ─────────────────────────────────────────────
 

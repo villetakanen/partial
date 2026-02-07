@@ -30,11 +30,11 @@ function handleOpen() {
     font-size: 2rem;
     font-weight: 700;
     margin: 0;
-    color: #e0e0e0;
+    color: var(--color-text-primary);
   }
 
   p {
-    color: #888;
+    color: var(--color-text-dim);
     margin: 0;
     font-size: 0.95rem;
   }
@@ -42,20 +42,20 @@ function handleOpen() {
   button {
     margin-top: 1rem;
     padding: 0.625rem 1.5rem;
-    background: #3a3a6a;
-    color: #fff;
-    border: 1px solid #5a5a9a;
+    background: var(--color-surface-active);
+    color: var(--color-text-inverse);
+    border: 1px solid var(--color-border-accent);
     border-radius: 6px;
     font-size: 1rem;
     cursor: pointer;
   }
 
   button:hover {
-    background: #4a4a8a;
+    background: var(--color-surface-active-hover);
   }
 
   .hint {
     font-size: 0.8rem;
-    color: #666;
+    color: var(--color-text-hint);
   }
 </style>

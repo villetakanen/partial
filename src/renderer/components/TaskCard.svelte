@@ -51,7 +51,12 @@ function handleTitleDblClick(event: MouseEvent) {
 }
 
 function handleCardKeydown(event: KeyboardEvent) {
-  if (event.key === 'Enter' && !editing) {
+  if (editing) return
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    toggleDone?.(task.id)
+  } else if (event.key === 'F2') {
+    event.preventDefault()
     startEditing()
   }
 }

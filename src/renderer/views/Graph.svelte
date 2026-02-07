@@ -181,6 +181,64 @@ function handleNodeClick(task: Task): void {
   selectedTask = selectedTask?.id === task.id ? null : task
 }
 
+/** Checks if a candidate node is in the correct direction from the origin. */
+function isInDirection(key: string, dx: number, dy: number): boolean {
+  switch (key) {
+    case 'ArrowRight':
+      return dx > 0 && Math.abs(dy) < Math.abs(dx)
+    case 'ArrowLeft':
+      return dx < 0 && Math.abs(dy) < Math.abs(dx)
+    case 'ArrowDown':
+      return dy > 0 && Math.abs(dx) < Math.abs(dy)
+    case 'ArrowUp':
+      return dy < 0 && Math.abs(dx) < Math.abs(dy)
+    default:
+      return false
+  }
+}
+
+/** Finds the nearest node in a given arrow-key direction from a source node. */
+function findNearestInDirection(key: string, from: SimNode): SimNode | null {
+  let best: SimNode | null = null
+  let bestDist = Number.POSITIVE_INFINITY
+
+  for (const node of simNodes) {
+    if (node.id === from.id || node.x == null || node.y == null) continue
+    const dx = node.x - (from.x ?? 0)
+    const dy = node.y - (from.y ?? 0)
+    if (!isInDirection(key, dx, dy)) continue
+    const dist = dx * dx + dy * dy
+    if (dist < bestDist) {
+      bestDist = dist
+      best = node
+    }
+  }
+  return best
+}
+
+/** Handles arrow-key navigation between Graph nodes by spatial proximity. */
+function handleGraphKeydown(event: KeyboardEvent) {
+  if (!event.key.startsWith('Arrow')) return
+
+  const target = event.target as Element
+  const nodeGroup = target.closest('.node')
+  if (!nodeGroup) return
+
+  const label = nodeGroup.querySelector('text')?.textContent?.trim()
+  const current = simNodes.find((n) => n.id === label)
+  if (!current || current.x == null || current.y == null) return
+
+  const bestNode = findNearestInDirection(event.key, current)
+  if (!bestNode || !svgEl) return
+
+  event.preventDefault()
+  const allGroups = Array.from(svgEl.querySelectorAll<SVGGElement>('g.node'))
+  const targetGroup = allGroups.find(
+    (g) => g.querySelector('text')?.textContent?.trim() === bestNode.id,
+  )
+  targetGroup?.focus()
+}
+
 function sourceX(link: SimLink): number {
   return (link.source as SimNode).x ?? 0
 }
@@ -198,7 +256,8 @@ function targetY(link: SimLink): number {
 }
 </script>
 
-<section class="graph-view" role="region" aria-label="Dependency graph">
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<section class="graph-view" role="region" aria-label="Dependency graph" onkeydown={handleGraphKeydown}>
 	{#if plan.tasks.length === 0}
 		<p class="empty-placeholder">No tasks to display</p>
 	{:else}

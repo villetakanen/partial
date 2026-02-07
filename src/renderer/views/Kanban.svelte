@@ -11,6 +11,8 @@ interface Props {
 
 let { plan, dag }: Props = $props()
 
+let boardEl = $state<HTMLElement | null>(null)
+
 type TaskStatus = 'done' | 'blocked' | 'ready' | 'in_progress'
 
 interface Column {
@@ -52,9 +54,67 @@ const columns = $derived.by<Column[]>(() => {
     { key: 'done', label: 'Done', tasks: done },
   ]
 })
+
+/** Returns all focusable task-card elements within a column element. */
+function getCardsInColumn(columnEl: Element): HTMLElement[] {
+  return Array.from(columnEl.querySelectorAll<HTMLElement>('.task-card'))
+}
+
+/** Handles arrow-key navigation between cards and columns. */
+function handleBoardKeydown(event: KeyboardEvent) {
+  if (!boardEl) return
+  const target = event.target as HTMLElement
+  if (!target.classList.contains('task-card')) return
+
+  const columnEls = Array.from(boardEl.querySelectorAll<HTMLElement>('.column'))
+  const currentCol = target.closest('.column')
+  if (!currentCol) return
+
+  const colIdx = columnEls.indexOf(currentCol as HTMLElement)
+  const cards = getCardsInColumn(currentCol)
+  const cardIdx = cards.indexOf(target)
+
+  switch (event.key) {
+    case 'ArrowDown': {
+      event.preventDefault()
+      const next = cards[cardIdx + 1]
+      next?.focus()
+      break
+    }
+    case 'ArrowUp': {
+      event.preventDefault()
+      const prev = cards[cardIdx - 1]
+      prev?.focus()
+      break
+    }
+    case 'ArrowRight': {
+      event.preventDefault()
+      for (let i = colIdx + 1; i < columnEls.length; i++) {
+        const nextCards = getCardsInColumn(columnEls[i])
+        if (nextCards.length > 0) {
+          nextCards[Math.min(cardIdx, nextCards.length - 1)].focus()
+          break
+        }
+      }
+      break
+    }
+    case 'ArrowLeft': {
+      event.preventDefault()
+      for (let i = colIdx - 1; i >= 0; i--) {
+        const prevCards = getCardsInColumn(columnEls[i])
+        if (prevCards.length > 0) {
+          prevCards[Math.min(cardIdx, prevCards.length - 1)].focus()
+          break
+        }
+      }
+      break
+    }
+  }
+}
 </script>
 
-<section class="kanban-view" role="region" aria-label="Kanban board">
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<section class="kanban-view" role="region" aria-label="Kanban board" bind:this={boardEl} onkeydown={handleBoardKeydown}>
 	{#each columns as column (column.key)}
 		<div
 			class="column"

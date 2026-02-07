@@ -98,7 +98,7 @@ tasks:
     title: Add keyboard navigation and focus management
     parent: accessibility
     type: feat
-    done: false
+    done: true
 
   - id: pbi-065
     title: Add ARIA labels and landmark roles

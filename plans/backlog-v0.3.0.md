@@ -295,13 +295,13 @@ Read: `plans/kanban-view/spec.md` — DoD: "Accessible: tasks are focusable"
 Read: `plans/gantt-view/spec.md` — DoD: "Accessible: keyboard navigation for task selection"
 
 #### Verification
-- [ ] TaskCards have `tabindex="0"` and are reachable via Tab
-- [ ] Arrow keys navigate between cards in Kanban columns
-- [ ] Enter on a focused card toggles done state
-- [ ] Visible focus ring/outline on focused cards
-- [ ] Focus is not trapped — Tab escapes the card list to other UI elements
+- [x] TaskCards have `tabindex="0"` and are reachable via Tab
+- [x] Arrow keys navigate between cards in Kanban columns
+- [x] Enter on a focused card toggles done state
+- [x] Visible focus ring/outline on focused cards
+- [x] Focus is not trapped — Tab escapes the card list to other UI elements
 - [ ] Works with screen readers (VoiceOver on macOS tested)
-- [ ] `pnpm exec svelte-check` passes
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If full screen reader support requires ARIA live regions for dynamic updates, defer to a follow-up PBI.

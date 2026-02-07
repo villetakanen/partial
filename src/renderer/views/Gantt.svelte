@@ -101,9 +101,36 @@ const layout = $derived.by<{
 
   return { bars, edges, svgWidth, svgHeight }
 })
+
+/** Handles arrow-key navigation between Gantt bars. */
+function handleGanttKeydown(event: KeyboardEvent) {
+  const target = event.target as Element
+  if (target.tagName !== 'rect' || !target.classList.contains('bar')) return
+
+  const svg = target.closest('svg')
+  if (!svg) return
+
+  const bars = Array.from(svg.querySelectorAll<SVGRectElement>('rect.bar'))
+  const idx = bars.indexOf(target as SVGRectElement)
+  if (idx === -1) return
+
+  switch (event.key) {
+    case 'ArrowDown': {
+      event.preventDefault()
+      bars[idx + 1]?.focus()
+      break
+    }
+    case 'ArrowUp': {
+      event.preventDefault()
+      bars[idx - 1]?.focus()
+      break
+    }
+  }
+}
 </script>
 
-<section class="gantt-view" role="region" aria-label="Gantt chart">
+<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+<section class="gantt-view" role="region" aria-label="Gantt chart" onkeydown={handleGanttKeydown}>
 	{#if sorted.length === 0}
 		<p class="empty-placeholder">No tasks to display</p>
 	{:else}

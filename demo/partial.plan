@@ -18,13 +18,13 @@ tasks:
     title: "Kanban 3-column default — hide In Progress when empty"
     parent: bugs
     type: fix
-    done: false
+    done: true
 
   - id: pbi-074
     title: Fix settings panel save not persisting
     parent: bugs
     type: fix
-    done: false
+    done: true
 
   # ── P1: Visual Polish ─────────────────────────────────────────
 
@@ -32,7 +32,7 @@ tasks:
     title: "Brighten dark theme — increase saturation and contrast"
     parent: polish
     type: feat
-    done: false
+    done: true
 
   # ── P2: Features — Schema ─────────────────────────────────────
 
@@ -40,7 +40,7 @@ tasks:
     title: Add description field to PlanFile schema
     parent: schema
     type: feat
-    done: false
+    done: true
 
   # ── P2: Features — Settings ───────────────────────────────────
 
@@ -51,7 +51,7 @@ tasks:
     needs:
       - pbi-074
       - pbi-075
-    done: false
+    done: true
 
   # ── P2: Features — Detail Panel ───────────────────────────────
 
@@ -61,7 +61,7 @@ tasks:
     type: feat
     needs:
       - pbi-074
-    done: false
+    done: true
 
   - id: pbi-078
     title: "Task detail panel — dependency editing with cycle detection"
@@ -69,7 +69,7 @@ tasks:
     type: feat
     needs:
       - pbi-077
-    done: false
+    done: true
 
   - id: pbi-079
     title: "Task detail panel — date fields (start, due, duration)"
@@ -77,7 +77,7 @@ tasks:
     type: feat
     needs:
       - pbi-077
-    done: false
+    done: true
 
   # ── P3: Dogfood ───────────────────────────────────────────────
 
@@ -90,4 +90,4 @@ tasks:
       - pbi-073
       - pbi-076
       - pbi-079
-    done: false
+    done: true

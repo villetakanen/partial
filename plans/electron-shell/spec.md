@@ -42,6 +42,14 @@ This is the integration layer — it doesn't implement business logic itself, bu
 - **Dependencies:** Electron, electron-vite, file watcher, parser
 - **Dependents:** All views (Gantt, Kanban, Graph), TaskCard component
 
+**Editing Data Flow (v0.3.0):**
+1. User interacts with a TaskCard in the renderer (done toggle, title edit, delete)
+2. Renderer updates local state optimistically
+3. Renderer dispatches `plan:save` IPC with the full updated `PlanFile`
+4. Main process serializes and writes to disk via `stringifyPlan`
+5. File watcher's SHA-256 content hash suppresses the self-write event
+6. If save fails, main sends `plan:error` back to renderer
+
 ### Anti-Patterns
 
 - **Business logic in main process** — The main process is a thin shell. DAG computation, view logic, and state management belong in the renderer or shared modules.
@@ -68,6 +76,13 @@ This is the integration layer — it doesn't implement business logic itself, bu
 - [ ] `pnpm dev` starts Electron with Vite HMR for the renderer
 - [ ] `pnpm build` produces a distributable application
 - [ ] electron-builder config produces platform-specific packages (dmg, exe, AppImage)
+- [ ] Inline done-toggle: clicking a task's status dot dispatches `plan:save` with flipped `done` (v0.3.0)
+- [ ] Inline title editing: double-click activates an input, Enter/blur saves, Escape cancels (v0.3.0)
+- [ ] Task creation: "Add Task" in Kanban creates a new task and enters edit mode (v0.3.0)
+- [ ] Task deletion: delete affordance on TaskCard, with dependency-aware confirmation (v0.3.0)
+- [ ] Settings panel: gear icon opens an overlay for editing project name (v0.3.0)
+- [ ] CSS reset eliminates body margin/padding gap; `box-sizing: border-box` global (v0.3.0)
+- [ ] All colors use CSS custom properties from `theme.css` — zero hardcoded hex in components (v0.3.0)
 
 ### Regression Guardrails
 
@@ -132,3 +147,28 @@ This is the integration layer — it doesn't implement business logic itself, bu
 - Given: The user has previously opened a .plan file
 - When: The app is relaunched
 - Then: The last-opened file is automatically loaded; if the path no longer exists, the Welcome screen is shown
+
+**Scenario: Done toggle from UI (v0.3.0)**
+- Given: A plan is loaded with task A (`done: false`)
+- When: The user clicks the status dot on task A's card
+- Then: Task A's `done` flips to `true`; the card updates optimistically; `plan:save` IPC writes to disk; the watcher does not re-trigger
+
+**Scenario: Inline title editing (v0.3.0)**
+- Given: A plan is loaded with task A (title: "Old title")
+- When: The user double-clicks the title on task A's card
+- Then: An inline input appears pre-filled with "Old title"; pressing Enter saves; pressing Escape reverts
+
+**Scenario: Task creation from Kanban (v0.3.0)**
+- Given: A plan is loaded and the Kanban view is active
+- When: The user clicks "Add Task" in the Ready column
+- Then: A new task is created with a generated ID, added to the plan, and the card enters title edit mode; saving writes to disk
+
+**Scenario: Task deletion with dependency warning (v0.3.0)**
+- Given: A plan with task A and task B (`needs: [A]`)
+- When: The user clicks delete on task A
+- Then: A confirmation dialog shows "Task B depends on A. Delete anyway?"; confirming removes A and clears it from B's `needs`
+
+**Scenario: Settings panel (v0.3.0)**
+- Given: A plan is loaded
+- When: The user clicks the settings gear icon
+- Then: An overlay panel opens showing the project name (editable) and version (read-only); saving the name dispatches `plan:save`

@@ -23,6 +23,13 @@ partial unblocked [file.plan]   # List tasks with all dependencies satisfied
 partial graph [file.plan]       # Output the dependency graph (text or DOT format)
 ```
 
+**Graph command flags (v0.3.0):**
+
+| Flag | Description |
+|------|-------------|
+| `--format text` | Human-readable text output (default) |
+| `--format dot` | Graphviz DOT format for piping to `dot`, `fdp`, etc. |
+
 **Global flags:**
 
 | Flag | Description |
@@ -59,6 +66,8 @@ partial graph [file.plan]       # Output the dependency graph (text or DOT forma
 - [ ] `partial status` displays task counts by state (done, ready, blocked)
 - [ ] `partial unblocked` lists tasks whose dependencies are all satisfied
 - [ ] `partial graph` outputs the dependency graph in human-readable text format
+- [ ] `partial graph --format dot` outputs valid Graphviz DOT syntax with node labels and directed edges (v0.3.0)
+- [ ] DOT output styles done tasks differently (e.g., filled gray) (v0.3.0)
 - [ ] All commands support `--json` flag for structured output
 - [ ] All commands accept file path as argument or read from stdin
 - [ ] Exit codes follow the documented convention (0, 1, 2)
@@ -116,3 +125,13 @@ partial graph [file.plan]       # Output the dependency graph (text or DOT forma
 - Given: A plan with A → B → C
 - When: `partial graph project.plan`
 - Then: Prints a text representation showing the dependency edges
+
+**Scenario: Graph DOT export (v0.3.0)**
+- Given: A plan with tasks A → B → C where A is `done: true`
+- When: `partial graph project.plan --format dot`
+- Then: Outputs valid DOT syntax with `digraph`, nodes labeled with task titles, directed edges, and done tasks styled (e.g., `fillcolor=gray`)
+
+**Scenario: DOT piped to Graphviz (v0.3.0)**
+- Given: A valid `.plan` file
+- When: `partial graph project.plan --format dot | dot -Tpng -o graph.png`
+- Then: Produces a valid PNG image of the dependency graph

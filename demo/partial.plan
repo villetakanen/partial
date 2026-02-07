@@ -2,494 +2,139 @@ version: "1.0.0"
 project: Partial
 
 # Dogfood: Partial's own backlog as a .plan file.
-# v0.2.0 — "Usable by Humans"
-# This exercises the full schema — dependencies, parent grouping,
-# extended fields, and unknown custom fields — making it a useful
-# smoke-test for the parser, DAG engine, and every view.
+# v0.3.0 — "Editable & Extensible"
+# Fresh iteration — only v0.3.0 PBIs, no carried-over items.
 
 metadata:
   description: Agent-native project management via .plan files
   repository: https://github.com/villetakanen/partial
-  created: 2026-02-06
-  release: v0.2.0
+  created: 2026-02-07
+  release: v0.3.0
 
 tasks:
-  # ── Layer 0 — Project Foundation ──────────────────────────────
+  # ── ADRs & Schema Foundations ─────────────────────────────────
 
-  - id: pbi-037
-    title: Create .gitignore
-    parent: foundation
-    type: chore
-    done: true
-
-  - id: pbi-001
-    title: Initialize package.json and install dependencies
-    parent: foundation
-    type: chore
-    done: true
-
-  - id: pbi-002
-    title: Add TypeScript configuration
-    parent: foundation
-    type: chore
-    needs:
-      - pbi-001
-    done: true
-
-  - id: pbi-003
-    title: Add Biome configuration
-    parent: foundation
-    type: chore
-    needs:
-      - pbi-001
-    done: true
-
-  - id: pbi-004
-    title: Add Lefthook git hooks and Conventional Commits enforcement
-    parent: foundation
-    type: chore
-    needs:
-      - pbi-001
-      - pbi-003
-    done: true
-
-  - id: pbi-005
-    title: Create initial directory structure
-    parent: foundation
-    type: chore
-    needs:
-      - pbi-002
-    done: true
-
-  - id: pbi-036
-    title: Add GitHub PR and issue templates
-    parent: foundation
-    type: chore
-    needs:
-      - pbi-001
-    done: true
-
-  - id: pbi-038
-    title: Create README.md
-    parent: foundation
-    type: docs
-    needs:
-      - pbi-001
-    done: true
-
-  - id: pbi-039
-    title: Create electron-vite configuration
-    parent: foundation
-    type: chore
-    needs:
-      - pbi-001
-      - pbi-002
-    done: true
-
-  - id: pbi-040
-    title: Create Vitest configuration
-    parent: foundation
-    type: chore
-    needs:
-      - pbi-001
-      - pbi-002
-    done: true
-
-  - id: pbi-041
-    title: Create sample .plan fixture files
-    parent: foundation
-    type: test
-    needs:
-      - pbi-005
-    done: true
-
-  - id: pbi-042
-    title: Add Vitest test setup and helpers
-    parent: foundation
-    type: test
-    needs:
-      - pbi-040
-    done: true
-
-  - id: pbi-035
-    title: Create AGENTS.md and CLAUDE.md symlink
-    parent: foundation
-    type: docs
-    needs:
-      - pbi-005
-    done: true
-
-  # ── Layer 1 — Shared Types & Schemas ──────────────────────────
-
-  - id: pbi-006
-    title: Create shared TypeScript type definitions
-    parent: shared
-    type: feat
-    needs:
-      - pbi-005
-    done: true
-
-  - id: pbi-007
-    title: Add Zod validation schemas for .plan files
-    parent: shared
-    type: feat
-    needs:
-      - pbi-006
-    done: true
-
-  # ── Layer 2 — Parser ──────────────────────────────────────────
-
-  - id: pbi-008
-    title: Implement parsePlan function
-    parent: parser
-    type: feat
-    needs:
-      - pbi-007
-    done: true
-
-  - id: pbi-009
-    title: Implement stringifyPlan function
-    parent: parser
-    type: feat
-    needs:
-      - pbi-008
-    done: true
-
-  - id: pbi-010
-    title: Add round-trip safety tests for parser
-    parent: parser
-    type: test
-    needs:
-      - pbi-009
-      - pbi-041
-    done: true
-
-  # ── Layer 2 — DAG Engine ──────────────────────────────────────
-
-  - id: pbi-011
-    title: Implement buildDAG function
-    parent: dag
-    type: feat
-    needs:
-      - pbi-007
-    done: true
-
-  - id: pbi-012
-    title: Implement cycle detection
-    parent: dag
-    type: feat
-    needs:
-      - pbi-011
-    done: true
-
-  - id: pbi-013
-    title: Implement topological sort
-    parent: dag
-    type: feat
-    needs:
-      - pbi-011
-    done: true
-
-  - id: pbi-014
-    title: Implement getUnblockedTasks
-    parent: dag
-    type: feat
-    needs:
-      - pbi-011
-    done: true
-
-  - id: pbi-015
-    title: Implement critical path calculation
-    parent: dag
-    type: feat
-    needs:
-      - pbi-013
-    done: true
-
-  # ── Layer 3 — File Watcher ────────────────────────────────────
-
-  - id: pbi-016
-    title: Implement core file watcher
-    parent: watcher
-    type: feat
-    needs:
-      - pbi-008
-    done: true
-
-  - id: pbi-017
-    title: Add debouncing to file watcher
-    parent: watcher
-    type: feat
-    needs:
-      - pbi-016
-    done: true
-
-  - id: pbi-018
-    title: Add error handling to file watcher
-    parent: watcher
-    type: feat
-    needs:
-      - pbi-016
-    done: true
-
-  # ── Layer 3 — Electron Shell ──────────────────────────────────
-
-  - id: pbi-019
-    title: Create Electron main process entry point
-    parent: electron
-    type: feat
-    needs:
-      - pbi-005
-      - pbi-039
-    done: true
-
-  - id: pbi-020
-    title: Add preload script and IPC channel registration
-    parent: electron
-    type: feat
-    needs:
-      - pbi-019
-    done: true
-
-  - id: pbi-021
-    title: Wire file watcher to Electron IPC
-    parent: electron
-    type: feat
-    needs:
-      - pbi-016
-      - pbi-020
-    done: true
-
-  # ── Layer 4 — Renderer & Components ───────────────────────────
-
-  - id: pbi-022
-    title: Bootstrap Svelte renderer
-    parent: renderer
-    type: feat
-    needs:
-      - pbi-020
-    done: true
-
-  - id: pbi-023
-    title: Implement App.svelte view switching
-    parent: renderer
-    type: feat
-    needs:
-      - pbi-022
-    done: true
-
-  - id: pbi-024
-    title: Implement TaskCard component
-    parent: renderer
-    type: feat
-    needs:
-      - pbi-022
-      - pbi-006
-    done: true
-
-  # ── Layer 5 — Views ───────────────────────────────────────────
-
-  - id: pbi-025
-    title: Implement Kanban view
-    parent: views
-    type: feat
-    needs:
-      - pbi-023
-      - pbi-024
-      - pbi-014
-    done: true
-
-  - id: pbi-026
-    title: Implement Gantt view
-    parent: views
-    type: feat
-    needs:
-      - pbi-023
-      - pbi-024
-      - pbi-015
-    done: true
-
-  - id: pbi-027
-    title: Implement Graph view
-    parent: views
-    type: feat
-    needs:
-      - pbi-023
-      - pbi-024
-      - pbi-011
-    done: true
-
-  # ── Layer 3 — CLI ─────────────────────────────────────────────
-
-  - id: pbi-028
-    title: Scaffold CLI entry point and implement validate command
-    parent: cli
-    type: feat
-    needs:
-      - pbi-008
-    done: true
-
-  - id: pbi-029
-    title: Implement CLI status command
-    parent: cli
-    type: feat
-    needs:
-      - pbi-028
-      - pbi-014
-    done: true
-
-  - id: pbi-030
-    title: Implement CLI unblocked command
-    parent: cli
-    type: feat
-    needs:
-      - pbi-028
-      - pbi-014
-    done: true
-
-  - id: pbi-031
-    title: Implement CLI graph command
-    parent: cli
-    type: feat
-    needs:
-      - pbi-028
-      - pbi-011
-    done: true
-
-  # ── Layer 6 — Build & CI ──────────────────────────────────────
-
-  - id: pbi-032
-    title: Add electron-builder configuration
-    parent: release
-    type: chore
-    needs:
-      - pbi-019
-    done: true
-
-  - id: pbi-033
-    title: Add GitHub Actions CI workflow
-    parent: release
-    type: ci
-    needs:
-      - pbi-003
-      - pbi-002
-    done: true
-
-  - id: pbi-034
-    title: Add GitHub Actions release workflow
-    parent: release
-    type: ci
-    needs:
-      - pbi-032
-      - pbi-033
-    done: true
-
-  # ── v0.2.0 — Data Fixes ────────────────────────────────────────
-
-  - id: pbi-044
-    title: Fix malformed pbi-007 in demo/partial.plan
-    parent: fixes
-    type: fix
-    done: false
-
-  - id: pbi-045
-    title: Update scaffolding doc to reflect out/ build directory
-    parent: fixes
+  - id: pbi-057
+    title: "ADR: Task date and duration fields for Gantt time axis"
+    parent: foundations
     type: docs
     done: false
 
-  # ── v0.2.0 — Electron Lifecycle & File Open ────────────────────
+  - id: pbi-058
+    title: "ADR: Project-level statuses configuration"
+    parent: foundations
+    type: docs
+    done: false
 
-  - id: pbi-046
-    title: Fix macOS quit-on-close behavior
-    parent: electron
+  # ── CSS Foundations ───────────────────────────────────────────
+
+  - id: pbi-069
+    title: Add CSS reset and fix body margin/padding
+    parent: css
     type: fix
     done: false
 
-  - id: pbi-047
-    title: Add native Electron menu with File > Open
-    parent: electron
-    type: feat
-    needs:
-      - pbi-046
-    done: false
-
-  - id: pbi-048
-    title: Add Welcome screen with Open Plan File button
-    parent: renderer
-    type: feat
-    needs:
-      - pbi-047
-    done: false
-
-  - id: pbi-049
-    title: Persist and auto-load last-opened .plan file
-    parent: electron
-    type: feat
-    needs:
-      - pbi-047
-    done: false
-
-  # ── v0.2.0 — Responsive Layout ─────────────────────────────────
-
-  - id: pbi-050
-    title: Make all views responsive to window size
-    parent: views
+  - id: pbi-070
+    title: Fix content overflow and window conformance
+    parent: css
     type: fix
+    needs:
+      - pbi-069
     done: false
 
-  # ── v0.2.0 — Kanban Polish ─────────────────────────────────────
+  - id: pbi-071
+    title: Extract color scheme to CSS custom properties
+    parent: css
+    type: feat
+    needs:
+      - pbi-069
+    done: false
 
-  - id: pbi-051
-    title: Make Kanban columns context-aware
-    parent: views
+  # ── Core Editing ─────────────────────────────────────────────
+
+  - id: pbi-059
+    title: Add inline done-toggle editing to TaskCard
+    parent: editing
     type: feat
     done: false
 
-  # ── v0.2.0 — Watcher Quality ───────────────────────────────────
-
-  - id: pbi-052
-    title: Improve self-write detection with content hashing
-    parent: watcher
-    type: fix
+  - id: pbi-060
+    title: Add inline title editing to TaskCard
+    parent: editing
+    type: feat
+    needs:
+      - pbi-059
     done: false
 
-  # ── v0.2.0 — Graph Tuning ──────────────────────────────────────
+  - id: pbi-061
+    title: Add new task creation from UI
+    parent: editing
+    type: feat
+    needs:
+      - pbi-060
+    done: false
 
-  - id: pbi-053
-    title: Auto-scale Graph force simulation parameters
-    parent: views
+  - id: pbi-062
+    title: Add task deletion from UI
+    parent: editing
+    type: feat
+    needs:
+      - pbi-059
+    done: false
+
+  # ── Settings ─────────────────────────────────────────────────
+
+  - id: pbi-063
+    title: Add project settings panel
+    parent: settings
+    type: feat
+    needs:
+      - pbi-058
+    done: false
+
+  # ── Accessibility ────────────────────────────────────────────
+
+  - id: pbi-064
+    title: Add keyboard navigation and focus management
+    parent: accessibility
     type: feat
     done: false
 
-  # ── v0.2.0 — Test Coverage ─────────────────────────────────────
-
-  - id: pbi-054
-    title: Add Svelte component tests
-    parent: testing
-    type: test
+  - id: pbi-065
+    title: Add ARIA labels and landmark roles
+    parent: accessibility
+    type: feat
     needs:
-      - pbi-051
-      - pbi-050
-    done: true
-
-  - id: pbi-055
-    title: Add Electron IPC integration tests
-    parent: testing
-    type: test
-    needs:
-      - pbi-047
+      - pbi-064
     done: false
 
-  # ── v0.2.0 — Dogfood Update ────────────────────────────────────
+  # ── CLI ──────────────────────────────────────────────────────
 
-  - id: pbi-056
-    title: Update demo/partial.plan for v0.2.0
+  - id: pbi-066
+    title: Add DOT format export to CLI graph command
+    parent: cli
+    type: feat
+    done: false
+
+  # ── Stretch ──────────────────────────────────────────────────
+
+  - id: pbi-067
+    title: Implement Gantt time axis with date fields
+    parent: views
+    type: feat
+    needs:
+      - pbi-057
+    done: false
+
+  # ── Release ──────────────────────────────────────────────────
+
+  - id: pbi-068
+    title: Create v0.3.0 demo .plan file
     parent: release
     type: chore
     needs:
-      - pbi-044
-      - pbi-047
-      - pbi-050
-      - pbi-051
+      - pbi-059
+      - pbi-065
+      - pbi-070
+      - pbi-071
     done: false

@@ -27,6 +27,7 @@ interface GanttViewProps {
 - **Data flow:** Receives `PlanFile` + computed `Graph` via props. Renders a D3-powered SVG timeline.
 - **Dependencies:** DAG engine (`src/shared/dag.ts`), D3.js, `TaskCard` component
 - **Dependents:** `App.svelte` (view switcher)
+- **ADR reference:** See `docs/decisions/adr-001-task-dates.md` for time axis design (v0.3.0 stretch)
 
 **Rendering pipeline:**
 1. Receive `plan` + `dag` props
@@ -58,6 +59,10 @@ interface GanttViewProps {
 - [ ] Uses Svelte 5 runes syntax exclusively
 - [ ] Uses scoped Svelte styles (no CSS frameworks)
 - [ ] Accessible: keyboard navigation for task selection, ARIA labels on chart elements
+- [ ] Label column width adapts gracefully at narrow viewports (v0.3.0)
+- [ ] Arrow-key navigation between task bars with visible focus ring (v0.3.0)
+- [ ] All colors reference CSS custom properties from `theme.css` (v0.3.0)
+- [ ] (Stretch) When tasks have `start`/`due` date fields, x-axis switches to `d3.scaleTime` (v0.3.0, depends on ADR-001)
 
 ### Regression Guardrails
 
@@ -92,3 +97,13 @@ interface GanttViewProps {
 - Given: The Gantt view is rendered with 3 tasks
 - When: A new task is added to the plan (via file watcher update)
 - Then: The chart updates to show 4 tasks without a full re-render
+
+**Scenario: Time-axis rendering (v0.3.0 stretch)**
+- Given: A plan where tasks have `start` and `due` ISO 8601 date fields
+- When: The Gantt view renders
+- Then: The x-axis uses `d3.scaleTime` with date labels; tasks without dates fall back to dependency-order
+
+**Scenario: Responsive label column (v0.3.0)**
+- Given: The window is resized to less than 1024px width
+- When: The Gantt view renders
+- Then: The label column shrinks or truncates task names gracefully; no horizontal overflow on body

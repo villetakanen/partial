@@ -36,6 +36,12 @@ interface KanbanViewProps {
 - **Dependencies:** DAG engine (`getUnblockedTasks`), `TaskCard` component
 - **Dependents:** `App.svelte` (view switcher)
 
+**Editing affordances (v0.3.0):**
+- TaskCard status dot is clickable to toggle `done`
+- TaskCard title is double-click-to-edit with inline input
+- "Add Task" button in Ready column header creates a new task in edit mode
+- Delete button on TaskCard (hover-visible) with dependency-aware confirmation
+
 ### Anti-Patterns
 
 - **Hardcoded column names** — Column definitions should be derivable from task state, not hardcoded strings that break when the schema evolves.
@@ -58,6 +64,13 @@ interface KanbanViewProps {
 - [ ] Uses Svelte 5 runes syntax exclusively
 - [ ] Uses scoped Svelte styles (no CSS frameworks)
 - [ ] Accessible: tasks are focusable, columns are labeled with ARIA roles
+- [ ] Inline done-toggle via status dot click dispatches save (v0.3.0)
+- [ ] Inline title editing via double-click with Enter/Escape/blur (v0.3.0)
+- [ ] "Add Task" button in Ready column creates a new task in edit mode (v0.3.0)
+- [ ] Task deletion with dependency-aware confirmation (v0.3.0)
+- [ ] Arrow-key navigation between cards within and across columns (v0.3.0)
+- [ ] Kanban columns use `role="list"`, cards use `role="listitem"` (v0.3.0)
+- [ ] All colors reference CSS custom properties from `theme.css` (v0.3.0)
 
 ### Regression Guardrails
 
@@ -92,3 +105,23 @@ interface KanbanViewProps {
 - Given: The Kanban view shows task B in "Ready"
 - When: The plan updates with B now `done: true`
 - Then: B moves to the "Done" column reactively
+
+**Scenario: Done toggle from Kanban (v0.3.0)**
+- Given: Task B is shown in the "Ready" column
+- When: The user clicks task B's status dot
+- Then: Task B moves to "Done"; the `.plan` file is updated on disk
+
+**Scenario: Inline title edit (v0.3.0)**
+- Given: Task B is shown in the "Ready" column
+- When: The user double-clicks task B's title
+- Then: An inline input activates; Enter saves and exits edit mode; Escape reverts
+
+**Scenario: Add task from Kanban (v0.3.0)**
+- Given: The Kanban view is displayed
+- When: The user clicks "Add Task" in the Ready column header
+- Then: A new task card appears in Ready with its title in edit mode; canceling (Escape) removes it
+
+**Scenario: Delete task from Kanban (v0.3.0)**
+- Given: Task A exists and task B has `needs: [A]`
+- When: The user clicks delete on task A
+- Then: A confirmation warns about task B's dependency; confirming removes A and cleans B's `needs`

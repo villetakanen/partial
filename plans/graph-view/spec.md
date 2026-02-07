@@ -62,6 +62,9 @@ interface GraphViewProps {
 - [ ] Simulation stops after convergence (alpha decay)
 - [x] Force simulation parameters auto-scale based on node count (v0.2.0)
 - [ ] SVG height is responsive to viewport (not fixed at 500px) (v0.2.0)
+- [ ] Arrow-key navigation between nodes with visible focus ring (v0.3.0)
+- [ ] Nodes and edges use `aria-label` for screen reader access (v0.3.0)
+- [ ] All colors reference CSS custom properties from `theme.css`; `nodeColor()` reads token values (v0.3.0)
 
 ### Regression Guardrails
 

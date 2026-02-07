@@ -40,6 +40,7 @@ export const PlanFileSchema = z
   .object({
     version: z.string(),
     project: z.string(),
+    description: z.string().optional(),
     tasks: z.array(TaskSchema),
   })
   .passthrough()

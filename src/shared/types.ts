@@ -14,6 +14,8 @@
 export interface PlanFile {
   version: string
   project: string
+  /** Optional project description */
+  description?: string
   tasks: Task[]
   /** Preserve unknown fields for forward compatibility */
   [key: string]: unknown

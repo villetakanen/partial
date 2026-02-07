@@ -212,6 +212,46 @@ describe('PlanFileSchema', () => {
     })
     expect(result.success).toBe(false)
   })
+
+  it('validates a plan with description field', () => {
+    const result = PlanFileSchema.safeParse({
+      version: '1.0.0',
+      project: 'Test',
+      description: 'A sample project description',
+      tasks: [],
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.description).toBe('A sample project description')
+    }
+  })
+
+  it('validates a plan without description (optional)', () => {
+    const result = PlanFileSchema.safeParse({
+      version: '1.0.0',
+      project: 'Test',
+      tasks: [],
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.description).toBeUndefined()
+    }
+  })
+
+  it('preserves unknown fields alongside description', () => {
+    const result = PlanFileSchema.safeParse({
+      version: '1.0.0',
+      project: 'Test',
+      description: 'With extras',
+      tasks: [],
+      custom_flag: true,
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.description).toBe('With extras')
+      expect(result.data.custom_flag).toBe(true)
+    }
+  })
 })
 
 describe('validatePlan', () => {

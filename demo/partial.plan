@@ -18,7 +18,7 @@ tasks:
     title: "ADR: Task date and duration fields for Gantt time axis"
     parent: foundations
     type: docs
-    done: false
+    done: true
 
   - id: pbi-058
     title: "ADR: Project-level statuses configuration"

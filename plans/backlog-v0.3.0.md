@@ -201,11 +201,11 @@ Read: `docs/0.1.0-findings.md` — Finding 5 (Gantt uses unit positions)
 Read: `plans/gantt-view/spec.md` — Blueprint → Context
 
 #### Verification
-- [ ] ADR follows the template: Title, Status, Context, Decision, Consequences
-- [ ] At least two format options are compared with pros/cons
-- [ ] Round-trip safety implications are addressed
-- [ ] Zod schema update is sketched (not implemented)
-- [ ] ADR is linked from the Gantt view spec
+- [x] ADR follows the template: Title, Status, Context, Decision, Consequences
+- [x] At least two format options are compared with pros/cons
+- [x] Round-trip safety implications are addressed
+- [x] Zod schema update is sketched (not implemented)
+- [x] ADR is linked from the Gantt view spec
 
 #### Refinement Protocol
 If the team prefers to defer dates entirely, the ADR can conclude with "Deferred" status.

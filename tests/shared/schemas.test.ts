@@ -59,6 +59,79 @@ describe('TaskSchema', () => {
       expect(result.data.needs_sf).toEqual(['dep-4'])
     }
   })
+
+  it('validates ISO 8601 date fields (start, due)', () => {
+    const result = TaskSchema.safeParse({
+      id: 'task-1',
+      title: 'Dated task',
+      start: '2026-03-01',
+      due: '2026-03-15',
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.start).toBe('2026-03-01')
+      expect(result.data.due).toBe('2026-03-15')
+    }
+  })
+
+  it('validates duration field', () => {
+    const result = TaskSchema.safeParse({
+      id: 'task-1',
+      title: 'Duration task',
+      duration: '3d',
+    })
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.duration).toBe('3d')
+    }
+  })
+
+  it('accepts various valid duration formats', () => {
+    for (const dur of ['1d', '2w', '4h', '12m']) {
+      const result = TaskSchema.safeParse({
+        id: 'task-1',
+        title: 'Task',
+        duration: dur,
+      })
+      expect(result.success, `Expected "${dur}" to be valid`).toBe(true)
+    }
+  })
+
+  it('rejects invalid date format in start field', () => {
+    const result = TaskSchema.safeParse({
+      id: 'task-1',
+      title: 'Bad date',
+      start: '03/01/2026',
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects invalid date format in due field', () => {
+    const result = TaskSchema.safeParse({
+      id: 'task-1',
+      title: 'Bad date',
+      due: 'March 15, 2026',
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects invalid duration format', () => {
+    const result = TaskSchema.safeParse({
+      id: 'task-1',
+      title: 'Bad duration',
+      duration: '3 days',
+    })
+    expect(result.success).toBe(false)
+  })
+
+  it('rejects date-time strings (only YYYY-MM-DD allowed)', () => {
+    const result = TaskSchema.safeParse({
+      id: 'task-1',
+      title: 'Datetime',
+      start: '2026-03-01T10:00:00',
+    })
+    expect(result.success).toBe(false)
+  })
 })
 
 describe('PlanFileSchema', () => {
@@ -181,6 +254,32 @@ describe('validatePlan', () => {
       expect(result.data.custom_metadata).toEqual({ author: 'alice' })
       expect(result.data.tasks[0].priority).toBe('high')
       expect(result.data.tasks[0].custom_data).toEqual([1, 2, 3])
+    }
+  })
+
+  it('preserves date and duration fields in validated output (round-trip safe)', () => {
+    const input = {
+      version: '1.0.0',
+      project: 'Test',
+      tasks: [
+        {
+          id: 'a',
+          title: 'Dated task',
+          start: '2026-03-01',
+          due: '2026-03-15',
+          duration: '2w',
+          custom_field: 'preserved',
+        },
+      ],
+    }
+    const result = validatePlan(input)
+    expect(result.success).toBe(true)
+    if (result.success) {
+      const task = result.data.tasks[0]
+      expect(task.start).toBe('2026-03-01')
+      expect(task.due).toBe('2026-03-15')
+      expect(task.duration).toBe('2w')
+      expect(task.custom_field).toBe('preserved')
     }
   })
 

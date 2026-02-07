@@ -45,8 +45,8 @@ export type DependencyType = 'fs' | 'ss' | 'ff' | 'sf'
 
 /**
  * Extended task interface for 1.x.0 features.
- * Adds optional typed dependency arrays (one per {@link DependencyType})
- * and workflow metadata fields.
+ * Adds optional typed dependency arrays (one per {@link DependencyType}),
+ * workflow metadata fields, and optional date/duration fields for Gantt time axis.
  */
 export interface TaskExtended extends Task {
   type?: string
@@ -55,4 +55,10 @@ export interface TaskExtended extends Task {
   needs_ss?: string[]
   needs_ff?: string[]
   needs_sf?: string[]
+  /** Planned start date in ISO 8601 format (YYYY-MM-DD) */
+  start?: string
+  /** Planned due/end date in ISO 8601 format (YYYY-MM-DD) */
+  due?: string
+  /** Estimated duration (e.g. "3d", "1w") — informational, not used for positioning in v1 */
+  duration?: string
 }

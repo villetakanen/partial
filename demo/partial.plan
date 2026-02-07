@@ -124,7 +124,7 @@ tasks:
     type: feat
     needs:
       - pbi-057
-    done: false
+    done: true
 
   # ── Release ──────────────────────────────────────────────────
 

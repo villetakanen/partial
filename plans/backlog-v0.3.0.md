@@ -500,14 +500,14 @@ Read: `docs/decisions/adr-001-task-dates.md` (written in PBI-057)
 Read: `plans/gantt-view/spec.md`
 
 #### Verification
-- [ ] Tasks with `start`/`due` dates render on a time axis
-- [ ] Tasks without dates fall back to dependency-order positioning
-- [ ] Mixed plans (some tasks with dates, some without) render coherently
-- [ ] Zod schema validates date formats per ADR
-- [ ] Round-trip safety: date fields preserved and re-serialized correctly
-- [ ] Unknown fields still preserved
-- [ ] `pnpm test -- --run` passes
-- [ ] `pnpm exec svelte-check` passes
+- [x] Tasks with `start`/`due` dates render on a time axis
+- [x] Tasks without dates fall back to dependency-order positioning
+- [x] Mixed plans (some tasks with dates, some without) render coherently
+- [x] Zod schema validates date formats per ADR
+- [x] Round-trip safety: date fields preserved and re-serialized correctly
+- [x] Unknown fields still preserved
+- [x] `pnpm test -- --run` passes
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If the ADR is deferred or rejected, this PBI is dropped from v0.3.0.

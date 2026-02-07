@@ -1,6 +1,12 @@
 import { z } from 'zod'
 import type { PlanFile } from './types'
 
+/** ISO 8601 date string pattern (YYYY-MM-DD). */
+const isoDateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Expected ISO 8601 date (YYYY-MM-DD)')
+
+/** Duration string pattern (e.g. "3d", "1w", "2h", "1m"). */
+const durationString = z.string().regex(/^\d+[dhwm]$/, 'Expected duration like 3d, 1w, 2h, 1m')
+
 /**
  * Zod schema for a single task.
  * Validates required fields (`id`, `title`) and preserves
@@ -19,6 +25,9 @@ export const TaskSchema = z
     needs_ss: z.array(z.string()).optional(),
     needs_ff: z.array(z.string()).optional(),
     needs_sf: z.array(z.string()).optional(),
+    start: isoDateString.optional(),
+    due: isoDateString.optional(),
+    duration: durationString.optional(),
   })
   .passthrough()
 

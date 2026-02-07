@@ -32,10 +32,13 @@ interface GanttViewProps {
 **Rendering pipeline:**
 1. Receive `plan` + `dag` props
 2. Compute topological order and critical path from DAG
-3. Map tasks to horizontal bars on a time axis
-4. Render dependency edges as connector lines
-5. Highlight critical path tasks
-6. Update reactively when `plan` changes (via `$derived`)
+3. Detect whether any task has parseable `start`/`due` date fields
+4. If dates present: use `d3.scaleTime` for time-based layout with day-tick grid lines
+5. If no dates: use `d3.scaleLinear` for dependency-order (ordinal) layout
+6. Map tasks to horizontal bars; undated tasks in time-mode get fractional ordinal placement
+7. Render dependency edges as cubic Bézier connector lines
+8. Highlight critical path tasks
+9. Update reactively when `plan` changes (via `$derived`)
 
 ### Anti-Patterns
 
@@ -62,7 +65,7 @@ interface GanttViewProps {
 - [ ] Label column width adapts gracefully at narrow viewports (v0.3.0)
 - [ ] Arrow-key navigation between task bars with visible focus ring (v0.3.0)
 - [ ] All colors reference CSS custom properties from `theme.css` (v0.3.0)
-- [ ] (Stretch) When tasks have `start`/`due` date fields, x-axis switches to `d3.scaleTime` (v0.3.0, depends on ADR-001)
+- [x] (Stretch) When tasks have `start`/`due` date fields, x-axis switches to `d3.scaleTime` (v0.3.0, depends on ADR-001)
 
 ### Regression Guardrails
 

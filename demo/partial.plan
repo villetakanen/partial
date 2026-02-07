@@ -90,7 +90,7 @@ tasks:
     type: feat
     needs:
       - pbi-058
-    done: false
+    done: true
 
   # ── Accessibility ────────────────────────────────────────────
 

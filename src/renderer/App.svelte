@@ -4,12 +4,14 @@ import { buildDAG } from '@shared/dag'
 import type { PartialAPI, PlanUpdatedPayload } from '@shared/ipc'
 import type { PlanFile } from '@shared/types'
 import { setContext } from 'svelte'
+import SettingsPanel from './components/SettingsPanel.svelte'
 import Welcome from './components/Welcome.svelte'
 import Gantt from './views/Gantt.svelte'
 import GraphView from './views/Graph.svelte'
 import Kanban from './views/Kanban.svelte'
 
 let view = $state<'gantt' | 'kanban' | 'graph'>('gantt')
+let showSettings = $state(false)
 
 let plan = $state<PlanFile | null>(null)
 let filePath = $state<string | null>(null)
@@ -146,6 +148,13 @@ function confirmDelete() {
 function cancelDelete() {
   deleteConfirm = null
 }
+
+/** Save updated plan from settings panel. */
+function handleSettingsSave(updatedPlan: PlanFile) {
+  if (!filePath) return
+  plan = updatedPlan
+  api?.savePlan({ filePath, plan: updatedPlan })
+}
 </script>
 
 <main>
@@ -160,6 +169,11 @@ function cancelDelete() {
 			{#if filePath}
 				<span class="plan-status" aria-live="polite">{filePath}</span>
 			{/if}
+			<button class="settings-btn" onclick={() => (showSettings = true)} aria-label="Project settings" type="button">
+				<svg class="settings-icon" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+					<path fill-rule="evenodd" d="M8.34 1.804A1 1 0 019.32 1h1.36a1 1 0 01.98.804l.295 1.473a6.5 6.5 0 011.345.777l1.42-.47a1 1 0 011.12.37l.68 1.177a1 1 0 01-.14 1.173l-1.126 1.003a6.5 6.5 0 010 1.554l1.126 1.003a1 1 0 01.14 1.173l-.68 1.177a1 1 0 01-1.12.37l-1.42-.47a6.5 6.5 0 01-1.345.777l-.295 1.473a1 1 0 01-.98.804H9.32a1 1 0 01-.98-.804l-.295-1.473a6.5 6.5 0 01-1.345-.777l-1.42.47a1 1 0 01-1.12-.37l-.68-1.177a1 1 0 01.14-1.173l1.126-1.003a6.5 6.5 0 010-1.554L3.62 5.63a1 1 0 01-.14-1.173l.68-1.177a1 1 0 011.12-.37l1.42.47a6.5 6.5 0 011.345-.777L8.34 1.804zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+				</svg>
+			</button>
 		</header>
 
 		<section class="view-container">
@@ -173,6 +187,10 @@ function cancelDelete() {
 		</section>
 	{:else}
 		<Welcome />
+	{/if}
+
+	{#if showSettings && plan}
+		<SettingsPanel {plan} onSave={handleSettingsSave} onClose={() => (showSettings = false)} />
 	{/if}
 
 	{#if deleteConfirm}
@@ -249,6 +267,30 @@ function cancelDelete() {
 		background: var(--color-surface-active);
 		color: var(--color-text-inverse);
 		border-color: var(--color-border-accent);
+	}
+
+	.settings-btn {
+		margin-left: 0;
+		padding: 0.375rem;
+		border: 1px solid var(--color-border-secondary);
+		border-radius: 4px;
+		background: transparent;
+		color: var(--color-text-muted);
+		cursor: pointer;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-shrink: 0;
+	}
+
+	.settings-btn:hover {
+		background: var(--color-surface-hover);
+		color: var(--color-text-inverse);
+	}
+
+	.settings-icon {
+		width: 1rem;
+		height: 1rem;
 	}
 
 	.plan-status {

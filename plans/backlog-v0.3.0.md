@@ -258,15 +258,15 @@ Read: `docs/0.1.0-findings.md` — HF-4 (No project settings UI)
 Read: `src/shared/types.ts` — `PlanFile` interface
 
 #### Verification
-- [ ] Settings gear icon visible in app header
-- [ ] Clicking it opens a panel/drawer overlay
-- [ ] Project name is displayed and editable
-- [ ] Version is displayed (read-only for now)
-- [ ] Changes to project name are saved to the `.plan` file on confirm
-- [ ] Panel can be closed without saving (cancel behavior)
-- [ ] Round-trip safety: unknown fields preserved
-- [ ] Svelte 5 runes syntax, scoped styles
-- [ ] `pnpm exec svelte-check` passes
+- [x] Settings gear icon visible in app header
+- [x] Clicking it opens a panel/drawer overlay
+- [x] Project name is displayed and editable
+- [x] Version is displayed (read-only for now)
+- [x] Changes to project name are saved to the `.plan` file on confirm
+- [x] Panel can be closed without saving (cancel behavior)
+- [x] Round-trip safety: unknown fields preserved
+- [x] Svelte 5 runes syntax, scoped styles
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If custom statuses config (from PBI-058 ADR) is approved, the settings panel can be extended in a follow-up PBI.

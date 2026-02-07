@@ -24,6 +24,15 @@ let parent = $state((task.parent as string | undefined) ?? '')
 let needs = $state<string[]>([...(task.needs ?? [])])
 let newDepId = $state('')
 let depError = $state('')
+// svelte-ignore state_referenced_locally
+let startDate = $state((task.start as string | undefined) ?? '')
+// svelte-ignore state_referenced_locally
+let dueDate = $state((task.due as string | undefined) ?? '')
+// svelte-ignore state_referenced_locally
+let duration = $state((task.duration as string | undefined) ?? '')
+let durationError = $state('')
+
+const DURATION_RE = /^\d+[dhwm]$/
 
 const otherTaskIds = $derived(plan.tasks.filter((t) => t.id !== task.id).map((t) => t.id))
 
@@ -67,8 +76,16 @@ function handleSave() {
   if (trimmedTitle === '') {
     return
   }
+  const trimmedDuration = duration.trim()
+  if (trimmedDuration && !DURATION_RE.test(trimmedDuration)) {
+    durationError = 'Invalid format — use e.g. 3d, 1w, 2h, 1m'
+    return
+  }
+  durationError = ''
   const trimmedState = taskState.trim()
   const trimmedParent = parent.trim()
+  const trimmedStart = startDate.trim()
+  const trimmedDue = dueDate.trim()
   onSave({
     ...task,
     title: trimmedTitle,
@@ -76,6 +93,9 @@ function handleSave() {
     ...(trimmedState ? { state: trimmedState } : { state: undefined }),
     ...(trimmedParent ? { parent: trimmedParent } : { parent: undefined }),
     ...(needs.length > 0 ? { needs } : { needs: undefined }),
+    ...(trimmedStart ? { start: trimmedStart } : { start: undefined }),
+    ...(trimmedDue ? { due: trimmedDue } : { due: undefined }),
+    ...(trimmedDuration ? { duration: trimmedDuration } : { duration: undefined }),
   })
   onClose()
 }
@@ -183,6 +203,43 @@ function handleKeydown(event: KeyboardEvent) {
         </div>
         {#if depError}
           <span class="dep-error">{depError}</span>
+        {/if}
+      </div>
+
+      <div class="field">
+        <span class="field-label">Schedule</span>
+        <div class="schedule-fields">
+          <div class="schedule-field">
+            <label class="schedule-label" for="detail-start">Start</label>
+            <input
+              id="detail-start"
+              class="field-input"
+              type="date"
+              bind:value={startDate}
+            />
+          </div>
+          <div class="schedule-field">
+            <label class="schedule-label" for="detail-due">Due</label>
+            <input
+              id="detail-due"
+              class="field-input"
+              type="date"
+              bind:value={dueDate}
+            />
+          </div>
+          <div class="schedule-field">
+            <label class="schedule-label" for="detail-duration">Duration</label>
+            <input
+              id="detail-duration"
+              class="field-input"
+              type="text"
+              bind:value={duration}
+              placeholder="e.g. 3d, 1w"
+            />
+          </div>
+        </div>
+        {#if durationError}
+          <span class="dep-error">{durationError}</span>
         {/if}
       </div>
     </div>
@@ -367,6 +424,23 @@ function handleKeydown(event: KeyboardEvent) {
   .dep-error {
     font-size: 0.75rem;
     color: var(--color-status-blocked);
+  }
+
+  .schedule-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .schedule-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .schedule-label {
+    font-size: 0.6875rem;
+    color: var(--color-text-dim);
   }
 
   .detail-footer {

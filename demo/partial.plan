@@ -24,7 +24,7 @@ tasks:
     title: "ADR: Project-level statuses configuration"
     parent: foundations
     type: docs
-    done: false
+    done: true
 
   # ── CSS Foundations ───────────────────────────────────────────
 

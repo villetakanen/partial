@@ -229,11 +229,11 @@ Read: `docs/0.1.0-findings.md` — HF-3 (Kanban 4 cols vs 2 states)
 Read: `plans/kanban-view/spec.md` — Column Logic table
 
 #### Verification
-- [ ] ADR follows the template: Title, Status, Context, Decision, Consequences
-- [ ] Backward compatibility with current `done: true/false` + `state` field addressed
-- [ ] Round-trip safety implications documented
-- [ ] Example `.plan` snippet included showing the proposed syntax
-- [ ] ADR is linked from the Kanban view spec
+- [x] ADR follows the template: Title, Status, Context, Decision, Consequences
+- [x] Backward compatibility with current `done: true/false` + `state` field addressed
+- [x] Round-trip safety implications documented
+- [x] Example `.plan` snippet included showing the proposed syntax
+- [x] ADR is linked from the Kanban view spec
 
 #### Refinement Protocol
 None — ADR is a document, not code.

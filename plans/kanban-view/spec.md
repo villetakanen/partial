@@ -35,6 +35,7 @@ interface KanbanViewProps {
 - **Data flow:** Receives `PlanFile` + `Graph`, computes column assignment via `$derived`, renders `TaskCard` components.
 - **Dependencies:** DAG engine (`getUnblockedTasks`), `TaskCard` component
 - **Dependents:** `App.svelte` (view switcher)
+- **ADR reference:** See `docs/decisions/adr-002-project-statuses.md` for configurable column design (v0.3.0+)
 
 **Editing affordances (v0.3.0):**
 - TaskCard status dot is clickable to toggle `done`

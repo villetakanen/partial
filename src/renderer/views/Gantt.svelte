@@ -420,7 +420,7 @@ function handleGanttKeydown(event: KeyboardEvent) {
 	}
 
 	.label.done {
-		opacity: 0.5;
+		opacity: 0.7;
 	}
 
 	.label.critical {
@@ -483,7 +483,7 @@ function handleGanttKeydown(event: KeyboardEvent) {
 
 	.bar.done {
 		fill: var(--color-status-done-subtle);
-		opacity: 0.5;
+		opacity: 0.7;
 	}
 
 	.bar.critical {

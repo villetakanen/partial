@@ -5,36 +5,36 @@
 
 :root {
   /* ── Surface colors ──────────────────────────────────────────── */
-  --color-surface-primary: #1a1a2e;
-  --color-surface-card: #222244;
+  --color-surface-primary: #1c1c32;
+  --color-surface-card: #262650;
   --color-surface-inset: #121225;
-  --color-surface-hover: #2a2a4a;
-  --color-surface-active: #3a3a6a;
+  --color-surface-hover: #333360;
+  --color-surface-active: #424280;
   --color-surface-active-hover: #4a4a8a;
-  --color-surface-elevated: #2a2a3e;
+  --color-surface-elevated: #2e2e48;
   --color-surface-elevated-hover: #3a3a4e;
 
   /* ── Text colors ─────────────────────────────────────────────── */
-  --color-text-primary: #e0e0e0;
-  --color-text-secondary: #ccc;
-  --color-text-muted: #aaa;
-  --color-text-dim: #888;
+  --color-text-primary: #efefef;
+  --color-text-secondary: #d4d4d8;
+  --color-text-muted: #b4b4b8;
+  --color-text-dim: #9a9a9e;
   --color-text-hint: #666;
   --color-text-placeholder: #555;
-  --color-text-done: #999;
+  --color-text-done: #b0b0b0;
   --color-text-inverse: #fff;
 
   /* ── Border colors ───────────────────────────────────────────── */
-  --color-border-primary: #333;
-  --color-border-secondary: #444;
-  --color-border-hover: #555;
-  --color-border-accent: #5a5a9a;
+  --color-border-primary: #3d3d50;
+  --color-border-secondary: #505064;
+  --color-border-hover: #606078;
+  --color-border-accent: #6a6ab0;
 
   /* ── Status colors ───────────────────────────────────────────── */
-  --color-status-done: #4caf50;
-  --color-status-ready: #42a5f5;
-  --color-status-blocked: #ef5350;
-  --color-status-in-progress: #ffa726;
+  --color-status-done: #5cc462;
+  --color-status-ready: #54b5ff;
+  --color-status-blocked: #ff6b68;
+  --color-status-in-progress: #ffb940;
 
   /* ── Status subtle (borders & muted fills) ───────────────────── */
   --color-status-done-subtle: #2a4a2a;
@@ -43,10 +43,10 @@
   --color-status-in-progress-subtle: #4a4a2a;
 
   /* ── Gantt bar colors ────────────────────────────────────────── */
-  --color-bar-default: #3a5a8a;
-  --color-bar-hover: #4a6a9a;
-  --color-bar-critical: #8a5a2a;
+  --color-bar-default: #4a6a9a;
+  --color-bar-hover: #5a7aaa;
+  --color-bar-critical: #a06830;
 
   /* ── Focus ────────────────────────────────────────────────────── */
-  --color-focus-ring: #6a6aff;
+  --color-focus-ring: #7a7aff;
 }

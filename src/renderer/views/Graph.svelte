@@ -380,7 +380,7 @@ function targetY(link: SimLink): number {
 	}
 
 	.node.done {
-		opacity: 0.5;
+		opacity: 0.7;
 	}
 
 	.node-label {

@@ -247,7 +247,7 @@ function handleInputMount(node: HTMLInputElement) {
 
 	/* State: done */
 	.done {
-		opacity: 0.6;
+		opacity: 0.75;
 		border-color: var(--color-status-done-subtle);
 	}
 

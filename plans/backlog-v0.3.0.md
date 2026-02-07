@@ -532,12 +532,12 @@ Create a fresh `demo/partial.plan` for v0.3.0 containing only v0.3.0 PBIs. Old v
 Read: This backlog (plans/backlog-v0.3.0.md)
 
 #### Verification
-- [ ] Only v0.3.0 PBIs (057–068) are present as tasks
-- [ ] No v0.1.0 or v0.2.0 items carried over
-- [ ] Dependency edges match this backlog's dependency graph
-- [ ] Metadata reflects v0.3.0
-- [ ] File parses without errors: `pnpm exec tsx src/cli/index.ts validate demo/partial.plan`
-- [ ] Round-trip safe (unknown fields in metadata preserved)
+- [x] Only v0.3.0 PBIs (057–068) are present as tasks
+- [x] No v0.1.0 or v0.2.0 items carried over
+- [x] Dependency edges match this backlog's dependency graph
+- [x] Metadata reflects v0.3.0
+- [x] File parses without errors: `pnpm exec tsx src/cli/index.ts validate demo/partial.plan`
+- [x] Round-trip safe (unknown fields in metadata preserved)
 
 #### Refinement Protocol
 Update this file as PBIs are completed during the release cycle.

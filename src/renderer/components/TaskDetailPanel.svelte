@@ -1,4 +1,5 @@
 <script lang="ts">
+import { wouldCreateCycle } from '@shared/dag'
 import type { PlanFile, Task } from '@shared/types'
 
 interface Props {
@@ -19,6 +20,46 @@ let done = $state(task.done ?? false)
 let taskState = $state((task.state as string | undefined) ?? '')
 // svelte-ignore state_referenced_locally
 let parent = $state((task.parent as string | undefined) ?? '')
+// svelte-ignore state_referenced_locally
+let needs = $state<string[]>([...(task.needs ?? [])])
+let newDepId = $state('')
+let depError = $state('')
+
+const otherTaskIds = $derived(plan.tasks.filter((t) => t.id !== task.id).map((t) => t.id))
+
+/** Remove a dependency from the needs list. */
+function removeDep(depId: string) {
+  needs = needs.filter((id) => id !== depId)
+}
+
+/** Add a new dependency after cycle check. */
+function addDep() {
+  const trimmed = newDepId.trim()
+  if (trimmed === '' || needs.includes(trimmed)) {
+    newDepId = ''
+    depError = ''
+    return
+  }
+  if (!plan.tasks.some((t) => t.id === trimmed)) {
+    depError = `Task "${trimmed}" does not exist`
+    return
+  }
+  if (wouldCreateCycle(plan.tasks, trimmed, task.id)) {
+    depError = 'Adding this dependency would create a cycle'
+    return
+  }
+  needs = [...needs, trimmed]
+  newDepId = ''
+  depError = ''
+}
+
+/** Handle Enter key on the dependency input. */
+function handleDepKeydown(event: KeyboardEvent) {
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    addDep()
+  }
+}
 
 /** Save updated task fields and close the panel. */
 function handleSave() {
@@ -34,6 +75,7 @@ function handleSave() {
     done,
     ...(trimmedState ? { state: trimmedState } : { state: undefined }),
     ...(trimmedParent ? { parent: trimmedParent } : { parent: undefined }),
+    ...(needs.length > 0 ? { needs } : { needs: undefined }),
   })
   onClose()
 }
@@ -106,6 +148,42 @@ function handleKeydown(event: KeyboardEvent) {
           bind:value={parent}
           placeholder="Parent task ID"
         />
+      </div>
+
+      <div class="field">
+        <span class="field-label">Dependencies</span>
+        {#if needs.length > 0}
+          <div class="dep-chips">
+            {#each needs as dep}
+              <span class="dep-chip">
+                {dep}
+                <button class="dep-remove" onclick={() => removeDep(dep)} aria-label="Remove dependency {dep}" type="button">×</button>
+              </span>
+            {/each}
+          </div>
+        {:else}
+          <span class="field-hint">No dependencies</span>
+        {/if}
+        <div class="dep-add">
+          <input
+            id="detail-dep-add"
+            class="field-input dep-input"
+            type="text"
+            bind:value={newDepId}
+            onkeydown={handleDepKeydown}
+            placeholder="Add dependency ID"
+            list="dep-suggestions"
+          />
+          <datalist id="dep-suggestions">
+            {#each otherTaskIds as tid}
+              <option value={tid}></option>
+            {/each}
+          </datalist>
+          <button class="dep-add-btn" onclick={addDep} type="button">Add</button>
+        </div>
+        {#if depError}
+          <span class="dep-error">{depError}</span>
+        {/if}
       </div>
     </div>
 
@@ -223,6 +301,72 @@ function handleKeydown(event: KeyboardEvent) {
 
   .field-input:focus {
     border-color: var(--color-border-accent);
+  }
+
+  .field-hint {
+    font-size: 0.75rem;
+    color: var(--color-text-dim);
+  }
+
+  .dep-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+  }
+
+  .dep-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    background: var(--color-surface-elevated);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-family: monospace;
+    color: var(--color-text-secondary);
+  }
+
+  .dep-remove {
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: var(--color-text-dim);
+    font-size: 0.875rem;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  .dep-remove:hover {
+    color: var(--color-status-blocked);
+  }
+
+  .dep-add {
+    display: flex;
+    gap: 0.375rem;
+  }
+
+  .dep-input {
+    flex: 1;
+  }
+
+  .dep-add-btn {
+    padding: 0.375rem 0.625rem;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 4px;
+    background: var(--color-surface-elevated);
+    color: var(--color-text-secondary);
+    font-size: 0.8125rem;
+    cursor: pointer;
+  }
+
+  .dep-add-btn:hover {
+    background: var(--color-surface-elevated-hover);
+  }
+
+  .dep-error {
+    font-size: 0.75rem;
+    color: var(--color-status-blocked);
   }
 
   .detail-footer {

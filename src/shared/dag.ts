@@ -243,6 +243,26 @@ function reconstructPath(graph: Graph, prev: Map<string, string | null>, endNode
 }
 
 /**
+ * Check if adding a dependency would create a cycle.
+ *
+ * Tests whether making `toId` depend on `fromId` (i.e. adding `fromId` to
+ * `toId.needs`) would introduce a cycle in the task graph.
+ *
+ * @returns `true` if adding the dependency would create a cycle
+ */
+export function wouldCreateCycle(tasks: Task[], fromId: string, toId: string): boolean {
+  const tempTasks = tasks.map((t) =>
+    t.id === toId ? { ...t, needs: [...(t.needs ?? []), fromId] } : t,
+  )
+  try {
+    const graph = buildDAG(tempTasks)
+    return detectCycles(graph) !== null
+  } catch {
+    return true
+  }
+}
+
+/**
  * Add directed edges from dependencies to the dependent task.
  * Edge direction: dependency → dependent (predecessor → successor).
  */

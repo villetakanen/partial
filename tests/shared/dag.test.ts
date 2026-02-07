@@ -5,6 +5,7 @@ import {
   type EdgeLabel,
   getUnblockedTasks,
   topologicalSort,
+  wouldCreateCycle,
 } from '@shared/dag'
 import type { Task } from '@shared/types'
 import { Graph } from 'graphlib'
@@ -409,5 +410,32 @@ describe('criticalPath', () => {
     const graph = buildDAG(tasks)
     const ids = criticalPath(graph).map((t) => t.id)
     expect(ids).toEqual(['a', 'b', 'c', 'f'])
+  })
+})
+
+describe('wouldCreateCycle', () => {
+  it('returns false for a valid new dependency', () => {
+    const tasks = [task('a'), task('b')]
+    expect(wouldCreateCycle(tasks, 'a', 'b')).toBe(false)
+  })
+
+  it('returns true for a direct cycle (A needs B, adding B needs A)', () => {
+    const tasks = [task('a'), task('b', { needs: ['a'] })]
+    expect(wouldCreateCycle(tasks, 'b', 'a')).toBe(true)
+  })
+
+  it('returns true for an indirect cycle (A→B→C, adding C needs A)', () => {
+    const tasks = [task('a'), task('b', { needs: ['a'] }), task('c', { needs: ['b'] })]
+    expect(wouldCreateCycle(tasks, 'c', 'a')).toBe(true)
+  })
+
+  it('returns false for unrelated tasks', () => {
+    const tasks = [task('a'), task('b', { needs: ['a'] }), task('c'), task('d')]
+    expect(wouldCreateCycle(tasks, 'c', 'd')).toBe(false)
+  })
+
+  it('returns true when fromId does not exist (broken reference)', () => {
+    const tasks = [task('a')]
+    expect(wouldCreateCycle(tasks, 'nonexistent', 'a')).toBe(true)
   })
 })

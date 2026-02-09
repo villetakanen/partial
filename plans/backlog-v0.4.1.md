@@ -53,12 +53,12 @@ Read: `src/preload/index.ts` — `savePlan` IPC invoke
 Read: `src/main/index.ts` — `plan:save` IPC handler, calls `stringifyPlan` + `writeFile`
 
 #### Verification
-- [ ] Edit project name in settings, click Save -> `.plan` file on disk reflects the new name
-- [ ] Edit description in settings, click Save -> `.plan` file on disk reflects the new description
-- [ ] Watcher does not trigger a spurious re-render after own save
-- [ ] Round-trip safety: unknown fields preserved after save
-- [ ] `pnpm exec svelte-check` passes
-- [ ] `pnpm test -- --run` passes
+- [x] Edit project name in settings, click Save -> `.plan` file on disk reflects the new name
+- [x] Edit description in settings, click Save -> `.plan` file on disk reflects the new description
+- [x] Watcher does not trigger a spurious re-render after own save
+- [x] Round-trip safety: unknown fields preserved after save
+- [x] `pnpm exec svelte-check` passes
+- [x] `pnpm test -- --run` passes
 
 #### Refinement Protocol
 If the issue is in the IPC layer (preload or main process), check whether the channel name or payload shape has drifted from the contract in `src/shared/ipc.ts`.
@@ -88,14 +88,14 @@ Read: `src/preload/index.ts` — `savePlan` IPC invoke
 Read: `src/main/index.ts` — `plan:save` IPC handler
 
 #### Verification
-- [ ] Edit task title in detail panel, click Save -> `.plan` file on disk reflects the new title
-- [ ] Toggle done checkbox, click Save -> `.plan` file on disk reflects the new done state
-- [ ] Edit dependencies, click Save -> `.plan` file on disk reflects updated needs array
-- [ ] Edit start/due/duration, click Save -> `.plan` file on disk reflects the new dates
-- [ ] Watcher does not trigger a spurious re-render after own save
-- [ ] Round-trip safety: unknown fields preserved after save
-- [ ] `pnpm exec svelte-check` passes
-- [ ] `pnpm test -- --run` passes
+- [x] Edit task title in detail panel, click Save -> `.plan` file on disk reflects the new title
+- [x] Toggle done checkbox, click Save -> `.plan` file on disk reflects the new done state
+- [x] Edit dependencies, click Save -> `.plan` file on disk reflects updated needs array
+- [x] Edit start/due/duration, click Save -> `.plan` file on disk reflects the new dates
+- [x] Watcher does not trigger a spurious re-render after own save
+- [x] Round-trip safety: unknown fields preserved after save
+- [x] `pnpm exec svelte-check` passes
+- [x] `pnpm test -- --run` passes
 
 #### Refinement Protocol
 If PBI-081 and PBI-082 share the same root cause, implement the fix in PBI-081 and mark PBI-082 as resolved by PBI-081's commit. If the causes differ, fix independently.
@@ -120,13 +120,13 @@ Read: `src/renderer/components/TaskCard.svelte` — `handleCardClick` pattern us
 Read: `src/renderer/views/Graph.svelte` — `handleNodeClick` pattern using `getContext('partial:openDetail')`
 
 #### Verification
-- [ ] Clicking a task bar in Gantt view opens the task detail panel
-- [ ] Clicking the task label in Gantt view also opens the detail panel
-- [ ] The correct task is shown in the detail panel (not a different task)
-- [ ] Editing and saving from the panel opened via Gantt works (persists changes)
-- [ ] Cursor changes to pointer on hover over clickable bars/labels
-- [ ] Svelte 5 runes syntax, scoped styles
-- [ ] `pnpm exec svelte-check` passes
+- [x] Clicking a task bar in Gantt view opens the task detail panel
+- [x] Clicking the task label in Gantt view also opens the detail panel
+- [x] The correct task is shown in the detail panel (not a different task)
+- [x] Editing and saving from the panel opened via Gantt works (persists changes)
+- [x] Cursor changes to pointer on hover over clickable bars/labels
+- [x] Svelte 5 runes syntax, scoped styles
+- [x] `pnpm exec svelte-check` passes
 
 #### Refinement Protocol
 If the Gantt bars are rendered via D3 (not Svelte DOM), the click handler may need to be attached via D3's `.on('click', ...)` API rather than Svelte's `onclick`. Follow the existing pattern in Graph.svelte for D3 click handling.

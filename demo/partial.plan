@@ -2,14 +2,14 @@ version: "1.0.0"
 project: Partial
 
 # Dogfood: Partial's own backlog as a .plan file.
-# v0.4.0 — "Polished & Discoverable"
-# Fresh iteration — only v0.4.0 PBIs, no carried-over items.
+# v0.4.1 — "Save What You Edit"
+# Includes v0.4.0 PBIs (done) + v0.4.1 bug fixes.
 
 metadata:
   description: Agent-native project management via .plan files
   repository: https://github.com/villetakanen/partial
   created: 2026-02-07
-  release: v0.4.0
+  release: v0.4.1
 
 tasks:
   # ── P0: Bugs ──────────────────────────────────────────────────
@@ -90,4 +90,24 @@ tasks:
       - pbi-073
       - pbi-076
       - pbi-079
+    done: true
+
+  # ── v0.4.1: Save What You Edit ─────────────────────────────────
+
+  - id: pbi-081
+    title: Settings panel changes persist to file
+    parent: bugs
+    type: fix
+    done: true
+
+  - id: pbi-082
+    title: Task detail panel changes persist to file
+    parent: bugs
+    type: fix
+    done: true
+
+  - id: pbi-083
+    title: Gantt view opens task detail panel on click
+    parent: detail-panel
+    type: feat
     done: true

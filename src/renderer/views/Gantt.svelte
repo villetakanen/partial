@@ -3,6 +3,9 @@ import type { Graph } from '@shared/dag'
 import { criticalPath, topologicalSort } from '@shared/dag'
 import type { PlanFile, Task } from '@shared/types'
 import * as d3 from 'd3'
+import { getContext } from 'svelte'
+
+const openDetail = getContext<((task: Task) => void) | undefined>('partial:openDetail')
 
 interface Props {
   plan: PlanFile
@@ -10,6 +13,11 @@ interface Props {
 }
 
 let { plan, dag }: Props = $props()
+
+/** Open the task detail panel for the given task. */
+function handleBarClick(task: Task) {
+  openDetail?.(task)
+}
 
 const ROW_HEIGHT = 36
 const BAR_HEIGHT = 24
@@ -278,12 +286,14 @@ function handleGanttKeydown(event: KeyboardEvent) {
 						<div class="label-axis-spacer" style="height: 24px"></div>
 					{/if}
 					{#each layout.bars as bar (bar.task.id)}
+						<!-- svelte-ignore a11y_no_static_element_interactions a11y_click_events_have_key_events -->
 						<div
 							class="label"
 							class:done={bar.task.done}
 							class:critical={bar.isCritical}
 							style="top: {bar.y + (layout.timeTicks.length > 0 ? 24 : 0)}px; height: {BAR_HEIGHT}px"
 							title={bar.task.title}
+							onclick={() => handleBarClick(bar.task)}
 						>
 							<span class="label-id">{bar.task.id}</span>
 							<span class="label-title">{bar.task.title}</span>
@@ -313,7 +323,6 @@ function handleGanttKeydown(event: KeyboardEvent) {
 								{/each}
 								<g role="list" aria-label="Task bars">
 									{#each layout.bars as bar (bar.task.id)}
-										<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 										<rect
 											x={bar.x}
 											y={bar.y}
@@ -324,8 +333,10 @@ function handleGanttKeydown(event: KeyboardEvent) {
 											class:done={bar.task.done}
 											class:critical={bar.isCritical && !bar.task.done}
 											tabindex="0"
-											role="listitem"
+											role="button"
 											aria-label="{bar.task.title}{bar.task.done ? ' (done)' : ''}{bar.isCritical ? ' (critical path)' : ''}"
+											onclick={() => handleBarClick(bar.task)}
+											onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleBarClick(bar.task) } }}
 										/>
 									{/each}
 								</g>
@@ -340,7 +351,6 @@ function handleGanttKeydown(event: KeyboardEvent) {
 							{/each}
 							<g role="list" aria-label="Task bars">
 								{#each layout.bars as bar (bar.task.id)}
-									<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 									<rect
 										x={bar.x}
 										y={bar.y}
@@ -351,8 +361,10 @@ function handleGanttKeydown(event: KeyboardEvent) {
 										class:done={bar.task.done}
 										class:critical={bar.isCritical && !bar.task.done}
 										tabindex="0"
-										role="listitem"
+										role="button"
 										aria-label="{bar.task.title}{bar.task.done ? ' (done)' : ''}{bar.isCritical ? ' (critical path)' : ''}"
+										onclick={() => handleBarClick(bar.task)}
+										onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handleBarClick(bar.task) } }}
 									/>
 								{/each}
 							</g>
@@ -417,6 +429,7 @@ function handleGanttKeydown(event: KeyboardEvent) {
 		color: var(--color-text-secondary);
 		overflow: hidden;
 		white-space: nowrap;
+		cursor: pointer;
 	}
 
 	.label.done {
@@ -468,7 +481,7 @@ function handleGanttKeydown(event: KeyboardEvent) {
 
 	.bar {
 		fill: var(--color-bar-default);
-		cursor: default;
+		cursor: pointer;
 		transition: fill 0.15s;
 	}
 

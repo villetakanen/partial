@@ -111,3 +111,30 @@ tasks:
     parent: detail-panel
     type: feat
     done: true
+
+  # ── Theme Readability ──────────────────────────────────────────
+
+  - id: pbi-084
+    title: "Theme readability — raise text contrast to WCAG AA"
+    parent: polish
+    type: fix
+    needs:
+      - pbi-073
+    done: true
+
+  - id: pbi-085
+    title: "Theme readability — strengthen borders and surface separation"
+    parent: polish
+    type: fix
+    needs:
+      - pbi-073
+    done: true
+
+  - id: pbi-086
+    title: "Theme readability — increase status-subtle fill visibility"
+    parent: polish
+    type: fix
+    needs:
+      - pbi-084
+      - pbi-085
+    done: true

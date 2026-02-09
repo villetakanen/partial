@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
 import { readFile, mkdir, writeFile } from "node:fs/promises";
-import { join, dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { app, Menu, ipcMain, BrowserWindow, dialog } from "electron";
 import { z } from "zod";
 import { stringify, parse } from "yaml";
@@ -21,7 +21,11 @@ const IPC_CHANNELS = {
   /** renderer → main: Show the native file picker dialog */
   SHOW_OPEN_DIALOG: "plan:show-open-dialog",
   /** renderer → main: User saves changes from UI */
-  SAVE: "plan:save"
+  SAVE: "plan:save",
+  /** renderer → main: Read current settings */
+  SETTINGS_GET: "settings:get",
+  /** renderer → main: Write (merge) settings */
+  SETTINGS_SET: "settings:set"
 };
 const isoDateString = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Expected ISO 8601 date (YYYY-MM-DD)");
 const durationString = z.string().regex(/^\d+[dhwm]$/, "Expected duration like 3d, 1w, 2h, 1m");
@@ -111,7 +115,10 @@ async function readSettings() {
       return parsed;
     }
     return {};
-  } catch {
+  } catch (error) {
+    if (error instanceof Error && "code" in error && error.code !== "ENOENT") {
+      console.error("[store] Failed to read settings:", error.message);
+    }
     return {};
   }
 }
@@ -350,6 +357,12 @@ function registerIpcHandlers() {
     const content = stringifyPlan(payload.plan);
     selfWriteHashes.set(payload.filePath, hashContent(content));
     await writeFile(payload.filePath, content, "utf-8");
+  });
+  ipcMain.handle(IPC_CHANNELS.SETTINGS_GET, async () => {
+    return readSettings();
+  });
+  ipcMain.handle(IPC_CHANNELS.SETTINGS_SET, async (_event, settings) => {
+    await writeSettings(settings);
   });
 }
 app.whenReady().then(async () => {

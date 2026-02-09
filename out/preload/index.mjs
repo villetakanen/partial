@@ -11,7 +11,11 @@ const IPC_CHANNELS = {
   /** renderer → main: Show the native file picker dialog */
   SHOW_OPEN_DIALOG: "plan:show-open-dialog",
   /** renderer → main: User saves changes from UI */
-  SAVE: "plan:save"
+  SAVE: "plan:save",
+  /** renderer → main: Read current settings */
+  SETTINGS_GET: "settings:get",
+  /** renderer → main: Write (merge) settings */
+  SETTINGS_SET: "settings:set"
 };
 const api = {
   openFile(payload) {
@@ -22,6 +26,12 @@ const api = {
   },
   savePlan(payload) {
     return ipcRenderer.invoke(IPC_CHANNELS.SAVE, payload);
+  },
+  getSettings() {
+    return ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_GET);
+  },
+  setSettings(settings) {
+    return ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_SET, settings);
   },
   onPlanUpdated(callback) {
     ipcRenderer.on(IPC_CHANNELS.PLAN_UPDATED, (_event, payload) => {
@@ -37,6 +47,15 @@ const api = {
     ipcRenderer.on(IPC_CHANNELS.PLAN_ERROR, (_event, payload) => {
       callback(payload);
     });
+  },
+  offPlanUpdated() {
+    ipcRenderer.removeAllListeners(IPC_CHANNELS.PLAN_UPDATED);
+  },
+  offPlanDeleted() {
+    ipcRenderer.removeAllListeners(IPC_CHANNELS.PLAN_DELETED);
+  },
+  offPlanError() {
+    ipcRenderer.removeAllListeners(IPC_CHANNELS.PLAN_ERROR);
   }
 };
 contextBridge.exposeInMainWorld("api", api);

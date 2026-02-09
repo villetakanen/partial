@@ -367,7 +367,7 @@ function targetY(link: SimLink): number {
 
 	.node-label {
 		fill: var(--color-text-secondary);
-		font-size: 10px;
+		font-size: 0.714rem;
 		font-family: monospace;
 		pointer-events: none;
 	}

@@ -2,14 +2,14 @@ version: "1.0.0"
 project: Partial
 
 # Dogfood: Partial's own backlog as a .plan file.
-# v0.4.1 — "Save What You Edit"
-# Includes v0.4.0 PBIs (done) + v0.4.1 bug fixes.
+# v0.5.0 — "List & Look"
+# Includes all PBIs through v0.5.0.
 
 metadata:
   description: Agent-native project management via .plan files
   repository: https://github.com/villetakanen/partial
   created: 2026-02-07
-  release: v0.4.1
+  release: v0.5.0
 
 tasks:
   # ── P0: Bugs ──────────────────────────────────────────────────

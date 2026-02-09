@@ -1,12 +1,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
+import type { AppSettings } from '@shared/ipc'
 import { app } from 'electron'
-
-/** Shape of the persisted app settings JSON file. */
-interface AppSettings {
-  lastOpenedFile?: string
-  [key: string]: unknown
-}
 
 /**
  * Return the absolute path to the settings JSON file in Electron's userData directory.
@@ -28,7 +23,10 @@ export async function readSettings(): Promise<AppSettings> {
       return parsed as AppSettings
     }
     return {}
-  } catch {
+  } catch (error: unknown) {
+    if (error instanceof Error && 'code' in error && error.code !== 'ENOENT') {
+      console.error('[store] Failed to read settings:', error.message)
+    }
     return {}
   }
 }

@@ -68,6 +68,7 @@
 - ALWAYS use Conventional Commits format
 - ALWAYS handle errors explicitly; never swallow with empty catch blocks
 - ALWAYS write tests for new parser logic and DAG operations
+- ALWAYS respect the deliverables section of a plan — if a plan lists specs and PBIs as deliverables, produce ONLY those artifacts; do NOT write `src/` or `tests/` code unless the deliverables explicitly include implementation
 
 ### Tier 2 — ASK (Procedural / Human-in-the-Loop)
 - ASK before adding any new dependency
@@ -75,6 +76,7 @@
 - ASK before changing Electron IPC contracts between main/renderer
 - ASK before modifying CI/CD workflows
 - ASK before restructuring the directory layout
+- ASK before moving from spec/PBI creation to code implementation within the same session
 
 ### Tier 3 — NEVER (Hard Constraints)
 - NEVER commit secrets, API keys, or `.env` files

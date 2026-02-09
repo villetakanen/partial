@@ -12,6 +12,11 @@ beforeEach(() => {
     onPlanUpdated: vi.fn(),
     onPlanDeleted: vi.fn(),
     onPlanError: vi.fn(),
+    offPlanUpdated: vi.fn(),
+    offPlanDeleted: vi.fn(),
+    offPlanError: vi.fn(),
+    getSettings: vi.fn().mockResolvedValue({}),
+    setSettings: vi.fn().mockResolvedValue(undefined),
   }
 })
 

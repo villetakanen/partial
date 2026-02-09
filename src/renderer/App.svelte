@@ -1,7 +1,7 @@
 <script lang="ts">
 import type { Graph } from '@shared/dag'
 import { buildDAG } from '@shared/dag'
-import type { PartialAPI, PlanUpdatedPayload } from '@shared/ipc'
+import type { AppSettings, PartialAPI, PlanUpdatedPayload } from '@shared/ipc'
 import type { PlanFile, Task } from '@shared/types'
 import { setContext } from 'svelte'
 import SettingsPanel from './components/SettingsPanel.svelte'
@@ -10,23 +10,44 @@ import Welcome from './components/Welcome.svelte'
 import Gantt from './views/Gantt.svelte'
 import GraphView from './views/Graph.svelte'
 import Kanban from './views/Kanban.svelte'
+import List from './views/List.svelte'
 
-let view = $state<'gantt' | 'kanban' | 'graph'>('gantt')
+let view = $state<'gantt' | 'kanban' | 'graph' | 'list'>('gantt')
 let showSettings = $state(false)
 let detailTask = $state<Task | null>(null)
 
 let plan = $state<PlanFile | null>(null)
 let filePath = $state<string | null>(null)
+let fontSize = $state(14)
 
 const dag: Graph = $derived(plan ? buildDAG(plan.tasks) : buildDAG([]))
 
 const api = (window as unknown as { api: PartialAPI }).api
+
+/** Apply the font size to the :root element. */
+function applyFontSize(size: number): void {
+  document.documentElement.style.setProperty('--font-size-base', `${size}px`)
+}
 
 $effect(() => {
   api?.onPlanUpdated((payload: PlanUpdatedPayload) => {
     plan = payload.plan
     filePath = payload.filePath
   })
+
+  // Load persisted settings on mount
+  api?.getSettings().then((settings: AppSettings) => {
+    if (typeof settings.fontSize === 'number') {
+      fontSize = settings.fontSize
+      applyFontSize(settings.fontSize)
+    }
+  })
+
+  return () => {
+    api?.offPlanUpdated()
+    api?.offPlanDeleted()
+    api?.offPlanError()
+  }
 })
 
 /**
@@ -88,6 +109,36 @@ setContext('partial:removeTask', (taskId: string) => {
   plan = updatedPlan
   api?.savePlan({ filePath, plan: updatedPlan })
 })
+
+/**
+ * Provide a generic task-update function to descendant components via Svelte context.
+ * List view uses this for inline editing of any task field.
+ * Uses spread to preserve unknown fields.
+ */
+setContext('partial:updateTask', (taskId: string, updates: Partial<Task>) => {
+  if (!plan || !filePath) return
+  const updatedPlan: PlanFile = {
+    ...plan,
+    tasks: plan.tasks.map((t) => (t.id === taskId ? { ...t, ...updates } : t)),
+  }
+  plan = updatedPlan
+  api?.savePlan({ filePath, plan: updatedPlan })
+})
+
+/**
+ * Provide a font-size setter to descendant components via Svelte context.
+ * SettingsPanel reads this to change the base font size.
+ */
+setContext('partial:setFontSize', (size: number) => {
+  fontSize = size
+  applyFontSize(size)
+  api?.setSettings({ fontSize: size })
+})
+
+/**
+ * Provide a font-size getter to descendant components via Svelte context.
+ */
+setContext('partial:getFontSize', () => fontSize)
 
 /**
  * Provide an open-detail function to descendant components via Svelte context.
@@ -187,6 +238,7 @@ function handleDetailSave(updatedTask: Task) {
 				<button class:active={view === 'gantt'} onclick={() => (view = 'gantt')} aria-label="Gantt chart view" aria-pressed={view === 'gantt'}>Gantt</button>
 				<button class:active={view === 'kanban'} onclick={() => (view = 'kanban')} aria-label="Kanban board view" aria-pressed={view === 'kanban'}>Kanban</button>
 				<button class:active={view === 'graph'} onclick={() => (view = 'graph')} aria-label="Dependency graph view" aria-pressed={view === 'graph'}>Graph</button>
+				<button class:active={view === 'list'} onclick={() => (view = 'list')} aria-label="List table view" aria-pressed={view === 'list'}>List</button>
 			</nav>
 			{#if filePath}
 				<span class="plan-status" aria-live="polite">{filePath}</span>
@@ -203,6 +255,8 @@ function handleDetailSave(updatedTask: Task) {
 				<Gantt plan={plan} {dag} />
 			{:else if view === 'kanban'}
 				<Kanban plan={plan} {dag} />
+			{:else if view === 'list'}
+				<List plan={plan} {dag} />
 			{:else}
 				<GraphView plan={plan} {dag} />
 			{/if}

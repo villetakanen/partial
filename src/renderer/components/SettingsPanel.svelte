@@ -1,5 +1,6 @@
 <script lang="ts">
 import type { PlanFile } from '@shared/types'
+import { getContext } from 'svelte'
 
 interface Props {
   plan: PlanFile
@@ -8,6 +9,17 @@ interface Props {
 }
 
 let { plan, onSave, onClose }: Props = $props()
+
+const setFontSize = getContext<((size: number) => void) | undefined>('partial:setFontSize')
+const getFontSize = getContext<(() => number) | undefined>('partial:getFontSize')
+
+const fontSizeOptions = [
+  { label: 'Small', value: 12 },
+  { label: 'Medium', value: 14 },
+  { label: 'Large', value: 16 },
+] as const
+
+let currentFontSize = $state(getFontSize?.() ?? 14)
 
 // Local edit state — intentionally captures initial value, not reactive
 // svelte-ignore state_referenced_locally
@@ -96,6 +108,22 @@ function handleInputKeydown(event: KeyboardEvent) {
           aria-readonly="true"
         />
         <span class="field-hint">Version is read-only</span>
+      </div>
+
+      <div class="field">
+        <span class="field-label">Font Size</span>
+        <div class="font-size-toggle" role="radiogroup" aria-label="Font size">
+          {#each fontSizeOptions as opt}
+            <button
+              class="font-size-btn"
+              class:font-size-btn-active={currentFontSize === opt.value}
+              type="button"
+              role="radio"
+              aria-checked={currentFontSize === opt.value}
+              onclick={() => { currentFontSize = opt.value; setFontSize?.(opt.value) }}
+            >{opt.label}</button>
+          {/each}
+        </div>
       </div>
     </div>
 
@@ -253,5 +281,33 @@ function handleInputKeydown(event: KeyboardEvent) {
 
   .settings-btn-save:hover {
     opacity: 0.9;
+  }
+
+  .font-size-toggle {
+    display: flex;
+    gap: 0.25rem;
+  }
+
+  .font-size-btn {
+    flex: 1;
+    padding: 0.375rem 0.5rem;
+    font-size: 0.8125rem;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 4px;
+    background: var(--color-surface-card);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+  }
+
+  .font-size-btn:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text-primary);
+  }
+
+  .font-size-btn-active {
+    background: var(--color-surface-active);
+    color: var(--color-text-inverse);
+    border-color: var(--color-border-accent);
   }
 </style>

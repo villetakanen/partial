@@ -1,4 +1,5 @@
 import type {
+  AppSettings,
   OpenFilePayload,
   PartialAPI,
   PlanDeletedPayload,
@@ -26,6 +27,14 @@ const api: PartialAPI = {
     return ipcRenderer.invoke(IPC_CHANNELS.SAVE, payload)
   },
 
+  getSettings(): Promise<AppSettings> {
+    return ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_GET)
+  },
+
+  setSettings(settings: Partial<AppSettings>): Promise<void> {
+    return ipcRenderer.invoke(IPC_CHANNELS.SETTINGS_SET, settings)
+  },
+
   onPlanUpdated(callback: (payload: PlanUpdatedPayload) => void): void {
     ipcRenderer.on(IPC_CHANNELS.PLAN_UPDATED, (_event, payload) => {
       callback(payload as PlanUpdatedPayload)
@@ -42,6 +51,18 @@ const api: PartialAPI = {
     ipcRenderer.on(IPC_CHANNELS.PLAN_ERROR, (_event, payload) => {
       callback(payload as PlanErrorPayload)
     })
+  },
+
+  offPlanUpdated(): void {
+    ipcRenderer.removeAllListeners(IPC_CHANNELS.PLAN_UPDATED)
+  },
+
+  offPlanDeleted(): void {
+    ipcRenderer.removeAllListeners(IPC_CHANNELS.PLAN_DELETED)
+  },
+
+  offPlanError(): void {
+    ipcRenderer.removeAllListeners(IPC_CHANNELS.PLAN_ERROR)
   },
 }
 

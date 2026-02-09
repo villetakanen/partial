@@ -1,11 +1,11 @@
 import { createHash } from 'node:crypto'
 import { readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import type { OpenFilePayload, PlanSavePayload } from '@shared/ipc'
+import type { AppSettings, OpenFilePayload, PlanSavePayload } from '@shared/ipc'
 import { IPC_CHANNELS } from '@shared/ipc'
 import { app, BrowserWindow, dialog, ipcMain, Menu } from 'electron'
 import { parsePlan, stringifyPlan } from './parser'
-import { getLastOpenedFile, setLastOpenedFile } from './store'
+import { getLastOpenedFile, readSettings, setLastOpenedFile, writeSettings } from './store'
 import type { PlanWatcher } from './watcher'
 import { watchDirectory } from './watcher'
 
@@ -207,6 +207,14 @@ function registerIpcHandlers(): void {
     const content = stringifyPlan(payload.plan)
     selfWriteHashes.set(payload.filePath, hashContent(content))
     await writeFile(payload.filePath, content, 'utf-8')
+  })
+
+  ipcMain.handle(IPC_CHANNELS.SETTINGS_GET, async () => {
+    return readSettings()
+  })
+
+  ipcMain.handle(IPC_CHANNELS.SETTINGS_SET, async (_event, settings: Partial<AppSettings>) => {
+    await writeSettings(settings)
   })
 }
 

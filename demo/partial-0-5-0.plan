@@ -1,0 +1,69 @@
+version: "1.0.0"
+project: Partial
+
+# Dogfood: Partial's own backlog as a .plan file.
+# v0.5.0 — "List & Look"
+# Theme refresh, settings IPC, font size preference, list view, IPC cleanup.
+
+metadata:
+  description: Agent-native project management via .plan files
+  repository: https://github.com/villetakanen/partial
+  created: 2026-02-09
+  release: v0.5.0
+
+tasks:
+  # ── Theme ────────────────────────────────────────────────────────
+
+  - id: pbi-084
+    title: "Monokai Pro theme — swap CSS variable values"
+    parent: theme
+    type: feat
+    done: false
+
+  # ── Settings IPC ─────────────────────────────────────────────────
+
+  - id: pbi-085
+    title: "Settings IPC channel — getSettings/setSettings"
+    parent: settings
+    type: feat
+    done: false
+
+  # ── Font Size ────────────────────────────────────────────────────
+
+  - id: pbi-086
+    title: "Font size preference — Small/Medium/Large toggle"
+    parent: settings
+    type: feat
+    needs:
+      - pbi-085
+    done: false
+
+  # ── List View ────────────────────────────────────────────────────
+
+  - id: pbi-087
+    title: "List view — editable table with inline editing"
+    parent: views
+    type: feat
+    done: false
+
+  # ── IPC Cleanup ──────────────────────────────────────────────────
+
+  - id: pbi-088
+    title: "IPC listener cleanup — off* methods and effect cleanup"
+    parent: infra
+    type: fix
+    done: false
+
+  # ── Dogfood ──────────────────────────────────────────────────────
+
+  - id: pbi-089
+    title: "v0.5.0 dogfood plan"
+    parent: release
+    type: chore
+    needs:
+      - pbi-084
+      - pbi-085
+      - pbi-086
+      - pbi-087
+      - pbi-088
+    done: false

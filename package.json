@@ -1,6 +1,6 @@
 {
   "name": "partial",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "description": "Agent-native project management via .plan files",
   "main": "out/main/index.js",
   "bin": {
